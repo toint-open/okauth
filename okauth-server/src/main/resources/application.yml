@@ -1,0 +1,34 @@
+spring:
+    datasource:
+        druid:
+            min-idle: 1
+            max-wait: 5000
+            validation-query: SELECT 1
+    config:
+        import: file:/Users/toint/repository/data/okauth/application-prod.yml
+server:
+    servlet:
+        # 启用编码配置
+        encoding:
+            enabled: true
+logging:
+    file:
+        name: ./log/spring.log
+    logback:
+        rollingpolicy:
+            max-file-size: 100MB
+            max-history: 7
+    level:
+        root: info
+    pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%5p]-[%X{TRACE_ID:--}]-[${PID:--}]-[%t]-[%-40.40logger{39}]: %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%5p]-[%X{TRACE_ID:--}]-[${PID:--}]-[%t]-[%-40.40logger{39}]: %msg%n"
+sa-token:
+    is-print: false
+    tokenName: Authorization
+    tokenStyle: simple-uuid
+    tokenPrefix: Bearer
+
+mybatis-flex:
+    global-config:
+        print-banner: false
