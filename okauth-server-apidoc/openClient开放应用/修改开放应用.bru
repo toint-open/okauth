@@ -1,0 +1,24 @@
+meta {
+  name: 修改开放应用
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}/okauth/openClient/update
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 0,
+    "name": "name_8105df6d6173",
+    "subjectId": "subjectId_0f92a04bb940",
+    "secret": "secret_5def4529ef02",
+    "allowRedirectUris": [
+      "allowRedirectUris_ccfe1d4feb1b"
+    ],
+    "status": 0
+  }
+}
