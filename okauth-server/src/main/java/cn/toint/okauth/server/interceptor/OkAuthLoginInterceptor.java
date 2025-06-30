@@ -22,8 +22,6 @@ import cn.dev33.satoken.stp.StpUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author Toint
@@ -31,7 +29,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Slf4j
 @Component
-public class OkAuthLoginInterceptor extends SaInterceptor implements WebMvcConfigurer, SaParamFunction<Object> {
+public class OkAuthLoginInterceptor extends SaInterceptor implements SaParamFunction<Object> {
 
     @Override
     public void run(Object handler) {
@@ -41,11 +39,5 @@ public class OkAuthLoginInterceptor extends SaInterceptor implements WebMvcConfi
     @PostConstruct
     private void init() {
         setAuth(this);
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(this).addPathPatterns("/**");
-        log.info("注册SaToken拦截器成功");
     }
 }

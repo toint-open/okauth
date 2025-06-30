@@ -121,15 +121,21 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
         // 查询用户部门权限: 用户->部门->权限
         allPermissionIds.addAll(listPermissionByUserMtmDept(userId));
 
-        // 根据权限ID查询权限code
-        List<OkAuthPermissionDo> permissionDos = permissionMapper.selectListByQuery(
-                QueryWrapper.create()
-                        .select(OkAuthPermissionDo::getCode)
-                        .in(OkAuthPermissionDo::getId, allPermissionIds));
+        // 所有权限code
+        Set<String> codes = new HashSet<>();
 
-        Set<String> codes = permissionDos.stream()
-                .map(OkAuthPermissionDo::getCode)
-                .collect(Collectors.toSet());
+        // 根据权限ID查询权限code
+        if (!allPermissionIds.isEmpty()) {
+            @SuppressWarnings("unchecked")
+            List<OkAuthPermissionDo> permissionDos = permissionMapper.selectListByQuery(
+                    QueryWrapper.create()
+                            .select(OkAuthPermissionDo::getCode)
+                            .in(OkAuthPermissionDo::getId, allPermissionIds));
+
+            permissionDos.stream()
+                    .map(OkAuthPermissionDo::getCode)
+                    .forEach(codes::add);
+        }
 
         stringRedisTemplate.opsForValue().set(key,
                 JacksonUtil.writeValueAsString(codes),

@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.common.model.constant;
+package cn.toint.okauth.server.user.service;
+
+import cn.dev33.satoken.stp.StpInterface;
 
 /**
+ * 访问权限控制
+ *
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/6/30
  */
-public class OkAuthConstant {
-    /**
-     * 权限数据源
-     */
-    public static final String PERMISSION_DATA_SOURCE = "okauth_permission_test";
-
-    /**
-     * 服务数据源
-     */
-    public static final String SERVER_DATA_SOURCE = "okauth_server_test";
+public interface OkAuthAccessPermissionService extends StpInterface {
 }

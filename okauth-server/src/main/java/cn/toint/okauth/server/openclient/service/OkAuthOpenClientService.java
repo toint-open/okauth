@@ -17,8 +17,8 @@
 package cn.toint.okauth.server.openclient.service;
 
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientDo;
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveReq;
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientUpdateReq;
+import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveRequest;
+import cn.toint.okauth.server.openclient.model.OkAuthOpenClientUpdateRequest;
 
 import java.util.List;
 
@@ -29,9 +29,9 @@ import java.util.List;
  * @date 2025-06-27
  */
 public interface OkAuthOpenClientService {
-    OkAuthOpenClientDo save(OkAuthOpenClientSaveReq req);
+    OkAuthOpenClientDo save(OkAuthOpenClientSaveRequest req);
 
-    void update(OkAuthOpenClientUpdateReq res);
+    void update(OkAuthOpenClientUpdateRequest res);
 
     boolean existById(long id);
 

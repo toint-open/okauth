@@ -29,9 +29,7 @@ import org.springframework.context.annotation.ComponentScan;
         "cn.toint.okauth.permission.service",
         "cn.toint.okauth.permission.controller"
 })
-@MapperScan({
-        "cn.toint.okauth.permission.mapper"
-})
+@MapperScan("cn.toint.okauth.permission.mapper")
 public class OkAuthPermissionConfig {
 
 }

@@ -39,17 +39,19 @@ public interface OkAuthPermissionService {
     Set<String> listPermissionCode(Long userId);
 
     /**
-     * 查询角色
+     * 全量查询权限树
+     * 有缓存
+     */
+    List<OkAuthPermissionTreeVo> listPermissionTree();
+
+    /**
+     * 根据用户查询所有角色
      */
     List<OkAuthRoleDo> listRole(Long userId);
 
     /**
-     * 查询部门树
+     * 全量查询部门树
+     * 有缓存
      */
     List<OkAuthDeptTreeVo> listDeptTree();
-
-    /**
-     * 查询所有权限
-     */
-    List<OkAuthPermissionTreeVo> listPermissionTree();
 }

@@ -14,11 +14,35 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.constant;
+package cn.toint.okauth.server.user.model;
+
+import cn.toint.okauth.server.constant.OkAuthConstant;
+import cn.toint.okauth.server.model.BaseDo;
+import com.mybatisflex.annotation.Column;
+import com.mybatisflex.annotation.Table;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
+ * 用户
+ *
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/6/30
  */
-public class OkAuthPermissionConstant {
+@EqualsAndHashCode(callSuper = true)
+@Data
+@Table(value = "okauth_user", dataSource = OkAuthConstant.DATA_SOURCE)
+public class OkAuthUserDo extends BaseDo {
+    @Column
+    private String username;
+
+    @Column
+    private String password;
+
+    @Column
+    private String name;
+
+    @Column
+    private String phone;
+
 }

@@ -16,6 +16,7 @@
 
 package cn.toint.okauth.permission.model;
 
+import cn.toint.okauth.permission.constant.OkAuthConstant;
 import com.mybatisflex.annotation.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,7 +27,7 @@ import lombok.EqualsAndHashCode;
  * @author Toint
  * @date 2025/6/29
  */
-@Table("okauth_role")
+@Table(value = "okauth_role", dataSource = OkAuthConstant.DATA_SOURCE)
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class OkAuthRoleDo extends BaseDo {

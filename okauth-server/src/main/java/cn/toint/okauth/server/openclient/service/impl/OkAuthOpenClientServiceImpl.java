@@ -21,9 +21,9 @@ import cn.dev33.satoken.oauth2.config.SaOAuth2ServerConfig;
 import cn.dev33.satoken.oauth2.data.model.loader.SaClientModel;
 import cn.toint.okauth.server.openclient.mapper.OkAuthOpenClientMapper;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientDo;
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveReq;
+import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveRequest;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientStatusEnum;
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientUpdateReq;
+import cn.toint.okauth.server.openclient.model.OkAuthOpenClientUpdateRequest;
 import cn.toint.okauth.server.openclient.service.OkAuthOpenClientService;
 import cn.toint.oktool.util.Assert;
 import com.mybatisflex.core.query.QueryWrapper;
@@ -64,7 +64,7 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
             SaOAuth2ServerConfig oAuth2ServerConfig = SaOAuth2Manager.getServerConfig();
             oAuth2ServerConfig.addClient(saClientModel);
         }
-        log.info("成功加载{}个客户端",  openClientDos.size());
+        log.info("开放应用模块初始化成功, 加载{}个开放应用",  openClientDos.size());
     }
 
     /**
@@ -78,7 +78,7 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
     }
 
     @Override
-    public OkAuthOpenClientDo save(OkAuthOpenClientSaveReq req) {
+    public OkAuthOpenClientDo save(OkAuthOpenClientSaveRequest req) {
         Assert.notNull(req, "请求参数不能为空");
         Assert.validate(req);
 
@@ -92,7 +92,7 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
     }
 
     @Override
-    public void update(OkAuthOpenClientUpdateReq res) {
+    public void update(OkAuthOpenClientUpdateRequest res) {
         Assert.notNull(res, "请求参数不能为空");
         Assert.validate(res);
 

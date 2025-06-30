@@ -28,7 +28,7 @@
 
     <groupId>cn.toint</groupId>
     <artifactId>okauth</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${project.version}</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -37,11 +37,12 @@
     </modules>
 
     <properties>
+        <project.version>1.0.0-SNAPSHOT</project.version>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <oktool.version>1.2.0</oktool.version>
+        <oktool.version>1.2.0-20250630075953</oktool.version>
         <sa-token.version>1.44.0</sa-token.version>
         <mybatis-flex.version>1.10.9</mybatis-flex.version>
         <druid.version>1.2.25</druid.version>
@@ -49,6 +50,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>cn.toint</groupId>
+                <artifactId>okauth-permission</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.mybatis-flex</groupId>
                 <artifactId>mybatis-flex-spring-boot3-starter</artifactId>

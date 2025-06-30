@@ -5,14 +5,14 @@ meta {
 }
 
 post {
-  url: {{host}}/okauth/openClient/save
+  url: {{host}}/openClient/save
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "name": "",
+    "name": "测试",
     "subjectId": "subjectId_b403c9d68b92",
     "secret": "secret_10d063506937",
     "allowRedirectUris": [

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.core.config;
+package cn.toint.okauth.server.config;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
-import cn.toint.okauth.server.common.model.ErrEnum;
-import cn.toint.okauth.server.common.model.Response;
+import cn.toint.okauth.server.exception.OkAuthUserNotExistException;
+import cn.toint.okauth.server.exception.OkAuthUserPasswordException;
+import cn.toint.okauth.server.model.ErrEnum;
+import cn.toint.okauth.server.model.ResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,21 +35,48 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+    /**
+     * 用户不存在
+     */
+    @ExceptionHandler(OkAuthUserNotExistException.class)
+    public ResponseVo<Void> exception(OkAuthUserNotExistException e) {
+        log.error(e.getMessage());
+        return ResponseVo.fail(OkAuthUserNotExistException.ERR);
+    }
+
+    /**
+     * 密码异常
+     */
+    @ExceptionHandler(OkAuthUserPasswordException.class)
+    public ResponseVo<Void> exception(OkAuthUserPasswordException e) {
+        log.error(e.getMessage());
+        return ResponseVo.fail(OkAuthUserPasswordException.ERR);
+    }
+
+    /**
+     * 无权限
+     */
     @ExceptionHandler(NotPermissionException.class)
-    public Response<Void> exception(NotPermissionException e) {
+    public ResponseVo<Void> exception(NotPermissionException e) {
         log.error(e.getMessage());
-        return Response.fail(ErrEnum.NOT_PERMISSION);
+        return ResponseVo.fail(ErrEnum.NOT_PERMISSION);
     }
 
+    /**
+     * 未登录
+     */
     @ExceptionHandler(NotLoginException.class)
-    public Response<Void> exception(NotLoginException e) {
+    public ResponseVo<Void> exception(NotLoginException e) {
         log.error(e.getMessage());
-        return Response.fail(ErrEnum.NOT_LOGIN);
+        return ResponseVo.fail(ErrEnum.NOT_LOGIN);
     }
 
+    /**
+     * 通用异常
+     */
     @ExceptionHandler(Exception.class)
-    public Response<Void> exception(Exception e) {
+    public ResponseVo<Void> exception(Exception e) {
         log.error(e.getMessage(), e);
-        return Response.fail(e.getMessage());
+        return ResponseVo.fail(e.getMessage());
     }
 }

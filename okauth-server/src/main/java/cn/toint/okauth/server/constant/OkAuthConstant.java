@@ -14,44 +14,15 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.openclient.model;
-
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-
-import java.util.List;
+package cn.toint.okauth.server.constant;
 
 /**
  * @author Toint
- * @date 2025/6/28
+ * @date 2025/6/29
  */
-@Data
-public class OkAuthOpenClientUpdateReq {
-    @NotNull(message = "应用ID不能为空")
-    private Long id;
-
+public class OkAuthConstant {
     /**
-     * 应用名称
+     * 服务数据源
      */
-    private String name;
-
-    /**
-     * 主体ID
-     */
-    private String subjectId;
-
-    /**
-     * 应用秘钥
-     */
-    private String secret;
-
-    /**
-     * 应用授权回调地址
-     */
-    private List<String> allowRedirectUris;
-
-    /**
-     * 状态
-     */
-    private Integer status;
+    public static final String DATA_SOURCE = "okauth-server";
 }

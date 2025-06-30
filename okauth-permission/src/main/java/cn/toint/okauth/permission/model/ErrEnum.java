@@ -16,25 +16,23 @@
 
 package cn.toint.okauth.permission.model;
 
-import cn.toint.okauth.permission.constant.OkAuthConstant;
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Table;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * 部门关联权限
- *
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/6/27
  */
-@Table(value = "okauth_dept_mtm_permission", dataSource = OkAuthConstant.DATA_SOURCE)
-@EqualsAndHashCode(callSuper = true)
-@Data
-public class OkAuthDeptMtmPermissionDo extends BaseDo {
-    @Column
-    private Long deptId;
+@Getter
+@AllArgsConstructor
+public enum ErrEnum {
+    NOT_PERMISSION(403, "权限不足"),
+    NOT_LOGIN(401, "未登录"),
+    PASSWORD_ERROR(10001, "密码错误"),
+    USER_NOT_EXIST(10000, "用户不存在"),
+    FAIL(-1, "失败"),
+    SUCCESS(0, "成功");
 
-    @Column
-    private Long permissionId;
+    private final int code;
+    private final String msg;
 }

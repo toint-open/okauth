@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.common.model;
+package cn.toint.okauth.server.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import cn.toint.okauth.server.model.ErrEnum;
 
 /**
+ * 密码错误
+ *
  * @author Toint
- * @date 2025/6/27
+ * @date 2025/6/30
  */
-@Getter
-@AllArgsConstructor
-public enum ErrEnum {
-    NOT_PERMISSION(403, "权限不足"),
-    NOT_LOGIN(401, "未登录"),
-    FAIL(-1, "失败"),
-    SUCCESS(0, "成功");
+public class OkAuthUserPasswordException extends RuntimeException{
+    public static final ErrEnum ERR = ErrEnum.PASSWORD_ERROR;
 
-    private final int code;
-    private final String msg;
+    public OkAuthUserPasswordException(String message) {
+        super(message);
+    }
 }

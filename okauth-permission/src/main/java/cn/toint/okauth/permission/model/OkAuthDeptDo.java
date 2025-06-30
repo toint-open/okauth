@@ -16,6 +16,7 @@
 
 package cn.toint.okauth.permission.model;
 
+import cn.toint.okauth.permission.constant.OkAuthConstant;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Table;
 import lombok.Data;
@@ -28,7 +29,7 @@ import lombok.EqualsAndHashCode;
  * @date 2025/6/29
  */
 @EqualsAndHashCode(callSuper = true)
-@Table("okauth_dept")
+@Table(value = "okauth_dept", dataSource = OkAuthConstant.DATA_SOURCE)
 @Data
 public class OkAuthDeptDo extends BaseDo {
     @Column

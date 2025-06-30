@@ -14,43 +14,19 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.openclient.model;
+package cn.toint.okauth.server.user.model;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
-import java.util.List;
-
 /**
- * 添加开放应用
- *
  * @author Toint
- * @date 2025/6/27
+ * @date 2025/6/30
  */
 @Data
-public class OkAuthOpenClientSaveReq {
-    /**
-     * 应用名称
-     */
-    @NotBlank(message = "应用名称不能为空")
-    private String name;
-
-    /**
-     * 主体ID
-     */
-    @NotBlank(message = "主体ID不能为空")
-    private String subjectId;
-
-    /**
-     * 应用秘钥
-     */
-    @NotBlank(message = "应用秘钥不能为空")
-    public String secret;
-
-    /**
-     * 应用授权回调地址
-     */
-    @NotEmpty(message = "应用授权回调地址不能为空")
-    public List<String> allowRedirectUris;
+public class OkAuthAdminLoginRequest {
+    @NotBlank(message = "账号不能为空")
+    private String username;
+    @NotBlank(message = "密码不能为空")
+    private String password;
 }

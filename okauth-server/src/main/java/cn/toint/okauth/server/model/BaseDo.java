@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.common.model;
+package cn.toint.okauth.server.model;
 
 import cn.toint.oktool.model.WriteValue;
 import com.mybatisflex.annotation.Column;

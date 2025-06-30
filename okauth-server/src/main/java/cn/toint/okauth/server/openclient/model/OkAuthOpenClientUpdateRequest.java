@@ -14,27 +14,44 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.model;
+package cn.toint.okauth.server.openclient.model;
 
-import cn.toint.okauth.permission.constant.OkAuthConstant;
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 /**
- * 部门关联权限
- *
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/6/28
  */
-@Table(value = "okauth_dept_mtm_permission", dataSource = OkAuthConstant.DATA_SOURCE)
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class OkAuthDeptMtmPermissionDo extends BaseDo {
-    @Column
-    private Long deptId;
+public class OkAuthOpenClientUpdateRequest {
+    @NotNull(message = "应用ID不能为空")
+    private Long id;
 
-    @Column
-    private Long permissionId;
+    /**
+     * 应用名称
+     */
+    private String name;
+
+    /**
+     * 主体ID
+     */
+    private String subjectId;
+
+    /**
+     * 应用秘钥
+     */
+    private String secret;
+
+    /**
+     * 应用授权回调地址
+     */
+    private List<String> allowRedirectUris;
+
+    /**
+     * 状态
+     */
+    private Integer status;
 }

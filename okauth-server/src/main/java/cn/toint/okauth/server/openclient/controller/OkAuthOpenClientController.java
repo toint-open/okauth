@@ -17,10 +17,10 @@
 package cn.toint.okauth.server.openclient.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.toint.okauth.server.common.model.Response;
+import cn.toint.okauth.server.model.ResponseVo;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientDo;
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveReq;
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientUpdateReq;
+import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveRequest;
+import cn.toint.okauth.server.openclient.model.OkAuthOpenClientUpdateRequest;
 import cn.toint.okauth.server.openclient.service.OkAuthOpenClientService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,30 +43,30 @@ public class OkAuthOpenClientController {
     /**
      * 添加开放应用
      */
-    @PostMapping("/okauth/openClient/save")
-    @SaCheckPermission("okauth:openClient:save")
-    public Response<Void> save(@RequestBody OkAuthOpenClientSaveReq res) {
+    @PostMapping("/openClient/save")
+    @SaCheckPermission(value = "openClient:save", orRole = "admin")
+    public ResponseVo<Void> save(@RequestBody OkAuthOpenClientSaveRequest res) {
         okAuthOpenClientService.save(res);
-        return Response.success();
+        return ResponseVo.success();
     }
 
     /**
      * 修改开放应用
      */
-    @PostMapping("/okauth/openClient/update")
-    @SaCheckPermission("okauth:openClient:update")
-    public Response<Void> update(@RequestBody OkAuthOpenClientUpdateReq res) {
+    @PostMapping("/openClient/update")
+    @SaCheckPermission(value = "openClient:update", orRole = "admin")
+    public ResponseVo<Void> update(@RequestBody OkAuthOpenClientUpdateRequest res) {
         okAuthOpenClientService.update(res);
-        return Response.success();
+        return ResponseVo.success();
     }
 
     /**
      * 查询开放应用列表
      */
-    @PostMapping("/okauth/openClient/list")
-    @SaCheckPermission("okauth:openClient:list")
-    public Response<List<OkAuthOpenClientDo>> update() {
+    @PostMapping("/openClient/list")
+    @SaCheckPermission(value = "openClient:list", orRole = "admin")
+    public ResponseVo<List<OkAuthOpenClientDo>> update() {
         List<OkAuthOpenClientDo> openClientDos = okAuthOpenClientService.list();
-        return Response.success(openClientDos);
+        return ResponseVo.success(openClientDos);
     }
 }

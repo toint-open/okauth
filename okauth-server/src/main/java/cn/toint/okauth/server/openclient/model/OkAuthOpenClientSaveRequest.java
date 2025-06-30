@@ -16,52 +16,41 @@
 
 package cn.toint.okauth.server.openclient.model;
 
-import cn.toint.okauth.server.constant.OkAuthConstant;
-import cn.toint.okauth.server.model.BaseDo;
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 /**
- * 应用
+ * 添加开放应用
  *
  * @author Toint
  * @date 2025/6/27
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@Table(value = "okauth_open_client", dataSource = OkAuthConstant.DATA_SOURCE)
-public class OkAuthOpenClientDo extends BaseDo {
+public class OkAuthOpenClientSaveRequest {
     /**
      * 应用名称
      */
-    @Column
+    @NotBlank(message = "应用名称不能为空")
     private String name;
 
     /**
      * 主体ID
      */
-    @Column
+    @NotBlank(message = "主体ID不能为空")
     private String subjectId;
 
     /**
      * 应用秘钥
      */
-    @Column
-    private String secret;
+    @NotBlank(message = "应用秘钥不能为空")
+    public String secret;
 
     /**
      * 应用授权回调地址
      */
-    @Column
-    private List<String> allowRedirectUris;
-
-    /**
-     * 状态
-     */
-    @Column
-    private Integer status;
+    @NotEmpty(message = "应用授权回调地址不能为空")
+    public List<String> allowRedirectUris;
 }

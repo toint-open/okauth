@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.model;
-
-import cn.toint.okauth.permission.constant.OkAuthConstant;
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Table;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+package cn.toint.okauth.server.user.service;
 
 /**
- * 部门关联权限
+ * 用户加密
  *
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/6/30
  */
-@Table(value = "okauth_dept_mtm_permission", dataSource = OkAuthConstant.DATA_SOURCE)
-@EqualsAndHashCode(callSuper = true)
-@Data
-public class OkAuthDeptMtmPermissionDo extends BaseDo {
-    @Column
-    private Long deptId;
-
-    @Column
-    private Long permissionId;
+public interface OkAuthUserEncryptService {
+    /**
+     * 加密内容
+     *
+     * @param value 加密前的内容
+     * @return 加密后的内容, 再Base64编码
+     */
+    String encrypt(String value);
 }

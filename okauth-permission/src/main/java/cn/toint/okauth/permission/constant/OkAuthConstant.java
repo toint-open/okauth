@@ -14,27 +14,15 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.model;
-
-import cn.toint.okauth.permission.constant.OkAuthConstant;
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Table;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+package cn.toint.okauth.permission.constant;
 
 /**
- * 部门关联权限
- *
  * @author Toint
  * @date 2025/6/29
  */
-@Table(value = "okauth_dept_mtm_permission", dataSource = OkAuthConstant.DATA_SOURCE)
-@EqualsAndHashCode(callSuper = true)
-@Data
-public class OkAuthDeptMtmPermissionDo extends BaseDo {
-    @Column
-    private Long deptId;
-
-    @Column
-    private Long permissionId;
+public class OkAuthConstant {
+    /**
+     * 数据源名称
+     */
+    public static final String DATA_SOURCE = "okauth-permission";
 }

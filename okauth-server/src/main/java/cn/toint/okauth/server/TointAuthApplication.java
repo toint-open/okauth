@@ -16,8 +16,6 @@
 
 package cn.toint.okauth.server;
 
-import cn.dev33.satoken.context.mock.SaTokenContextMockUtil;
-import cn.dev33.satoken.stp.StpUtil;
 import cn.toint.oktool.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.http.client.ClientConfig;
@@ -39,14 +37,5 @@ public class TointAuthApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(TointAuthApplication.class, args);
-
-        // 模拟账号
-        SaTokenContextMockUtil.setMockContext(() -> {
-            if (!StpUtil.isLogin(1L)) {
-                StpUtil.login(1L);
-            }
-            String token = StpUtil.getTokenValueByLoginId(1L);
-            log.info("token={}", token);
-        });
     }
 }
