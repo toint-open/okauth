@@ -1,0 +1,18 @@
+meta {
+  name: 超管登录
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/admin/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "admin",
+    "password": "okauth-admin"
+  }
+}
