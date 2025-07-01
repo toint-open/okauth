@@ -17,15 +17,16 @@
 package cn.toint.okauth.server.oauth2.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.dev33.satoken.oauth2.data.model.CodeModel;
+import cn.toint.okauth.server.model.Response;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2AccessTokenRequest;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2AccessTokenResponse;
 import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordRequest;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordResponse;
 import cn.toint.okauth.server.oauth2.service.OkAuthOauth2Service;
 import jakarta.annotation.Resource;
-import org.dromara.hutool.core.net.url.UrlBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 public class OkAuthOauth2Controller {
@@ -38,39 +39,21 @@ public class OkAuthOauth2Controller {
      */
     @PostMapping("/oauth2/loginByPassword")
     @SaIgnore
-    public RedirectView loginByPassword(@RequestBody OkAuthOauth2LoginByPasswordRequest request) {
-        CodeModel codeModel = oauth2Service.login(request);
-        UrlBuilder url = UrlBuilder.of(codeModel.getRedirectUri()).addQuery("code", codeModel.getCode());
-        return new RedirectView(url.toString());
+    public Response<OkAuthOauth2LoginByPasswordResponse> loginByPassword(@RequestBody OkAuthOauth2LoginByPasswordRequest request) {
+        OkAuthOauth2LoginByPasswordResponse response = oauth2Service.login(request);
+        return Response.success(response);
     }
 
-//    // 模式一：Code授权码 || 模式二：隐藏式
-//    @RequestMapping("/oauth2/authorize")
-//    @SaIgnore
-//    public Object authorize() {
-//        return SaOAuth2ServerProcessor.instance.authorize();
-//    }
-//
-//    // 用户登录
-//    @RequestMapping("/oauth2/doLogin")
-//    @SaIgnore
-//    public Object doLogin() {
-//        return SaOAuth2ServerProcessor.instance.doLogin();
-//    }
-//
-//    // 用户确认授权
-//    @SaIgnore
-//    @RequestMapping("/oauth2/doConfirm")
-//    public Object doConfirm() {
-//        return SaOAuth2ServerProcessor.instance.doConfirm();
-//    }
-//
-//    // Code 换 Access-Token || 模式三：密码式
-//    @SaIgnore
-//    @RequestMapping("/oauth2/token")
-//    public Object token() {
-//        return SaOAuth2ServerProcessor.instance.token();
-//    }
+
+    /**
+     * Code 换 Access-Token
+     */
+    @SaIgnore
+    @PostMapping("/oauth2/accessToken")
+    public Response<OkAuthOauth2AccessTokenResponse> accessToken(OkAuthOauth2AccessTokenRequest request) {
+        OkAuthOauth2AccessTokenResponse response = oauth2Service.accessToken(request);
+        return Response.success(response);
+    }
 //
 //    // Refresh-Token 刷新 Access-Token
 //    @SaIgnore

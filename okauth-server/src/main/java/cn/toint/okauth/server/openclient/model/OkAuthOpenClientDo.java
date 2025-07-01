@@ -71,10 +71,4 @@ public class OkAuthOpenClientDo extends BaseDo {
      */
     @Column
     private Integer status;
-
-    /**
-     * 授权地址
-     */
-    @Column
-    private String authorizeUrl;
 }

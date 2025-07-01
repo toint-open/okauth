@@ -18,9 +18,12 @@ package cn.toint.okauth.server.oauth2.service.impl;
 
 import cn.dev33.satoken.oauth2.SaOAuth2Manager;
 import cn.dev33.satoken.oauth2.consts.SaOAuth2Consts;
+import cn.dev33.satoken.oauth2.data.model.AccessTokenModel;
 import cn.dev33.satoken.oauth2.data.model.CodeModel;
 import cn.dev33.satoken.oauth2.data.model.request.RequestAuthModel;
 import cn.toint.okauth.server.oauth2.manager.OkAuthOauth2Manager;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2AccessTokenRequest;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2AccessTokenResponse;
 import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordRequest;
 import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordResponse;
 import cn.toint.okauth.server.oauth2.service.OkAuthOauth2Service;
@@ -60,7 +63,8 @@ public class OkAuthOauth2ServiceImpl implements OkAuthOauth2Service {
 
         // 校验授权方式
         Assert.equals(responseType, SaOAuth2Consts.ResponseType.code, "不支持的responseType");
-
+        // 校验客户端
+        SaOAuth2Manager.getTemplate().checkClientModel(clientId);
         // 校验回调地址
         SaOAuth2Manager.getTemplate().checkRedirectUri(String.valueOf(clientId), redirectUri);
 
@@ -84,5 +88,25 @@ public class OkAuthOauth2ServiceImpl implements OkAuthOauth2Service {
         OkAuthOauth2LoginByPasswordResponse response = new OkAuthOauth2LoginByPasswordResponse();
         response.setRedirectUri(clientRedirectUri);
         return response;
+    }
+
+    @Override
+    public OkAuthOauth2AccessTokenResponse accessToken(OkAuthOauth2AccessTokenRequest request) {
+        String clientId = request.getClientId();
+        String clientSecret = request.getClientSecret();
+        String grantType = request.getGrantType();
+        String scope = request.getScope();
+        String code = request.getCode();
+
+        // 校验授权方式
+        Assert.equals(grantType, "authorization_code", "不支持的grantType");
+        // 校验客户端
+        SaOAuth2Manager.getTemplate().checkClientModel(clientId);
+        // 校验密钥
+        SaOAuth2Manager.getTemplate().checkClientSecret(clientId, clientSecret);
+        // 校验code
+        SaOAuth2Manager.getTemplate().checkCode(code);
+        AccessTokenModel accessTokenModel = SaOAuth2Manager.getDataGenerate().generateAccessToken(code);
+        return BeanUtil.copyProperties(accessTokenModel, new OkAuthOauth2AccessTokenResponse());
     }
 }

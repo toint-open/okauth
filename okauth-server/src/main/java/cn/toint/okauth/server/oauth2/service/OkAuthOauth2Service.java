@@ -16,6 +16,8 @@
 
 package cn.toint.okauth.server.oauth2.service;
 
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2AccessTokenRequest;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2AccessTokenResponse;
 import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordRequest;
 import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordResponse;
 
@@ -30,4 +32,6 @@ public interface OkAuthOauth2Service {
      * 账号密码登录
      */
     OkAuthOauth2LoginByPasswordResponse login(OkAuthOauth2LoginByPasswordRequest request);
+
+    OkAuthOauth2AccessTokenResponse accessToken(OkAuthOauth2AccessTokenRequest request);
 }
