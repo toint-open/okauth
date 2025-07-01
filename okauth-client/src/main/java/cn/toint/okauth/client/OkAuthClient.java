@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.oauth2.service;
+package cn.toint.okauth.client;
 
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordRequest;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordResponse;
+import cn.toint.okauth.client.model.OkAuthGetOauth2AuthorizeUriRequest;
+import cn.toint.okauth.client.model.OkAuthGetOauth2AuthorizeUriResponse;
 
 /**
- * oauth2
+ * OkAuth客户端
  *
  * @author Toint
- * @date 2025/7/1
+ * @date 2025/7/2
  */
-public interface OkAuthOauth2Service {
+public interface OkAuthClient {
     /**
-     * 账号密码登录
+     * 获取oauth2授权地址
      */
-    OkAuthOauth2LoginByPasswordResponse login(OkAuthOauth2LoginByPasswordRequest request);
+    OkAuthGetOauth2AuthorizeUriResponse getOauth2AuthorizeUri(OkAuthGetOauth2AuthorizeUriRequest request);
+
+//    /**
+//     * 缓存state, 以便回调时校验来源合法
+//     *
+//     * @param state   state
+//     * @param timeout 超时时间, 默认5分钟
+//     */
+//    void cacheState(String state, Duration timeout);
 }

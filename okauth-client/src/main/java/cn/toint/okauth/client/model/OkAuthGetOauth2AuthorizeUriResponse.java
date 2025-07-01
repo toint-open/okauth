@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.oauth2.model;
+package cn.toint.okauth.client.model;
 
 import lombok.Data;
 
@@ -23,9 +23,11 @@ import lombok.Data;
  * @date 2025/7/1
  */
 @Data
-public class OkAuthOauth2GetAuthorizeUrlResponse {
+public class OkAuthGetOauth2AuthorizeUriResponse {
     /**
      * 授权链接, 前端拿到地址后跳转该链接
      */
-    private String authorizeUrl;
+    private String authorizeUri;
+
+    private String state;
 }

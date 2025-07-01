@@ -20,21 +20,18 @@ import cn.dev33.satoken.oauth2.SaOAuth2Manager;
 import cn.dev33.satoken.oauth2.consts.SaOAuth2Consts;
 import cn.dev33.satoken.oauth2.data.model.CodeModel;
 import cn.dev33.satoken.oauth2.data.model.request.RequestAuthModel;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2GetAuthorizeUrlRequest;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2GetAuthorizeUrlResponse;
+import cn.toint.okauth.server.oauth2.manager.OkAuthOauth2Manager;
 import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordRequest;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginResponse;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordResponse;
 import cn.toint.okauth.server.oauth2.service.OkAuthOauth2Service;
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientDo;
-import cn.toint.okauth.server.openclient.service.OkAuthOpenClientService;
+import cn.toint.okauth.server.user.model.OkAuthUserLoginResponse;
 import cn.toint.okauth.server.user.service.OkAuthUserService;
 import cn.toint.oktool.util.Assert;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.bean.BeanUtil;
-import org.dromara.hutool.core.net.url.UrlBuilder;
-import org.dromara.hutool.core.net.url.UrlEncoder;
-import org.dromara.hutool.core.net.url.UrlQuery;
+import org.dromara.hutool.core.data.id.IdUtil;
+import org.dromara.hutool.core.text.split.SplitUtil;
 import org.springframework.stereotype.Service;
 
 /**
@@ -44,64 +41,48 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class OkAuthOauth2ServiceImpl implements OkAuthOauth2Service {
-    @Resource
-    private OkAuthOpenClientService openClientService;
 
     @Resource
-    private OkAuthUserService userService;
+    private OkAuthUserService okAuthUserService;
+
+    @Resource
+    private OkAuthOauth2Manager okAuthOauth2Manager;
 
     @Override
-    public OkAuthOauth2GetAuthorizeUrlResponse getAuthorizeUrl(OkAuthOauth2GetAuthorizeUrlRequest request) {
-        // 参数校验
-        Assert.notNull(openClientService, "请求参数不能为空");
+    public OkAuthOauth2LoginByPasswordResponse login(OkAuthOauth2LoginByPasswordRequest request) {
+        Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request);
 
         String responseType = request.getResponseType();
-        Long clientId = request.getClientId();
+        String clientId = request.getClientId();
         String redirectUri = request.getRedirectUri();
+        String state = request.getState();
 
-        // 校验授权
+        // 校验授权方式
         Assert.equals(responseType, SaOAuth2Consts.ResponseType.code, "不支持的responseType");
 
         // 校验回调地址
         SaOAuth2Manager.getTemplate().checkRedirectUri(String.valueOf(clientId), redirectUri);
 
-        // 获取客户端信息
-        OkAuthOpenClientDo openClientDo = openClientService.getById(request.getClientId());
-        Assert.notNull(openClientDo, "开放应用不存在");
-
-        // 构建授权地址
-        // redirect_uri=http://127.0.0.1:5500/client.html&scope=userinfo,userid,openid,unionid,oidc
-        UrlQuery urlQuery = UrlQuery.of()
-                .add("response_type", request.getResponseType())
-                .add("client_id", request.getClientId())
-                .add("redirect_uri", UrlEncoder.encodeAll(request.getRedirectUri()))
-                .add("scope", request.getScope())
-                .add("state", request.getState());
-
-        String authorizeUrl = UrlBuilder.of(openClientDo.getAuthorizeUrl())
-                .setQuery(urlQuery)
-                .toString();
-
-        OkAuthOauth2GetAuthorizeUrlResponse response = new OkAuthOauth2GetAuthorizeUrlResponse();
-        response.setAuthorizeUrl(authorizeUrl);
-        return response;
-    }
-
-    @Override
-    public OkAuthOauth2LoginResponse login(OkAuthOauth2LoginByPasswordRequest request) {
-        Assert.notNull(request, "请求参数不能为空");
-        Assert.validate(request);
-
         // 登录账号
-        userService.login(request);
+        OkAuthUserLoginResponse loginResponse = okAuthUserService.login(request);
+        Long userId = loginResponse.getUser().getId();
 
-        // 获取code
+        // 获取code并构造回调地址
         RequestAuthModel requestAuthModel = BeanUtil.copyProperties(request, new RequestAuthModel());
-        CodeModel codeModel = SaOAuth2Manager.getDataGenerate().generateCode(requestAuthModel);
+        requestAuthModel.setClientId(clientId);
+        requestAuthModel.setScopes(SplitUtil.splitTrim(request.getScope(), ","));
+        requestAuthModel.setLoginId(userId);
+        requestAuthModel.setRedirectUri(redirectUri);
+        requestAuthModel.setResponseType(responseType);
+        requestAuthModel.setState(state);
+        requestAuthModel.setNonce(IdUtil.fastSimpleUUID());
+        CodeModel codeModel = okAuthOauth2Manager.getSaOAuth2DataGenerate().generateCode(requestAuthModel);
+        String clientRedirectUri = okAuthOauth2Manager.getSaOAuth2DataGenerate()
+                .buildRedirectUri(redirectUri, codeModel.getCode(), state);
 
-        OkAuthOauth2LoginResponse oauth2LoginResponse = new OkAuthOauth2LoginResponse();
-        oauth2LoginResponse.setCode(codeModel.getCode());
-        return oauth2LoginResponse;
+        OkAuthOauth2LoginByPasswordResponse response = new OkAuthOauth2LoginByPasswordResponse();
+        response.setRedirectUri(clientRedirectUri);
+        return response;
     }
 }

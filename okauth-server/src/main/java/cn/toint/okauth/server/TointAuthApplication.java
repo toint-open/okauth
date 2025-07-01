@@ -26,7 +26,7 @@ import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfigur
 
 import java.time.Duration;
 
-@SpringBootApplication(exclude = SpringDataWebAutoConfiguration.class)
+@SpringBootApplication(exclude = {SpringDataWebAutoConfiguration.class})
 @Slf4j
 public class TointAuthApplication {
     static {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.oauth2.model;
+package cn.toint.okauth.client.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,17 +27,27 @@ import lombok.Data;
  * @date 2025/7/1
  */
 @Data
-public class OkAuthOauth2GetAuthorizeUrlRequest {
+public class OkAuthGetOauth2AuthorizeUriRequest {
+    @NotBlank(message = "授权链接不能为空")
+    private String authorizeUri;
+
     @NotBlank(message = "responseType不能为空")
     private String responseType;
 
     @NotNull(message = "开放应用ID不能为空")
-    private Long clientId;
+    private String clientId;
 
     @NotBlank(message = "回调链接不能为空")
     private String redirectUri;
 
+    /**
+     * 授权范围
+     */
     private String scope;
 
+    /**
+     * 随机值, 此参数会在重定向时追加到url末尾
+     * 建议开发者把该值缓存起来, 回调时校验该值
+     */
     private String state;
 }

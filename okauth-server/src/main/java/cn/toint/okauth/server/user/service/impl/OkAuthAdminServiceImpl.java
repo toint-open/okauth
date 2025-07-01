@@ -18,10 +18,12 @@ package cn.toint.okauth.server.user.service.impl;
 
 import cn.toint.okauth.server.user.model.OkAuthAdminLoginByPasswordRequest;
 import cn.toint.okauth.server.user.model.OkAuthAdminLoginResponse;
+import cn.toint.okauth.server.user.model.OkAuthUserLoginResponse;
 import cn.toint.okauth.server.user.service.OkAuthAdminService;
 import cn.toint.okauth.server.user.service.OkAuthUserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.bean.BeanUtil;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,10 +34,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OkAuthAdminServiceImpl implements OkAuthAdminService {
     @Resource
-    private OkAuthUserService userService;
+    private OkAuthUserService okAuthUserService;
 
     @Override
     public OkAuthAdminLoginResponse login(OkAuthAdminLoginByPasswordRequest request) {
-      return (OkAuthAdminLoginResponse) userService.login(request);
+        OkAuthUserLoginResponse loginResponse = okAuthUserService.login(request);
+        return BeanUtil.copyProperties(loginResponse, OkAuthAdminLoginResponse.class);
     }
 }

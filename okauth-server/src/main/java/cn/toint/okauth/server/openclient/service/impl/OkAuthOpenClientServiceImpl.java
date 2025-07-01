@@ -54,7 +54,7 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
         // 获取所有状态正常的应用加载进satoken
         QueryWrapper queryWrapper = QueryWrapper.create().eq(OkAuthOpenClientDo::getStatus, 1);
         List<OkAuthOpenClientDo> openClientDos = openClientMapper.selectListByQuery(queryWrapper);
-        oauth2Manager.getServerConfig().getClients().clear();
+        oauth2Manager.getSaOAuth2ServerConfig().getClients().clear();
         openClientDos.forEach(this::load);
         log.info("开放应用模块初始化成功, 加载{}个开放应用", openClientDos.size());
     }
@@ -68,7 +68,7 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
         saClientModel.setSubjectId(openClientDo.getSubjectId());
         saClientModel.setAllowGrantTypes(openClientDo.getAllowGrantTypes());
         saClientModel.setAllowRedirectUris(openClientDo.getAllowRedirectUris()); // 允许授权回调的url, 可使用通配符*
-        oauth2Manager.getServerConfig().addClient(saClientModel);
+        oauth2Manager.getSaOAuth2ServerConfig().addClient(saClientModel);
         log.info("加载开放应用[{}]成功", openClientDo.getId());
     }
 

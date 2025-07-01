@@ -33,7 +33,7 @@ import java.util.Set;
 @Service
 public class OkAuthAccessPermissionServiceImpl implements OkAuthAccessPermissionService {
     @Resource
-    private OkAuthPermissionService permissionService;
+    private OkAuthPermissionService okAuthPermissionService;
 
     /**
      * 返回指定账号id所拥有的权限码集合
@@ -45,7 +45,7 @@ public class OkAuthAccessPermissionServiceImpl implements OkAuthAccessPermission
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
         Long userId = Long.valueOf(loginId.toString());
-        Set<String> codes = permissionService.listPermissionCode(userId);
+        Set<String> codes = okAuthPermissionService.listPermissionCode(userId);
         return new ArrayList<>(codes);
     }
 
@@ -59,7 +59,7 @@ public class OkAuthAccessPermissionServiceImpl implements OkAuthAccessPermission
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         Long userId = Long.valueOf(loginId.toString());
-        List<OkAuthRoleDo> roleDos = permissionService.listRole(userId);
+        List<OkAuthRoleDo> roleDos = okAuthPermissionService.listRole(userId);
         return roleDos.stream().map(OkAuthRoleDo::getCode).toList();
     }
 }

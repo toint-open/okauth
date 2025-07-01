@@ -5,14 +5,14 @@ meta {
 }
 
 post {
-  url: {{host}}/user/login
+  url: {{host}}/admin/login
   body: json
   auth: none
 }
 
 body:json {
   {
-    "username": "user",
-    "password": "okauth-user"
+    "username": "admin",
+    "password": "okauth-admin"
   }
 }

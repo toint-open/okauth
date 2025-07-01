@@ -34,6 +34,7 @@
     <modules>
         <module>okauth-server</module>
         <module>okauth-permission</module>
+        <module>okauth-client</module>
     </modules>
 
     <properties>

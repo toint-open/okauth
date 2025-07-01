@@ -23,6 +23,9 @@ import lombok.Data;
  * @date 2025/7/2
  */
 @Data
-public class OkAuthOauth2LoginResponse {
-    private String code;
+public class OkAuthOauth2LoginByPasswordResponse {
+    /**
+     * 拼接完毕的回调地址, 前端重定向至该地址
+     */
+    private String redirectUri;
 }

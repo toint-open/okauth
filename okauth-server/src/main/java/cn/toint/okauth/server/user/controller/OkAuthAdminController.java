@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OkAuthAdminController {
 
     @Resource
-    private OkAuthAdminService adminService;
+    private OkAuthAdminService okAuthAdminService;
 
     /**
      * 超管登录
@@ -44,7 +44,7 @@ public class OkAuthAdminController {
     @PostMapping("/admin/login")
     @SaIgnore
     public Response<OkAuthAdminLoginResponse> login(@RequestBody OkAuthAdminLoginByPasswordRequest request) {
-        OkAuthAdminLoginResponse loginVo = adminService.login(request);
+        OkAuthAdminLoginResponse loginVo = okAuthAdminService.login(request);
         return Response.success(loginVo);
     }
 }

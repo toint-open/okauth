@@ -17,10 +17,9 @@
 package cn.toint.okauth.server.oauth2.model;
 
 import cn.toint.okauth.server.user.model.OkAuthUserLoginByPasswordRequest;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.List;
 
 /**
  * @author Toint
@@ -30,37 +29,30 @@ import java.util.List;
 @Data
 public class OkAuthOauth2LoginByPasswordRequest extends OkAuthUserLoginByPasswordRequest {
     /**
+     * 授权类型
+     */
+    @NotBlank
+    public String responseType;
+
+    /**
      * 应用id
      */
+    @NotBlank
     public String clientId;
+
+    /**
+     * 重定向URL
+     */
+    @NotBlank
+    public String redirectUri;
 
     /**
      * 授权范围
      */
-    public List<String> scopes;
+    public String scope;
 
     /**
-     * 对应的账号id
-     */
-    public Object loginId;
-
-    /**
-     * 待重定向URL
-     */
-    public String redirectUri;
-
-    /**
-     * 授权类型, 非必填
-     */
-    public String responseType;
-
-    /**
-     * 状态标识, 可为null
+     * 状态标识
      */
     public String state;
-
-    /**
-     * 随机数
-     */
-    public String nonce;
 }

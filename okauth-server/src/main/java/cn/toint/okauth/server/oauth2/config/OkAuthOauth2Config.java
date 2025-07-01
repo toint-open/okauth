@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.oauth2.manager;
+package cn.toint.okauth.server.oauth2.config;
 
+import cn.dev33.satoken.oauth2.SaOAuth2Manager;
 import cn.dev33.satoken.oauth2.config.SaOAuth2ServerConfig;
 import cn.dev33.satoken.oauth2.data.generate.SaOAuth2DataGenerate;
-import cn.dev33.satoken.spring.oauth2.SaOAuth2BeanInject;
-import jakarta.annotation.Resource;
-import lombok.Getter;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
- * {@link SaOAuth2BeanInject}
- *
  * @author Toint
  * @date 2025/7/2
  */
-@Service
-public class OkAuthOauth2Manager {
-    /**
-     * OAuth2 配置对象
-     */
-    @Resource
-    @Getter
-    private SaOAuth2ServerConfig saOAuth2ServerConfig;
+@Configuration
+public class OkAuthOauth2Config {
+    @Bean
+    @Primary
+    public SaOAuth2ServerConfig saOAuth2ServerConfig() {
+        return SaOAuth2Manager.getServerConfig();
+    }
 
-
-    @Resource
-    @Getter
-    private SaOAuth2DataGenerate saOAuth2DataGenerate;
+    @Bean
+    @Primary
+    public SaOAuth2DataGenerate saOAuth2DataGenerate() {
+        return SaOAuth2Manager.getDataGenerate();
+    }
 }

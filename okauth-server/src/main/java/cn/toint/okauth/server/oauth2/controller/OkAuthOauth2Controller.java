@@ -17,16 +17,15 @@
 package cn.toint.okauth.server.oauth2.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.toint.okauth.server.model.Response;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2GetAuthorizeUrlRequest;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2GetAuthorizeUrlResponse;
+import cn.dev33.satoken.oauth2.data.model.CodeModel;
 import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordRequest;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginResponse;
 import cn.toint.okauth.server.oauth2.service.OkAuthOauth2Service;
 import jakarta.annotation.Resource;
+import org.dromara.hutool.core.net.url.UrlBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 public class OkAuthOauth2Controller {
@@ -35,23 +34,14 @@ public class OkAuthOauth2Controller {
     private OkAuthOauth2Service oauth2Service;
 
     /**
-     * 获取授权链接
-     */
-    @PostMapping("/oauth2/getAuthorizeUrl")
-    @SaIgnore
-    public Response<OkAuthOauth2GetAuthorizeUrlResponse> getAuthorizeUrl(@RequestBody OkAuthOauth2GetAuthorizeUrlRequest request) {
-        OkAuthOauth2GetAuthorizeUrlResponse res = oauth2Service.getAuthorizeUrl(request);
-        return Response.success(res);
-    }
-
-    /**
      * 账号密码登录
      */
     @PostMapping("/oauth2/loginByPassword")
     @SaIgnore
-    public Response<OkAuthOauth2LoginResponse> loginByPassword(@RequestBody OkAuthOauth2LoginByPasswordRequest request) {
-        OkAuthOauth2LoginResponse response = oauth2Service.login(request);
-        return Response.success(response);
+    public RedirectView loginByPassword(@RequestBody OkAuthOauth2LoginByPasswordRequest request) {
+        CodeModel codeModel = oauth2Service.login(request);
+        UrlBuilder url = UrlBuilder.of(codeModel.getRedirectUri()).addQuery("code", codeModel.getCode());
+        return new RedirectView(url.toString());
     }
 
 //    // 模式一：Code授权码 || 模式二：隐藏式

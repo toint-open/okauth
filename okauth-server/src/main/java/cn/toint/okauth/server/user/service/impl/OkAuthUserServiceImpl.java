@@ -47,13 +47,13 @@ import java.util.Objects;
 @Slf4j
 public class OkAuthUserServiceImpl implements OkAuthUserService {
     @Resource
-    private OkAuthUserMapper userMapper;
+    private OkAuthUserMapper okAuthUserMapper;
 
     /**
      * 用户信息加密
      */
     @Resource
-    private OkAuthUserEncryptService encryptService;
+    private OkAuthUserEncryptService okAuthUserEncryptService;
 
     @Override
     public OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request) {
@@ -65,14 +65,14 @@ public class OkAuthUserServiceImpl implements OkAuthUserService {
         String password = request.getPassword();
 
         // 校验用户是否存在
-        OkAuthUserDo userDo = userMapper.selectOneByQuery(
+        OkAuthUserDo userDo = okAuthUserMapper.selectOneByQuery(
                 QueryWrapper.create().eq(OkAuthUserDo::getUsername, username));
         if (userDo == null) {
             throw new OkAuthUserNotExistException(StrUtil.format("账号[{}]不存在", username));
         }
 
         // 校验密码是否一致
-        password = encryptService.encrypt(password);
+        password = okAuthUserEncryptService.encrypt(password);
         if (!Objects.equals(userDo.getPassword(), password)) {
             throw new OkAuthUserPasswordException("密码错误");
         }
