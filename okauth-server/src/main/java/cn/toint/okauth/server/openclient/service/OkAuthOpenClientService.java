@@ -35,6 +35,11 @@ public interface OkAuthOpenClientService {
     void load(OkAuthOpenClientDo openClientDo);
 
     /**
+     * 写在开放应用
+     */
+    void unload(String clientId);
+
+    /**
      * 添加开放应用
      */
     OkAuthOpenClientDo save(OkAuthOpenClientSaveRequest req);

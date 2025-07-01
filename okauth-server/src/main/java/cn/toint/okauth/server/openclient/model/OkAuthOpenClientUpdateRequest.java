@@ -59,9 +59,4 @@ public class OkAuthOpenClientUpdateRequest {
      * 状态
      */
     private Integer status;
-
-    /**
-     * 授权地址
-     */
-    private String authorizeUrl;
 }

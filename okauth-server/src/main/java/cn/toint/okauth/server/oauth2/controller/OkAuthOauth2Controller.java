@@ -46,11 +46,11 @@ public class OkAuthOauth2Controller {
 
 
     /**
-     * Code 换 Access-Token
+     * code换accessToken
      */
     @SaIgnore
     @PostMapping("/oauth2/accessToken")
-    public Response<OkAuthOauth2AccessTokenResponse> accessToken(OkAuthOauth2AccessTokenRequest request) {
+    public Response<OkAuthOauth2AccessTokenResponse> accessToken(@RequestBody OkAuthOauth2AccessTokenRequest request) {
         OkAuthOauth2AccessTokenResponse response = oauth2Service.accessToken(request);
         return Response.success(response);
     }

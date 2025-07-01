@@ -104,12 +104,12 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
         String cacheValue = stringRedisTemplate.opsForValue().get(key);
 
         if (StringUtils.isNotBlank(cacheValue)) {
-            log.info("listPermission命中缓存");
+            log.debug("listPermission命中缓存");
             return JacksonUtil.readValue(cacheValue, new TypeReference<>() {
             });
         }
 
-        log.info("listPermission未命中缓存");
+        log.debug("listPermission未命中缓存");
         Set<Long> allPermissionIds = new HashSet<>();
 
         // 查询用户角色权限: 用户->角色->权限

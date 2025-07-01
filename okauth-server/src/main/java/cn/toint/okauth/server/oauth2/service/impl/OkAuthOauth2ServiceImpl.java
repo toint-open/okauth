@@ -98,10 +98,16 @@ public class OkAuthOauth2ServiceImpl implements OkAuthOauth2Service {
         String scope = request.getScope();
         String code = request.getCode();
 
-        // 校验授权方式
-        Assert.equals(grantType, "authorization_code", "不支持的grantType");
         // 校验客户端
         SaOAuth2Manager.getTemplate().checkClientModel(clientId);
+        // 校验授权方式
+        boolean hasGrantType = okAuthOauth2Manager.getSaOAuth2ServerConfig()
+                .getClients()
+                .get(clientId)
+                .getAllowGrantTypes()
+                .contains(grantType);
+        Assert.isTrue(hasGrantType, "应用未授权此grantType");
+        Assert.equals(grantType, "authorization_code", "不支持的grantType");
         // 校验密钥
         SaOAuth2Manager.getTemplate().checkClientSecret(clientId, clientSecret);
         // 校验code
