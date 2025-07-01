@@ -17,9 +17,9 @@
 package cn.toint.okauth.server.user.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.toint.okauth.server.model.ResponseVo;
-import cn.toint.okauth.server.user.model.OkAuthAdminLoginRequest;
-import cn.toint.okauth.server.user.model.OkAuthAdminLoginVo;
+import cn.toint.okauth.server.model.Response;
+import cn.toint.okauth.server.user.model.OkAuthAdminLoginByPasswordRequest;
+import cn.toint.okauth.server.user.model.OkAuthAdminLoginResponse;
 import cn.toint.okauth.server.user.service.OkAuthAdminService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class OkAuthAdminController {
+
     @Resource
     private OkAuthAdminService adminService;
 
@@ -42,8 +43,8 @@ public class OkAuthAdminController {
      */
     @PostMapping("/admin/login")
     @SaIgnore
-    public ResponseVo<OkAuthAdminLoginVo> login(@RequestBody OkAuthAdminLoginRequest request) {
-        OkAuthAdminLoginVo loginVo = adminService.login(request);
-        return ResponseVo.success(loginVo);
+    public Response<OkAuthAdminLoginResponse> login(@RequestBody OkAuthAdminLoginByPasswordRequest request) {
+        OkAuthAdminLoginResponse loginVo = adminService.login(request);
+        return Response.success(loginVo);
     }
 }

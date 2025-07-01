@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.service;
+package cn.toint.okauth.server.oauth2.service;
 
-import cn.toint.okauth.server.user.model.OkAuthUserLoginByPasswordRequest;
-import cn.toint.okauth.server.user.model.OkAuthUserLoginResponse;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2GetAuthorizeUrlRequest;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2GetAuthorizeUrlResponse;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordRequest;
+import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginResponse;
 
 /**
- * 用户
+ * oauth2
  *
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/7/1
  */
-public interface OkAuthUserService {
+public interface OkAuthOauth2Service {
+    /**
+     * 获取授权地址
+     */
+    OkAuthOauth2GetAuthorizeUrlResponse getAuthorizeUrl(OkAuthOauth2GetAuthorizeUrlRequest request);
+
     /**
      * 账号密码登录
      */
-    OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request);
+    OkAuthOauth2LoginResponse login(OkAuthOauth2LoginByPasswordRequest request);
 }

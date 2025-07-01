@@ -20,6 +20,7 @@ import cn.toint.okauth.server.constant.OkAuthConstant;
 import cn.toint.okauth.server.model.BaseDo;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Table;
+import com.mybatisflex.core.handler.JacksonTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -54,14 +55,26 @@ public class OkAuthOpenClientDo extends BaseDo {
     private String secret;
 
     /**
-     * 应用授权回调地址
+     * 授权回调地址
      */
-    @Column
+    @Column(typeHandler = JacksonTypeHandler.class)
     private List<String> allowRedirectUris;
+
+    /**
+     * 授权类型
+     */
+    @Column(typeHandler = JacksonTypeHandler.class)
+    private List<String> allowGrantTypes;
 
     /**
      * 状态
      */
     @Column
     private Integer status;
+
+    /**
+     * 授权地址
+     */
+    @Column
+    private String authorizeUrl;
 }

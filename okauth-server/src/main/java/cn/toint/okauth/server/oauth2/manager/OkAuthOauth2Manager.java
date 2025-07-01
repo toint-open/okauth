@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.service.impl;
+package cn.toint.okauth.server.oauth2.manager;
 
-import cn.toint.okauth.server.user.model.OkAuthAdminLoginByPasswordRequest;
-import cn.toint.okauth.server.user.model.OkAuthAdminLoginResponse;
-import cn.toint.okauth.server.user.service.OkAuthAdminService;
-import cn.toint.okauth.server.user.service.OkAuthUserService;
+import cn.dev33.satoken.oauth2.config.SaOAuth2ServerConfig;
+import cn.dev33.satoken.spring.oauth2.SaOAuth2BeanInject;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 /**
+ * {@link SaOAuth2BeanInject}
+ *
  * @author Toint
- * @date 2025/6/30
+ * @date 2025/7/2
  */
 @Service
-@Slf4j
-public class OkAuthAdminServiceImpl implements OkAuthAdminService {
+public class OkAuthOauth2Manager {
+    /**
+     * OAuth2 配置对象
+     */
     @Resource
-    private OkAuthUserService userService;
-
-    @Override
-    public OkAuthAdminLoginResponse login(OkAuthAdminLoginByPasswordRequest request) {
-      return (OkAuthAdminLoginResponse) userService.login(request);
-    }
+    @Getter
+    private SaOAuth2ServerConfig serverConfig;
 }

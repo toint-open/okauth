@@ -16,8 +16,8 @@
 
 package cn.toint.okauth.permission.service;
 
-import cn.toint.okauth.permission.model.OkAuthDeptTreeVo;
-import cn.toint.okauth.permission.model.OkAuthPermissionTreeVo;
+import cn.toint.okauth.permission.model.OkAuthDeptTreeResponse;
+import cn.toint.okauth.permission.model.OkAuthPermissionTreeResponse;
 import cn.toint.okauth.permission.model.OkAuthRoleDo;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public interface OkAuthPermissionService {
      * 全量查询权限树
      * 有缓存
      */
-    List<OkAuthPermissionTreeVo> listPermissionTree();
+    List<OkAuthPermissionTreeResponse> listPermissionTree();
 
     /**
      * 根据用户查询所有角色
@@ -53,5 +53,5 @@ public interface OkAuthPermissionService {
      * 全量查询部门树
      * 有缓存
      */
-    List<OkAuthDeptTreeVo> listDeptTree();
+    List<OkAuthDeptTreeResponse> listDeptTree();
 }

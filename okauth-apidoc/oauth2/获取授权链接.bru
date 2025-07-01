@@ -1,0 +1,21 @@
+meta {
+  name: 获取授权链接
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/oauth2/getAuthorizeUrl
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "responseType": "code",
+    "clientId": 1940045146251055104,
+    "redirectUri": "redirectUri_e7e4ca0cb663",
+    "scope": "scope_4ba663f07180",
+    "state": "state_e896fdaea57a"
+  }
+}

@@ -14,54 +14,71 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.openclient.model;
+package cn.toint.okauth.permission.model;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
+ * 权限树
+ *
  * @author Toint
- * @date 2025/6/28
+ * @date 2025/6/29
  */
 @Data
-public class OkAuthOpenClientUpdateRequest {
-    @NotNull(message = "应用ID不能为空")
+public class OkAuthPermissionTreeResponse {
     private Long id;
 
+    private LocalDateTime createTime;
+
+    private LocalDateTime updateTime;
+
     /**
-     * 应用名称
+     * 父菜单ID
+     */
+    private Long parentId;
+
+    /**
+     * 菜单类型
+     */
+    private Integer type;
+
+    /**
+     * 权限名称
      */
     private String name;
 
     /**
-     * 主体ID
+     * 访问路径
      */
-    private String subjectId;
+    private String path;
 
     /**
-     * 应用秘钥
+     * 前端组件
      */
-    private String secret;
+    private String component;
 
     /**
-     * 应用授权回调地址
+     * 组件名称
      */
-    private List<String> allowRedirectUris;
+    private String componentName;
 
     /**
-     * 授权类型
+     * 菜单图标
      */
-    private List<String> allowGrantTypes;
+    private String icon;
 
     /**
-     * 状态
+     * 排序
      */
-    private Integer status;
+    private Integer order;
 
     /**
-     * 授权地址
+     * 权限标识
      */
-    private String authorizeUrl;
+    private String code;
+
+    private List<OkAuthPermissionTreeResponse> children;
 }

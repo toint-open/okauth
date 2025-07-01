@@ -16,9 +16,8 @@
 
 package cn.toint.okauth.server.openclient.service.impl;
 
-import cn.dev33.satoken.oauth2.SaOAuth2Manager;
-import cn.dev33.satoken.oauth2.config.SaOAuth2ServerConfig;
 import cn.dev33.satoken.oauth2.data.model.loader.SaClientModel;
+import cn.toint.okauth.server.oauth2.manager.OkAuthOauth2Manager;
 import cn.toint.okauth.server.openclient.mapper.OkAuthOpenClientMapper;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientDo;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveRequest;
@@ -35,36 +34,42 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
 @Slf4j
 public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
+
     @Resource
     private OkAuthOpenClientMapper openClientMapper;
+
+    @Resource
+    private OkAuthOauth2Manager oauth2Manager;
 
     /**
      * 初始化Bean, 加载所有开放应用到sa-token
      */
     @PostConstruct
-    private void loadOpenClients() throws IOException {
+    private void loadAll() {
         // 获取所有状态正常的应用加载进satoken
         QueryWrapper queryWrapper = QueryWrapper.create().eq(OkAuthOpenClientDo::getStatus, 1);
         List<OkAuthOpenClientDo> openClientDos = openClientMapper.selectListByQuery(queryWrapper);
-        for (OkAuthOpenClientDo openClientDo : openClientDos) {
-            checkLoadOpenClient(openClientDo);
+        oauth2Manager.getServerConfig().getClients().clear();
+        openClientDos.forEach(this::load);
+        log.info("开放应用模块初始化成功, 加载{}个开放应用", openClientDos.size());
+    }
 
-            SaClientModel saClientModel = new SaClientModel();
-            saClientModel.setClientId(String.valueOf(openClientDo.getId()));
-            saClientModel.setClientSecret(openClientDo.getSecret());
-            saClientModel.setSubjectId(openClientDo.getSubjectId());
-            saClientModel.setAllowRedirectUris(openClientDo.getAllowRedirectUris()); // 允许授权回调的url, 可使用通配符*
-
-            SaOAuth2ServerConfig oAuth2ServerConfig = SaOAuth2Manager.getServerConfig();
-            oAuth2ServerConfig.addClient(saClientModel);
-        }
-        log.info("开放应用模块初始化成功, 加载{}个开放应用",  openClientDos.size());
+    @Override
+    public void load(OkAuthOpenClientDo openClientDo) {
+        checkLoadOpenClient(openClientDo);
+        SaClientModel saClientModel = new SaClientModel();
+        saClientModel.setClientId(String.valueOf(openClientDo.getId()));
+        saClientModel.setClientSecret(openClientDo.getSecret());
+        saClientModel.setSubjectId(openClientDo.getSubjectId());
+        saClientModel.setAllowGrantTypes(openClientDo.getAllowGrantTypes());
+        saClientModel.setAllowRedirectUris(openClientDo.getAllowRedirectUris()); // 允许授权回调的url, 可使用通配符*
+        oauth2Manager.getServerConfig().addClient(saClientModel);
+        log.info("加载开放应用[{}]成功", openClientDo.getId());
     }
 
     /**
@@ -75,6 +80,7 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
         Assert.notBlank(openClientDo.getSecret(), "应用密钥不能为空");
         Assert.notBlank(openClientDo.getSubjectId(), "主体ID不能为空");
         Assert.notNull(openClientDo.getId(), "应用ID不能为空");
+        Assert.notEmpty(openClientDo.getAllowGrantTypes(), "授权方式不能为空");
     }
 
     @Override
@@ -87,6 +93,9 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
         openClientDo.setStatus(OkAuthOpenClientStatusEnum.ENABLE.getValue());
         int inserted = openClientMapper.insert(openClientDo);
         Assert.isTrue(SqlUtil.toBool(inserted), "开放应用保存失败");
+
+        // 加载至satoken
+        load(openClientDo);
 
         return openClientDo;
     }
@@ -109,7 +118,8 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean existById(long id) {
+    public boolean existById(Long id) {
+        Assert.notNull(id, "查询的客户端ID不能为空");
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .select(OkAuthOpenClientDo::getId)
                 .eq(OkAuthOpenClientDo::getId, id);
@@ -118,7 +128,13 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
     }
 
     @Override
-    public List<OkAuthOpenClientDo> list() {
+    public List<OkAuthOpenClientDo> listAll() {
         return openClientMapper.selectAll();
+    }
+
+    @Override
+    public OkAuthOpenClientDo getById(Long id) {
+        Assert.notNull(id, "查询的客户端ID不能为空");
+        return openClientMapper.selectOneById(id);
     }
 }

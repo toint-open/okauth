@@ -22,63 +22,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 权限树
+ * 部门树
  *
  * @author Toint
  * @date 2025/6/29
  */
 @Data
-public class OkAuthPermissionTreeVo {
+public class OkAuthDeptTreeResponse {
     private Long id;
 
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
 
-    /**
-     * 父菜单ID
-     */
-    private Long parentId;
-
-    /**
-     * 菜单类型
-     */
-    private Integer type;
-
-    /**
-     * 权限名称
-     */
     private String name;
 
-    /**
-     * 访问路径
-     */
-    private String path;
+    private String remark;
 
-    /**
-     * 前端组件
-     */
-    private String component;
+    private Long parentId;
 
-    /**
-     * 组件名称
-     */
-    private String componentName;
-
-    /**
-     * 菜单图标
-     */
-    private String icon;
-
-    /**
-     * 排序
-     */
-    private Integer order;
-
-    /**
-     * 权限标识
-     */
-    private String code;
-
-    private List<OkAuthPermissionTreeVo> children;
+    private List<OkAuthDeptTreeResponse> children;
 }

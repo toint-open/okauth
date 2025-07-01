@@ -14,54 +14,53 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.openclient.model;
+package cn.toint.okauth.server.oauth2.model;
 
-import jakarta.validation.constraints.NotNull;
+import cn.toint.okauth.server.user.model.OkAuthUserLoginByPasswordRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 /**
  * @author Toint
- * @date 2025/6/28
+ * @date 2025/7/2
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class OkAuthOpenClientUpdateRequest {
-    @NotNull(message = "应用ID不能为空")
-    private Long id;
+public class OkAuthOauth2LoginByPasswordRequest extends OkAuthUserLoginByPasswordRequest {
+    /**
+     * 应用id
+     */
+    public String clientId;
 
     /**
-     * 应用名称
+     * 授权范围
      */
-    private String name;
+    public List<String> scopes;
 
     /**
-     * 主体ID
+     * 对应的账号id
      */
-    private String subjectId;
+    public Object loginId;
 
     /**
-     * 应用秘钥
+     * 待重定向URL
      */
-    private String secret;
+    public String redirectUri;
 
     /**
-     * 应用授权回调地址
+     * 授权类型, 非必填
      */
-    private List<String> allowRedirectUris;
+    public String responseType;
 
     /**
-     * 授权类型
+     * 状态标识, 可为null
      */
-    private List<String> allowGrantTypes;
+    public String state;
 
     /**
-     * 状态
+     * 随机数
      */
-    private Integer status;
-
-    /**
-     * 授权地址
-     */
-    private String authorizeUrl;
+    public String nonce;
 }

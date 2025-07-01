@@ -17,7 +17,7 @@
 package cn.toint.okauth.server.openclient.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.toint.okauth.server.model.ResponseVo;
+import cn.toint.okauth.server.model.Response;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientDo;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveRequest;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientUpdateRequest;
@@ -45,9 +45,9 @@ public class OkAuthOpenClientController {
      */
     @PostMapping("/openClient/save")
     @SaCheckPermission(value = "openClient:save", orRole = "admin")
-    public ResponseVo<Void> save(@RequestBody OkAuthOpenClientSaveRequest res) {
+    public Response<Void> save(@RequestBody OkAuthOpenClientSaveRequest res) {
         okAuthOpenClientService.save(res);
-        return ResponseVo.success();
+        return Response.success();
     }
 
     /**
@@ -55,18 +55,18 @@ public class OkAuthOpenClientController {
      */
     @PostMapping("/openClient/update")
     @SaCheckPermission(value = "openClient:update", orRole = "admin")
-    public ResponseVo<Void> update(@RequestBody OkAuthOpenClientUpdateRequest res) {
+    public Response<Void> update(@RequestBody OkAuthOpenClientUpdateRequest res) {
         okAuthOpenClientService.update(res);
-        return ResponseVo.success();
+        return Response.success();
     }
 
     /**
      * 查询开放应用列表
      */
-    @PostMapping("/openClient/list")
-    @SaCheckPermission(value = "openClient:list", orRole = "admin")
-    public ResponseVo<List<OkAuthOpenClientDo>> update() {
-        List<OkAuthOpenClientDo> openClientDos = okAuthOpenClientService.list();
-        return ResponseVo.success(openClientDos);
+    @PostMapping("/openClient/listAll")
+    @SaCheckPermission(value = "openClient:listAll", orRole = "admin")
+    public Response<List<OkAuthOpenClientDo>> listAll() {
+        List<OkAuthOpenClientDo> openClientDos = okAuthOpenClientService.listAll();
+        return Response.success(openClientDos);
     }
 }

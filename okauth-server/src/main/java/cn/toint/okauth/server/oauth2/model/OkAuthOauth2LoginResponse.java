@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.service;
+package cn.toint.okauth.server.oauth2.model;
 
-import cn.toint.okauth.server.user.model.OkAuthUserLoginByPasswordRequest;
-import cn.toint.okauth.server.user.model.OkAuthUserLoginResponse;
+import lombok.Data;
 
 /**
- * 用户
- *
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/7/2
  */
-public interface OkAuthUserService {
-    /**
-     * 账号密码登录
-     */
-    OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request);
+@Data
+public class OkAuthOauth2LoginResponse {
+    private String code;
 }

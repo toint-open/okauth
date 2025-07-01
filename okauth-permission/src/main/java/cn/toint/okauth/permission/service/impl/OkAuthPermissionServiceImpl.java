@@ -145,7 +145,7 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
 
     private Set<Long> listPermissionByUserMtmDept(Long userId) {
         // 查询所有部门, 有缓存, 查询极快
-        List<OkAuthDeptTreeVo> deptTrees = listDeptTree();
+        List<OkAuthDeptTreeResponse> deptTrees = listDeptTree();
 
         // 查询用户关联的直接部门
         List<OkAuthUserMtmDeptDo> userMtmDeptDos = userMtmDeptMapper.selectListByQuery(
@@ -160,7 +160,7 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
         Set<Long> allDeptIds = new HashSet<>(directDeptIds);
 
         // 遍历部门树，收集所有子部门
-        for (OkAuthDeptTreeVo deptTree : deptTrees) {
+        for (OkAuthDeptTreeResponse deptTree : deptTrees) {
             findAndAddChildDepts(deptTree, allDeptIds);
         }
 
@@ -181,14 +181,14 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
      * 递归收集子部门
      * 如果部门的父部门已在集合中，则将该部门也加入集合
      */
-    private void findAndAddChildDepts(OkAuthDeptTreeVo deptTree, Set<Long> allDeptIds) {
+    private void findAndAddChildDepts(OkAuthDeptTreeResponse deptTree, Set<Long> allDeptIds) {
         if (allDeptIds.contains(deptTree.getParentId())) {
             allDeptIds.add(deptTree.getId());
         }
 
         // 递归处理子部门
         if (CollUtil.isNotEmpty(deptTree.getChildren())) {
-            for (OkAuthDeptTreeVo child : deptTree.getChildren()) {
+            for (OkAuthDeptTreeResponse child : deptTree.getChildren()) {
                 findAndAddChildDepts(child, allDeptIds);
             }
         }
@@ -267,7 +267,7 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
     }
 
     @Override
-    public List<OkAuthDeptTreeVo> listDeptTree() {
+    public List<OkAuthDeptTreeResponse> listDeptTree() {
         // 尝试从缓存中查找
         String key = KeyBuilderUtil.of("okauth").add("deptTree").build("all");
         String cacheStr = stringRedisTemplate.opsForValue().get(key);
@@ -283,22 +283,22 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
         }
 
         // 全部对象转换为vo
-        List<OkAuthDeptTreeVo> deptVos = new ArrayList<>();
+        List<OkAuthDeptTreeResponse> deptVos = new ArrayList<>();
         for (OkAuthDeptDo deptDo : deptDos) {
-            OkAuthDeptTreeVo deptVo = new OkAuthDeptTreeVo();
+            OkAuthDeptTreeResponse deptVo = new OkAuthDeptTreeResponse();
             BeanUtil.copyProperties(deptDo, deptVo);
             deptVo.setChildren(new ArrayList<>());
             deptVos.add(deptVo);
         }
 
         // 创建Map方便查找
-        Map<Long, OkAuthDeptTreeVo> deptVoMap = new HashMap<>();
-        for (OkAuthDeptTreeVo deptVo : deptVos) {
+        Map<Long, OkAuthDeptTreeResponse> deptVoMap = new HashMap<>();
+        for (OkAuthDeptTreeResponse deptVo : deptVos) {
             deptVoMap.put(deptVo.getId(), deptVo);
         }
 
         // 检测循环依赖
-        for (OkAuthDeptTreeVo deptVo : deptVos) {
+        for (OkAuthDeptTreeResponse deptVo : deptVos) {
             Set<Long> path = new HashSet<>();
             Long currentId = deptVo.getId();
 
@@ -307,20 +307,20 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
                 if (!path.add(currentId)) {  // add返回false说明已存在，即发现循环
                     throw ExceptionUtil.wrapRuntimeException("部门[{}]存在循环依赖", currentId);
                 }
-                OkAuthDeptTreeVo current = deptVoMap.get(currentId);
+                OkAuthDeptTreeResponse current = deptVoMap.get(currentId);
                 currentId = (current.getParentId() == 0) ? null : current.getParentId();
             }
         }
 
         // 构建树关系
-        List<OkAuthDeptTreeVo> roots = new ArrayList<>();
-        for (OkAuthDeptTreeVo deptVo : deptVos) {
+        List<OkAuthDeptTreeResponse> roots = new ArrayList<>();
+        for (OkAuthDeptTreeResponse deptVo : deptVos) {
             if (deptVo.getParentId() == 0) {
                 // 找到根节点
                 roots.add(deptVo);
             } else {
                 // 找到父节点，把当前节点加入父节点的children
-                OkAuthDeptTreeVo parent = deptVoMap.get(deptVo.getParentId());
+                OkAuthDeptTreeResponse parent = deptVoMap.get(deptVo.getParentId());
                 if (parent != null) {
                     parent.getChildren().add(deptVo);
                 }
@@ -332,7 +332,7 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
     }
 
     @Override
-    public List<OkAuthPermissionTreeVo> listPermissionTree() {
+    public List<OkAuthPermissionTreeResponse> listPermissionTree() {
         // 尝试从缓存中查找
         String key = KeyBuilderUtil.of("okauth").add("permissionTree").build("all");
         String cacheStr = stringRedisTemplate.opsForValue().get(key);
@@ -348,22 +348,22 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
         }
 
         // 全部对象转为vo
-        ArrayList<OkAuthPermissionTreeVo> permissionVos = new ArrayList<>();
+        ArrayList<OkAuthPermissionTreeResponse> permissionVos = new ArrayList<>();
         for (OkAuthPermissionDo permissionDo : permissionDos) {
-            OkAuthPermissionTreeVo permissionVo = new OkAuthPermissionTreeVo();
+            OkAuthPermissionTreeResponse permissionVo = new OkAuthPermissionTreeResponse();
             BeanUtil.copyProperties(permissionDo, permissionVo);
             permissionVo.setChildren(new ArrayList<>());
             permissionVos.add(permissionVo);
         }
 
         // 创建Map方便查找
-        Map<Long, OkAuthPermissionTreeVo> permissionVoMap = new HashMap<>();
-        for (OkAuthPermissionTreeVo permissionVo : permissionVos) {
+        Map<Long, OkAuthPermissionTreeResponse> permissionVoMap = new HashMap<>();
+        for (OkAuthPermissionTreeResponse permissionVo : permissionVos) {
             permissionVoMap.put(permissionVo.getId(), permissionVo);
         }
 
         // 检测循环依赖
-        for (OkAuthPermissionTreeVo permissionVo : permissionVos) {
+        for (OkAuthPermissionTreeResponse permissionVo : permissionVos) {
             Set<Long> path = new HashSet<>();
             Long currentId = permissionVo.getId();
 
@@ -372,18 +372,18 @@ public class OkAuthPermissionServiceImpl implements OkAuthPermissionService {
                 if (!path.add(currentId)) {  // add返回false说明已存在，即发现循环
                     throw ExceptionUtil.wrapRuntimeException("权限[{}]存在循环依赖", currentId);
                 }
-                OkAuthPermissionTreeVo current = permissionVoMap.get(currentId);
+                OkAuthPermissionTreeResponse current = permissionVoMap.get(currentId);
                 currentId = (current.getParentId() == 0) ? null : current.getParentId();
             }
         }
 
         // 构建树关系
-        List<OkAuthPermissionTreeVo> roots = new ArrayList<>();
-        for (OkAuthPermissionTreeVo permissionVo : permissionVos) {
+        List<OkAuthPermissionTreeResponse> roots = new ArrayList<>();
+        for (OkAuthPermissionTreeResponse permissionVo : permissionVos) {
             if (permissionVo.getParentId() == 0) {
                 roots.add(permissionVo);
             } else {
-                OkAuthPermissionTreeVo parent = permissionVoMap.get(permissionVo.getParentId());
+                OkAuthPermissionTreeResponse parent = permissionVoMap.get(permissionVo.getParentId());
                 if (parent != null) {
                     parent.getChildren().add(permissionVo);
                 }

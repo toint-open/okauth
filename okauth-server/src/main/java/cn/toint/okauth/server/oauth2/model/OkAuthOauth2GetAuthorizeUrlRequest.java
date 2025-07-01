@@ -14,20 +14,30 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.service;
+package cn.toint.okauth.server.oauth2.model;
 
-import cn.toint.okauth.server.user.model.OkAuthUserLoginByPasswordRequest;
-import cn.toint.okauth.server.user.model.OkAuthUserLoginResponse;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 /**
- * 用户
+ * 构建授权链接
  *
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/7/1
  */
-public interface OkAuthUserService {
-    /**
-     * 账号密码登录
-     */
-    OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request);
+@Data
+public class OkAuthOauth2GetAuthorizeUrlRequest {
+    @NotBlank(message = "responseType不能为空")
+    private String responseType;
+
+    @NotNull(message = "开放应用ID不能为空")
+    private Long clientId;
+
+    @NotBlank(message = "回调链接不能为空")
+    private String redirectUri;
+
+    private String scope;
+
+    private String state;
 }

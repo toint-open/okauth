@@ -16,50 +16,18 @@
 
 package cn.toint.okauth.server.user.model;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
  * @author Toint
- * @date 2025/6/30
+ * @date 2025/7/2
  */
 @Data
-public class OkAuthAdminLoginVo {
-    /**
-     * 超管信息
-     */
-    private Admin admin;
+public class OkAuthUserLoginByPasswordRequest {
+    @NotBlank(message = "账号不能为空")
+    private String username;
 
-    /**
-     * token信息
-     */
-    private Token token;
-
-    @Data
-    public static class Admin {
-        private Long id;
-
-        private String username;
-
-        private String name;
-
-        private String phone;
-    }
-
-    @Data
-    public static class Token {
-        /**
-         * token 名称
-         */
-        public String tokenName;
-
-        /**
-         * token 值
-         */
-        public String tokenValue;
-
-        /**
-         * token 剩余有效期（单位: 秒）
-         */
-        public long tokenTimeout;
-    }
+    @NotBlank(message = "密码不能为空")
+    private String password;
 }

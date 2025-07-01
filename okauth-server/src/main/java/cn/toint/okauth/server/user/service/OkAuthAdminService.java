@@ -16,8 +16,8 @@
 
 package cn.toint.okauth.server.user.service;
 
-import cn.toint.okauth.server.user.model.OkAuthAdminLoginRequest;
-import cn.toint.okauth.server.user.model.OkAuthAdminLoginVo;
+import cn.toint.okauth.server.user.model.OkAuthAdminLoginByPasswordRequest;
+import cn.toint.okauth.server.user.model.OkAuthAdminLoginResponse;
 
 /**
  * 超管
@@ -26,5 +26,5 @@ import cn.toint.okauth.server.user.model.OkAuthAdminLoginVo;
  * @date 2025/6/30
  */
 public interface OkAuthAdminService {
-    OkAuthAdminLoginVo login(OkAuthAdminLoginRequest request);
+    OkAuthAdminLoginResponse login(OkAuthAdminLoginByPasswordRequest request);
 }

@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "okauth-server",
+  "name": "okauth",
   "type": "collection",
   "ignore": [
     "node_modules",

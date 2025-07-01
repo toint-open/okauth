@@ -53,4 +53,16 @@ public class OkAuthOpenClientSaveRequest {
      */
     @NotEmpty(message = "应用授权回调地址不能为空")
     public List<String> allowRedirectUris;
+
+    /**
+     * 应用授权方式
+     */
+    @NotEmpty(message = "应用授权方式不能为空")
+    public List<String> allowGrantTypes;
+
+    /**
+     * 授权地址
+     */
+    @NotBlank(message = "应用授权链接不能为空")
+    private String authorizeUrl;
 }

@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.model;
+package cn.toint.okauth.server.user.event;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import cn.toint.okauth.server.user.model.OkAuthUserLoginResponse;
+import org.springframework.context.ApplicationEvent;
 
 /**
+ * 用户登录事件
+ *
  * @author Toint
- * @date 2025/6/30
+ * @date 2025/7/2
  */
-@Data
-public class OkAuthAdminLoginRequest {
-    @NotBlank(message = "账号不能为空")
-    private String username;
-    @NotBlank(message = "密码不能为空")
-    private String password;
+public class OkAuthUserLoginEvent extends ApplicationEvent {
+
+    public OkAuthUserLoginEvent(OkAuthUserLoginResponse source) {
+        super(source);
+    }
+
+    @Override
+    public OkAuthUserLoginResponse getSource() {
+        return (OkAuthUserLoginResponse) super.getSource();
+    }
 }

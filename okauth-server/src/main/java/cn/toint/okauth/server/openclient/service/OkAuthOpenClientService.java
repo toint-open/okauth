@@ -29,11 +29,36 @@ import java.util.List;
  * @date 2025-06-27
  */
 public interface OkAuthOpenClientService {
+    /**
+     * 加载开放应用
+     */
+    void load(OkAuthOpenClientDo openClientDo);
+
+    /**
+     * 添加开放应用
+     */
     OkAuthOpenClientDo save(OkAuthOpenClientSaveRequest req);
 
+    /**
+     * 修改开放应用
+     */
     void update(OkAuthOpenClientUpdateRequest res);
 
-    boolean existById(long id);
+    /**
+     * 开放应用是否存在
+     */
+    boolean existById(Long id);
 
-    List<OkAuthOpenClientDo> list();
+    /**
+     * 列表查询所有开放应用
+     */
+    List<OkAuthOpenClientDo> listAll();
+
+    /**
+     * 查询客户端
+     *
+     * @param id 客户端ID
+     * @return 客户端对象
+     */
+    OkAuthOpenClientDo getById(Long id);
 }

@@ -14,32 +14,17 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.model;
+package cn.toint.okauth.server.user.model;
 
 import lombok.Data;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.EqualsAndHashCode;
 
 /**
- * 部门树
- *
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/6/30
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class OkAuthDeptTreeVo {
-    private Long id;
+public class OkAuthAdminLoginResponse extends OkAuthUserLoginResponse{
 
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
-
-    private String name;
-
-    private String remark;
-
-    private Long parentId;
-
-    private List<OkAuthDeptTreeVo> children;
 }
