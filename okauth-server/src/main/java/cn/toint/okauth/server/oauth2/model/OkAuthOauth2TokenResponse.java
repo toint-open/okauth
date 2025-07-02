@@ -14,29 +14,17 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.oauth2.service;
+package cn.toint.okauth.server.oauth2.model;
 
-import cn.toint.okauth.server.oauth2.model.*;
+import cn.dev33.satoken.oauth2.data.model.AccessTokenModel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
- * oauth2
- *
  * @author Toint
- * @date 2025/7/1
+ * @date 2025/7/2
  */
-public interface OkAuthOauth2Service {
-    /**
-     * 账号密码登录
-     */
-    OkAuthOauth2LoginByPasswordResponse login(OkAuthOauth2LoginByPasswordRequest request);
-
-    /**
-     * 获取token
-     */
-    OkAuthOauth2TokenResponse token(OkAuthOauth2TokenRequest request);
-
-    /**
-     * 刷新token
-     */
-    OkAuthOauth2TokenResponse refresh(OkAuthOauth2RefreshRequest request);
+@EqualsAndHashCode(callSuper = true)
+@Data
+public class OkAuthOauth2TokenResponse extends AccessTokenModel {
 }

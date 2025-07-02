@@ -16,15 +16,24 @@
 
 package cn.toint.okauth.server.oauth2.model;
 
-import cn.dev33.satoken.oauth2.data.model.AccessTokenModel;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * @author Toint
  * @date 2025/7/2
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class OkAuthOauth2AccessTokenResponse extends AccessTokenModel {
+public class OkAuthOauth2RefreshRequest {
+    @NotBlank
+    private String clientId;
+
+    @NotBlank
+    private String clientSecret;
+
+    @NotBlank
+    private String grantType;
+
+    @NotBlank
+    private String refreshToken;
 }

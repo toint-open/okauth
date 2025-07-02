@@ -19,6 +19,7 @@ package cn.toint.okauth.server.oauth2.config;
 import cn.dev33.satoken.oauth2.SaOAuth2Manager;
 import cn.dev33.satoken.oauth2.config.SaOAuth2ServerConfig;
 import cn.dev33.satoken.oauth2.data.generate.SaOAuth2DataGenerate;
+import cn.dev33.satoken.oauth2.template.SaOAuth2Template;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -39,5 +40,11 @@ public class OkAuthOauth2Config {
     @Primary
     public SaOAuth2DataGenerate saOAuth2DataGenerate() {
         return SaOAuth2Manager.getDataGenerate();
+    }
+
+    @Bean
+    @Primary
+    public SaOAuth2Template saOAuth2Template() {
+        return SaOAuth2Manager.getTemplate();
     }
 }

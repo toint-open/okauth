@@ -17,15 +17,13 @@
 package cn.toint.okauth.server.oauth2.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.toint.okauth.server.model.Response;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2AccessTokenRequest;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2AccessTokenResponse;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordRequest;
-import cn.toint.okauth.server.oauth2.model.OkAuthOauth2LoginByPasswordResponse;
+import cn.toint.okauth.server.model.OkAuthResponse;
+import cn.toint.okauth.server.oauth2.model.*;
 import cn.toint.okauth.server.oauth2.service.OkAuthOauth2Service;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,9 +37,9 @@ public class OkAuthOauth2Controller {
      */
     @PostMapping("/oauth2/loginByPassword")
     @SaIgnore
-    public Response<OkAuthOauth2LoginByPasswordResponse> loginByPassword(@RequestBody OkAuthOauth2LoginByPasswordRequest request) {
+    public OkAuthResponse<OkAuthOauth2LoginByPasswordResponse> loginByPassword(@RequestBody OkAuthOauth2LoginByPasswordRequest request) {
         OkAuthOauth2LoginByPasswordResponse response = oauth2Service.login(request);
-        return Response.success(response);
+        return OkAuthResponse.success(response);
     }
 
 
@@ -49,18 +47,21 @@ public class OkAuthOauth2Controller {
      * code换accessToken
      */
     @SaIgnore
-    @PostMapping("/oauth2/accessToken")
-    public Response<OkAuthOauth2AccessTokenResponse> accessToken(@RequestBody OkAuthOauth2AccessTokenRequest request) {
-        OkAuthOauth2AccessTokenResponse response = oauth2Service.accessToken(request);
-        return Response.success(response);
+    @PostMapping("/oauth2/token")
+    public OkAuthResponse<OkAuthOauth2TokenResponse> token(@RequestBody OkAuthOauth2TokenRequest request) {
+        OkAuthOauth2TokenResponse response = oauth2Service.token(request);
+        return OkAuthResponse.success(response);
     }
-//
-//    // Refresh-Token 刷新 Access-Token
-//    @SaIgnore
-//    @RequestMapping("/oauth2/refresh")
-//    public Object refresh() {
-//        return SaOAuth2ServerProcessor.instance.refresh();
-//    }
+
+    /**
+     * Refresh-Token刷新 Access-Token
+     */
+    @SaIgnore
+    @RequestMapping("/oauth2/refresh")
+    public OkAuthResponse<OkAuthOauth2TokenResponse> refresh(@RequestBody OkAuthOauth2RefreshRequest request) {
+        OkAuthOauth2TokenResponse response = oauth2Service.refresh(request);
+        return OkAuthResponse.success(response);
+    }
 //
 //    // 回收 Access-Token
 //    @RequestMapping("/oauth2/revoke")

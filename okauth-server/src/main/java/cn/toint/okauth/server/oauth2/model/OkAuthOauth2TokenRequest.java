@@ -24,7 +24,7 @@ import lombok.Data;
  * @date 2025/7/2
  */
 @Data
-public class OkAuthOauth2AccessTokenRequest {
+public class OkAuthOauth2TokenRequest {
     @NotBlank
     private String clientId;
 

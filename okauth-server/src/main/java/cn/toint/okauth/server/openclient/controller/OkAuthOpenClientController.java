@@ -17,7 +17,7 @@
 package cn.toint.okauth.server.openclient.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.toint.okauth.server.model.Response;
+import cn.toint.okauth.server.model.OkAuthResponse;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientDo;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveRequest;
 import cn.toint.okauth.server.openclient.model.OkAuthOpenClientUpdateRequest;
@@ -45,9 +45,9 @@ public class OkAuthOpenClientController {
      */
     @PostMapping("/openClient/save")
     @SaCheckPermission(value = "openClient:save", orRole = "admin")
-    public Response<Void> save(@RequestBody OkAuthOpenClientSaveRequest res) {
+    public OkAuthResponse<Void> save(@RequestBody OkAuthOpenClientSaveRequest res) {
         okAuthOpenClientService.save(res);
-        return Response.success();
+        return OkAuthResponse.success();
     }
 
     /**
@@ -55,9 +55,9 @@ public class OkAuthOpenClientController {
      */
     @PostMapping("/openClient/update")
     @SaCheckPermission(value = "openClient:update", orRole = "admin")
-    public Response<Void> update(@RequestBody OkAuthOpenClientUpdateRequest res) {
+    public OkAuthResponse<Void> update(@RequestBody OkAuthOpenClientUpdateRequest res) {
         okAuthOpenClientService.update(res);
-        return Response.success();
+        return OkAuthResponse.success();
     }
 
     /**
@@ -65,8 +65,8 @@ public class OkAuthOpenClientController {
      */
     @PostMapping("/openClient/listAll")
     @SaCheckPermission(value = "openClient:listAll", orRole = "admin")
-    public Response<List<OkAuthOpenClientDo>> listAll() {
+    public OkAuthResponse<List<OkAuthOpenClientDo>> listAll() {
         List<OkAuthOpenClientDo> openClientDos = okAuthOpenClientService.listAll();
-        return Response.success(openClientDos);
+        return OkAuthResponse.success(openClientDos);
     }
 }

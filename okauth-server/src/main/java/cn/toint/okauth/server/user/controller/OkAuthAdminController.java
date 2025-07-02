@@ -17,7 +17,7 @@
 package cn.toint.okauth.server.user.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.toint.okauth.server.model.Response;
+import cn.toint.okauth.server.model.OkAuthResponse;
 import cn.toint.okauth.server.user.model.OkAuthAdminLoginByPasswordRequest;
 import cn.toint.okauth.server.user.model.OkAuthAdminLoginResponse;
 import cn.toint.okauth.server.user.service.OkAuthAdminService;
@@ -43,8 +43,8 @@ public class OkAuthAdminController {
      */
     @PostMapping("/admin/login")
     @SaIgnore
-    public Response<OkAuthAdminLoginResponse> login(@RequestBody OkAuthAdminLoginByPasswordRequest request) {
+    public OkAuthResponse<OkAuthAdminLoginResponse> login(@RequestBody OkAuthAdminLoginByPasswordRequest request) {
         OkAuthAdminLoginResponse loginVo = okAuthAdminService.login(request);
-        return Response.success(loginVo);
+        return OkAuthResponse.success(loginVo);
     }
 }

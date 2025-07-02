@@ -65,7 +65,6 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
         saClientModel.setClientId(String.valueOf(openClientDo.getId()));
         saClientModel.setClientSecret(openClientDo.getSecret());
         saClientModel.setSubjectId(openClientDo.getSubjectId());
-        saClientModel.setAllowGrantTypes(openClientDo.getAllowGrantTypes());
         saClientModel.setAllowRedirectUris(openClientDo.getAllowRedirectUris()); // 允许授权回调的url, 可使用通配符*
         okAuthOauth2Manager.getSaOAuth2ServerConfig().addClient(saClientModel);
         log.info("加载开放应用[{}]成功", openClientDo.getId());
@@ -86,7 +85,6 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
         Assert.notBlank(openClientDo.getSecret(), "应用密钥不能为空");
         Assert.notBlank(openClientDo.getSubjectId(), "主体ID不能为空");
         Assert.notNull(openClientDo.getId(), "应用ID不能为空");
-        Assert.notEmpty(openClientDo.getAllowGrantTypes(), "授权方式不能为空");
     }
 
     @Override

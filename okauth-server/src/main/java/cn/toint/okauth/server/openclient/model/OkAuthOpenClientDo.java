@@ -61,12 +61,6 @@ public class OkAuthOpenClientDo extends BaseDo {
     private List<String> allowRedirectUris;
 
     /**
-     * 授权类型
-     */
-    @Column(typeHandler = JacksonTypeHandler.class)
-    private List<String> allowGrantTypes;
-
-    /**
      * 状态
      */
     @Column

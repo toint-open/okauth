@@ -43,7 +43,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <oktool.version>1.2.0-20250630075953</oktool.version>
+        <oktool.version>1.2.0-20250702073945</oktool.version>
         <sa-token.version>1.44.0</sa-token.version>
         <mybatis-flex.version>1.10.9</mybatis-flex.version>
         <druid.version>1.2.25</druid.version>
@@ -95,31 +95,62 @@
         </dependencies>
     </dependencyManagement>
 
-    <!--定义三种开发环境-->
-    <profiles>
-        <profile>
-            <!--不同环境的唯一id-->
-            <id>dev</id>
-            <properties>
-                <!--profile.active对应application.yml中的@profile.active@-->
-                <profile.active>dev</profile.active>
-            </properties>
-        </profile>
+    <build>
+        <plugins>
+            <!--推送maven中央仓库-->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.7.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
 
-        <!--测试环境-->
-        <profile>
-            <id>test</id>
-            <properties>
-                <profile.active>test</profile.active>
-            </properties>
-        </profile>
+            <!--签名-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.7</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-        <!--生产环境-->
-        <profile>
-            <id>prod</id>
-            <properties>
-                <profile.active>prod</profile.active>
-            </properties>
-        </profile>
-    </profiles>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <doclint>none</doclint>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

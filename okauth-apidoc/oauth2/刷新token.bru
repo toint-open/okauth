@@ -1,0 +1,20 @@
+meta {
+  name: 刷新token
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/oauth2/token
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "clientId": "10000",
+    "clientSecret": "okauth",
+    "grantType": "authorization_code",
+    "refreshToken": ""
+  }
+}
