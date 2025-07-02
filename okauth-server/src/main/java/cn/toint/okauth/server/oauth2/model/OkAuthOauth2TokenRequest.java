@@ -34,8 +34,8 @@ public class OkAuthOauth2TokenRequest {
     @NotBlank
     private String grantType;
 
-    private String scope;
-
     @NotBlank
     private String code;
+
+    private String scope;
 }

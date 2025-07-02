@@ -16,43 +16,16 @@
 
 package cn.toint.okauth.server.oauth2.model;
 
-import cn.toint.okauth.server.user.model.OkAuthUserLoginByPasswordRequest;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * @author Toint
  * @date 2025/7/2
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class OkAuthOauth2LoginByPasswordRequest extends OkAuthUserLoginByPasswordRequest {
+public class OkAuthOauth2CodeResponse {
     /**
-     * 授权类型
+     * 拼接完毕的回调地址, 前端重定向至该地址
      */
-    @NotBlank
-    public String responseType;
-
-    /**
-     * 应用id
-     */
-    @NotBlank
-    public String clientId;
-
-    /**
-     * 重定向URL
-     */
-    @NotBlank
-    public String redirectUri;
-
-    /**
-     * 授权范围
-     */
-    public String scope;
-
-    /**
-     * 状态标识
-     */
-    public String state;
+    private String redirectUri;
 }

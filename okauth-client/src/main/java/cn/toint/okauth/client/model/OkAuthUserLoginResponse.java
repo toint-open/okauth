@@ -16,32 +16,50 @@
 
 package cn.toint.okauth.client.model;
 
-import cn.toint.okauth.client.constant.OkAuthConstant;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * 构建授权链接
- *
  * @author Toint
- * @date 2025/7/1
+ * @date 2025/7/2
  */
 @Data
-public class OkAuthGetOauth2AuthorizeUriRequest {
+public class OkAuthUserLoginResponse {
     /**
-     * @see OkAuthConstant.ResponseType
+     * 用户信息
      */
-    @NotBlank(message = "responseType不能为空")
-    private String responseType;
+    private user user;
 
     /**
-     * 授权范围
+     * token信息
      */
-    private String scope;
+    private Token token;
 
-    /**
-     * 随机值, 此参数会在重定向时追加到url末尾
-     * 建议开发者把该值缓存起来, 回调时校验该值
-     */
-    private String state;
+    @Data
+    public static class user {
+        private Long id;
+
+        private String username;
+
+        private String name;
+
+        private String phone;
+    }
+
+    @Data
+    public static class Token {
+        /**
+         * token 名称
+         */
+        public String tokenName;
+
+        /**
+         * token 值
+         */
+        public String tokenValue;
+
+        /**
+         * token 剩余有效期（单位: 秒）
+         */
+        public long tokenTimeout;
+    }
 }

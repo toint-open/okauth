@@ -16,15 +16,31 @@
 
 package cn.toint.okauth.server.oauth2.model;
 
-import cn.dev33.satoken.oauth2.data.model.AccessTokenModel;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * @author Toint
  * @date 2025/7/2
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class OkAuthOauth2TokenResponse extends AccessTokenModel {
+public class OkAuthOauth2TokenResponse {
+    /**
+     * Access-Token 值
+     */
+    public String accessToken;
+
+    /**
+     * Refresh-Token 值
+     */
+    public String refreshToken;
+
+    /**
+     * Access-Token 到期时间
+     */
+    public long expiresTime;
+
+    /**
+     * Refresh-Token 到期时间
+     */
+    public long refreshExpiresTime;
 }

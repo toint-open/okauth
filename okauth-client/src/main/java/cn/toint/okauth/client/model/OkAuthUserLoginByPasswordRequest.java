@@ -14,22 +14,39 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.client.constant;
+package cn.toint.okauth.client.model;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
 /**
  * @author Toint
  * @date 2025/7/2
  */
-public class OkAuthConstant {
-    /**
-     * 所有返回类型
-     */
-    public static final class ResponseType {
-        public static String code = "code";
-    }
+@Data
+public class OkAuthUserLoginByPasswordRequest {
+    @NotBlank(message = "账号不能为空")
+    private String username;
 
-    public static final class GrantType {
-        public static final String AUTHORIZATION_CODE = "authorization_code";
-        public static final String REFRESH_TOKEN = "refresh_token";
-    }
+    @NotBlank(message = "密码不能为空")
+    private String password;
+
+    @NotBlank(message = "授权类型不能为空")
+    public String responseType;
+
+    @NotBlank(message = "应用ID不能为空")
+    public String clientId;
+
+    @NotBlank(message = "重定向URL不能为空")
+    public String redirectUri;
+
+    /**
+     * 授权范围
+     */
+    public String scope;
+
+    /**
+     * 状态标识
+     */
+    public String state;
 }

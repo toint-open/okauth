@@ -16,6 +16,14 @@
 
 package cn.toint.okauth.server.user.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
+import cn.toint.okauth.server.model.OkAuthResponse;
+import cn.toint.okauth.server.user.model.OkAuthUserLoginByPasswordRequest;
+import cn.toint.okauth.server.user.model.OkAuthUserLoginResponse;
+import cn.toint.okauth.server.user.service.OkAuthUserService;
+import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,4 +33,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OkAuthUserController {
 
+    @Resource
+    private OkAuthUserService okAuthUserService;
+
+    /**
+     * 账号密码登录
+     */
+    @PostMapping("/user/login/password")
+    @SaIgnore
+    public OkAuthResponse<OkAuthUserLoginResponse> loginByPassword(@RequestBody OkAuthUserLoginByPasswordRequest request) {
+        OkAuthUserLoginResponse response = okAuthUserService.login(request);
+        return OkAuthResponse.success(response);
+    }
 }

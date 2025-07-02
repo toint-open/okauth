@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.model;
+package cn.toint.okauth.client.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * @author Toint
- * @date 2025/6/30
+ * @date 2025/7/1
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class OkAuthAdminLoginResponse extends OkAuthUserLoginResponse{
-
+public class OkAuthOauth2BuildAuthorizeUriResponse {
+    /**
+     * 授权链接, 前端拿到地址后跳转该链接
+     */
+    private String authorizeUri;
 }

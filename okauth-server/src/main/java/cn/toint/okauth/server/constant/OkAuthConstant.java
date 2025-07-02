@@ -25,4 +25,9 @@ public class OkAuthConstant {
      * 服务数据源
      */
     public static final String DATA_SOURCE = "okauth-server";
+
+    public static final class GrantType {
+        public static final String AUTHORIZATION_CODE = "authorization_code";
+        public static final String REFRESH_TOKEN = "refresh_token";
+    }
 }

@@ -17,6 +17,7 @@
 package cn.toint.okauth.server.oauth2.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.toint.okauth.server.model.OkAuthResponse;
 import cn.toint.okauth.server.oauth2.model.*;
 import cn.toint.okauth.server.oauth2.service.OkAuthOauth2Service;
@@ -33,12 +34,11 @@ public class OkAuthOauth2Controller {
     private OkAuthOauth2Service oauth2Service;
 
     /**
-     * 账号密码登录
+     * 获取验证码
      */
-    @PostMapping("/oauth2/loginByPassword")
-    @SaIgnore
-    public OkAuthResponse<OkAuthOauth2LoginByPasswordResponse> loginByPassword(@RequestBody OkAuthOauth2LoginByPasswordRequest request) {
-        OkAuthOauth2LoginByPasswordResponse response = oauth2Service.login(request);
+    @PostMapping("/oauth2/code")
+    public OkAuthResponse<OkAuthOauth2CodeResponse> code(@RequestBody OkAuthOauth2CodeRequest request) {
+        OkAuthOauth2CodeResponse response = oauth2Service.code(StpUtil.getLoginIdAsLong(), request);
         return OkAuthResponse.success(response);
     }
 
@@ -61,18 +61,4 @@ public class OkAuthOauth2Controller {
         OkAuthOauth2TokenResponse response = oauth2Service.refresh(request);
         return OkAuthResponse.success(response);
     }
-//
-//    // 回收 Access-Token
-//    @RequestMapping("/oauth2/revoke")
-//    @SaIgnore
-//    public Object revoke() {
-//        return SaOAuth2ServerProcessor.instance.revoke();
-//    }
-//
-//    // 模式四：凭证式
-//    @SaIgnore
-//    @RequestMapping("/oauth2/client_token")
-//    public Object clientToken() {
-//        return SaOAuth2ServerProcessor.instance.clientToken();
-//    }
 }

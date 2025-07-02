@@ -26,13 +26,13 @@ import lombok.Data;
 @Data
 public class OkAuthConfig {
     /**
-     * 认证服务器地址
+     * 认证服务地址
      */
     @NotBlank(message = "认证服务器地址不能为空")
     private String serverUri;
 
     /**
-     * 授权地址, 登录页
+     * 授权服务地址
      */
     @NotBlank(message = "授权地址不能为空")
     private String authorizeUri;

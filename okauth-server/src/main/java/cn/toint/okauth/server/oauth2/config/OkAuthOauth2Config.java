@@ -33,7 +33,11 @@ public class OkAuthOauth2Config {
     @Bean
     @Primary
     public SaOAuth2ServerConfig saOAuth2ServerConfig() {
-        return SaOAuth2Manager.getServerConfig();
+        SaOAuth2ServerConfig saOAuth2ServerConfig = SaOAuth2Manager.getServerConfig();
+        saOAuth2ServerConfig.setMaxAccessTokenCount(1);
+        saOAuth2ServerConfig.setMaxRefreshTokenCount(1);
+        saOAuth2ServerConfig.setMaxClientTokenCount(1);
+        return saOAuth2ServerConfig;
     }
 
     @Bean

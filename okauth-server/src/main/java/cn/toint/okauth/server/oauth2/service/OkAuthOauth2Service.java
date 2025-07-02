@@ -26,9 +26,12 @@ import cn.toint.okauth.server.oauth2.model.*;
  */
 public interface OkAuthOauth2Service {
     /**
-     * 账号密码登录
+     * 生成code
+     *
+     * @param userId 用户ID
+     * @return 登录响应信息
      */
-    OkAuthOauth2LoginByPasswordResponse login(OkAuthOauth2LoginByPasswordRequest request);
+    OkAuthOauth2CodeResponse code(Long userId, OkAuthOauth2CodeRequest request);
 
     /**
      * 获取token

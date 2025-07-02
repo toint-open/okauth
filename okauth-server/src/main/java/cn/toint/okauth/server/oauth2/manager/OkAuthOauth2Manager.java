@@ -22,6 +22,7 @@ import cn.dev33.satoken.oauth2.template.SaOAuth2Template;
 import cn.dev33.satoken.spring.oauth2.SaOAuth2BeanInject;
 import jakarta.annotation.Resource;
 import lombok.Getter;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
  * @date 2025/7/2
  */
 @Service
+@DependsOn()
 public class OkAuthOauth2Manager {
     /**
      * OAuth2 配置对象
@@ -38,7 +40,6 @@ public class OkAuthOauth2Manager {
     @Resource
     @Getter
     private SaOAuth2ServerConfig saOAuth2ServerConfig;
-
 
     @Resource
     @Getter

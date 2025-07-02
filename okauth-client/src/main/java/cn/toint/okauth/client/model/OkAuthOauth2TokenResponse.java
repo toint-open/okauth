@@ -18,9 +18,6 @@ package cn.toint.okauth.client.model;
 
 import lombok.Data;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author Toint
  * @date 2025/7/2
@@ -46,39 +43,4 @@ public class OkAuthOauth2TokenResponse {
      * Refresh-Token 到期时间
      */
     public long refreshExpiresTime;
-
-    /**
-     * 应用id
-     */
-    public String clientId;
-
-    /**
-     * 账号id
-     */
-    public Object loginId;
-
-    /**
-     * 授权范围
-     */
-    public List<String> scopes;
-
-    /**
-     * Token 类型
-     */
-    public String tokenType;
-
-    /**
-     * 授权类型
-     */
-    public String grantType;
-
-    /**
-     * 扩展数据
-     */
-    public Map<String, Object> extraData;
-
-    /**
-     * 创建时间，13位时间戳
-     */
-    public long createTime;
 }

@@ -28,6 +28,7 @@ import org.dromara.hutool.core.net.url.UrlBuilder;
 import org.dromara.hutool.core.net.url.UrlQuery;
 import org.dromara.hutool.http.HttpUtil;
 import org.dromara.hutool.http.client.Request;
+import org.dromara.hutool.http.meta.Method;
 
 import java.util.Optional;
 
@@ -48,7 +49,12 @@ public class OkAuthClientImpl implements OkAuthClient {
     }
 
     @Override
-    public OkAuthGetOauth2AuthorizeUriResponse getOauth2AuthorizeUri(OkAuthGetOauth2AuthorizeUriRequest request) {
+    public OkAuthConfig getConfig() {
+        return okAuthConfig;
+    }
+
+    @Override
+    public OkAuthOauth2BuildAuthorizeUriResponse buildAuthorizeUri(OkAuthOauth2BuildAuthorizeUriRequest request) {
         // 参数校验
         Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request);
@@ -67,9 +73,8 @@ public class OkAuthClientImpl implements OkAuthClient {
                 .setQuery(urlQuery)
                 .toString();
 
-        OkAuthGetOauth2AuthorizeUriResponse response = new OkAuthGetOauth2AuthorizeUriResponse();
+        OkAuthOauth2BuildAuthorizeUriResponse response = new OkAuthOauth2BuildAuthorizeUriResponse();
         response.setAuthorizeUri(authorizeUrl);
-        response.setState(state);
         return response;
     }
 
@@ -79,7 +84,7 @@ public class OkAuthClientImpl implements OkAuthClient {
         Assert.validate(request);
 
         // 请求认证服务端
-        Request tokenRequest = HttpUtil.createPost(okAuthConfig.getServerUri())
+        Request tokenRequest = HttpUtil.createPost(okAuthConfig.getServerUri() + "/oauth2/token")
                 .body(JacksonUtil.writeValueAsString(request));
         OkAuthResponse<OkAuthOauth2TokenResponse> response = JacksonUtil.readValue(OkAuthHttpUtil.request(tokenRequest), new TypeReference<>() {
         });
@@ -93,11 +98,26 @@ public class OkAuthClientImpl implements OkAuthClient {
         Assert.validate(request);
 
         // 请求认证服务端
-        Request tokenRequest = HttpUtil.createPost(okAuthConfig.getServerUri())
+        Request tokenRequest = HttpUtil.createPost(okAuthConfig.getServerUri() + "/oauth2/refresh")
                 .body(JacksonUtil.writeValueAsString(request));
         OkAuthResponse<OkAuthOauth2TokenResponse> response = JacksonUtil.readValue(OkAuthHttpUtil.request(tokenRequest), new TypeReference<>() {
         });
         Assert.isTrue(response.isSuccess(), response.getMsg());
         return response.getData();
+    }
+
+    @Override
+    public OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request) {
+        Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
+        Request httpRequest = Request.of(okAuthConfig.getServerUri() + "/oauth2/login/password")
+                .method(Method.POST)
+                .body(JacksonUtil.writeValueAsString(request));
+        String resBodyStr = OkAuthHttpUtil.request(httpRequest);
+        OkAuthResponse<OkAuthUserLoginResponse> okAuthResponse = JacksonUtil.readValue(resBodyStr, new TypeReference<OkAuthResponse<OkAuthUserLoginResponse>>() {
+        });
+        Assert.isTrue(okAuthResponse.isSuccess(), okAuthResponse.getMsg());
+        return okAuthResponse.getData();
     }
 }

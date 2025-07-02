@@ -25,10 +25,18 @@ import cn.toint.okauth.client.model.*;
  * @date 2025/7/2
  */
 public interface OkAuthClient {
+
+    OkAuthConfig getConfig();
+
+    /**
+     * 账号密码登录
+     */
+    OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request);
+
     /**
      * 获取oauth2授权地址
      */
-    OkAuthGetOauth2AuthorizeUriResponse getOauth2AuthorizeUri(OkAuthGetOauth2AuthorizeUriRequest request);
+    OkAuthOauth2BuildAuthorizeUriResponse buildAuthorizeUri(OkAuthOauth2BuildAuthorizeUriRequest request);
 
     /**
      * 获取token
@@ -39,12 +47,4 @@ public interface OkAuthClient {
      * 刷新token
      */
     OkAuthOauth2TokenResponse refresh(OkAuthOauth2RefreshRequest request);
-
-//    /**
-//     * 缓存state, 以便回调时校验来源合法
-//     *
-//     * @param state   state
-//     * @param timeout 超时时间, 默认5分钟
-//     */
-//    void cacheState(String state, Duration timeout);
 }

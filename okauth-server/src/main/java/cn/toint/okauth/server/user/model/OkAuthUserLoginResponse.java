@@ -25,7 +25,7 @@ import lombok.Data;
 @Data
 public class OkAuthUserLoginResponse {
     /**
-     * 超管信息
+     * 用户信息
      */
     private user user;
 

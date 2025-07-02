@@ -16,6 +16,7 @@
 
 package cn.toint.okauth.server;
 
+import cn.dev33.satoken.spring.oauth2.SaOAuth2BeanInject;
 import cn.toint.oktool.util.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.http.client.ClientConfig;
@@ -26,13 +27,14 @@ import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfigur
 
 import java.time.Duration;
 
-@SpringBootApplication(exclude = {SpringDataWebAutoConfiguration.class})
+@SpringBootApplication(exclude = {SpringDataWebAutoConfiguration.class, SaOAuth2BeanInject.class})
 @Slf4j
 public class TointAuthApplication {
+
     static {
-        // 初始化 hutool http 引擎
-        HttpClientUtil.initGlobalConfig(OkHttpEngine.class, ClientConfig.of(), Duration.ofSeconds(10));
-        log.info("HTTP客户端初始化成功");
+        Duration timeout = Duration.ofSeconds(10);
+        ClientConfig clientConfig = ClientConfig.of().setTimeout((int) timeout.toMillis());
+        HttpClientUtil.initGlobalConfig(OkHttpEngine.class, clientConfig, timeout);
     }
 
     public static void main(String[] args) {
