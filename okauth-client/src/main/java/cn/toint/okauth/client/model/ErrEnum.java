@@ -16,32 +16,23 @@
 
 package cn.toint.okauth.client.model;
 
-import cn.toint.okauth.client.constant.OkAuthConstant;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * 构建授权链接
- *
  * @author Toint
- * @date 2025/7/1
+ * @date 2025/6/27
  */
-@Data
-public class OkAuthGetOauth2AuthorizeUriRequest {
-    /**
-     * @see OkAuthConstant.ResponseType
-     */
-    @NotBlank(message = "responseType不能为空")
-    private String responseType;
+@Getter
+@AllArgsConstructor
+public enum ErrEnum {
+    NOT_PERMISSION(403, "权限不足"),
+    NOT_LOGIN(401, "未登录"),
+    PASSWORD_ERROR(10001, "密码错误"),
+    USER_NOT_EXIST(10000, "用户不存在"),
+    FAIL(-1, "失败"),
+    SUCCESS(0, "成功");
 
-    /**
-     * 授权范围
-     */
-    private String scope;
-
-    /**
-     * 随机值, 此参数会在重定向时追加到url末尾
-     * 建议开发者把该值缓存起来, 回调时校验该值
-     */
-    private String state;
+    private final int code;
+    private final String msg;
 }

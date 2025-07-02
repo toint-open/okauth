@@ -16,32 +16,24 @@
 
 package cn.toint.okauth.client.model;
 
-import cn.toint.okauth.client.constant.OkAuthConstant;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * 构建授权链接
- *
  * @author Toint
- * @date 2025/7/1
+ * @date 2025/7/2
  */
 @Data
-public class OkAuthGetOauth2AuthorizeUriRequest {
-    /**
-     * @see OkAuthConstant.ResponseType
-     */
-    @NotBlank(message = "responseType不能为空")
-    private String responseType;
+public class OkAuthOauth2RefreshRequest {
+    @NotBlank
+    private String clientId;
 
-    /**
-     * 授权范围
-     */
-    private String scope;
+    @NotBlank
+    private String clientSecret;
 
-    /**
-     * 随机值, 此参数会在重定向时追加到url末尾
-     * 建议开发者把该值缓存起来, 回调时校验该值
-     */
-    private String state;
+    @NotBlank
+    private String grantType;
+
+    @NotBlank
+    private String refreshToken;
 }

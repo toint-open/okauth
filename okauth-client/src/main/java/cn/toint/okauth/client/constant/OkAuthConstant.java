@@ -14,34 +14,17 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.client.model;
-
-import cn.toint.okauth.client.constant.OkAuthConstant;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+package cn.toint.okauth.client.constant;
 
 /**
- * 构建授权链接
- *
  * @author Toint
- * @date 2025/7/1
+ * @date 2025/7/2
  */
-@Data
-public class OkAuthGetOauth2AuthorizeUriRequest {
+public class OkAuthConstant {
     /**
-     * @see OkAuthConstant.ResponseType
+     * 所有返回类型
      */
-    @NotBlank(message = "responseType不能为空")
-    private String responseType;
-
-    /**
-     * 授权范围
-     */
-    private String scope;
-
-    /**
-     * 随机值, 此参数会在重定向时追加到url末尾
-     * 建议开发者把该值缓存起来, 回调时校验该值
-     */
-    private String state;
+    public static final class ResponseType {
+        public static String code = "code";
+    }
 }

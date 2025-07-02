@@ -42,7 +42,6 @@ public class OkAuthOauth2Controller {
         return OkAuthResponse.success(response);
     }
 
-
     /**
      * code换accessToken
      */

@@ -88,6 +88,9 @@ public class OkAuthOauth2ServiceImpl implements OkAuthOauth2Service {
 
     @Override
     public OkAuthOauth2TokenResponse token(OkAuthOauth2TokenRequest request) {
+        Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
         String clientId = request.getClientId();
         String clientSecret = request.getClientSecret();
         String grantType = request.getGrantType();

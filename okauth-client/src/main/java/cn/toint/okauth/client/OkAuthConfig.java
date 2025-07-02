@@ -14,34 +14,44 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.client.model;
+package cn.toint.okauth.client;
 
-import cn.toint.okauth.client.constant.OkAuthConstant;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * 构建授权链接
- *
  * @author Toint
- * @date 2025/7/1
+ * @date 2025/7/2
  */
 @Data
-public class OkAuthGetOauth2AuthorizeUriRequest {
+public class OkAuthConfig {
     /**
-     * @see OkAuthConstant.ResponseType
+     * 认证服务器地址
      */
-    @NotBlank(message = "responseType不能为空")
-    private String responseType;
+    @NotBlank(message = "认证服务器地址不能为空")
+    private String serverUri;
 
     /**
-     * 授权范围
+     * 授权地址, 登录页
      */
-    private String scope;
+    @NotBlank(message = "授权地址不能为空")
+    private String authorizeUri;
 
     /**
-     * 随机值, 此参数会在重定向时追加到url末尾
-     * 建议开发者把该值缓存起来, 回调时校验该值
+     * 客户端ID
      */
-    private String state;
+    @NotBlank(message = "客户端ID不能为空")
+    private String clientId;
+
+    /**
+     * 客户端密钥
+     */
+    @NotBlank(message = "客户端密钥不能为空")
+    private String clientSecret;
+
+    /**
+     * 回调地址
+     */
+    @NotBlank(message = "回调地址不能为空")
+    private String redirectUri;
 }

@@ -16,8 +16,7 @@
 
 package cn.toint.okauth.client;
 
-import cn.toint.okauth.client.model.OkAuthGetOauth2AuthorizeUriRequest;
-import cn.toint.okauth.client.model.OkAuthGetOauth2AuthorizeUriResponse;
+import cn.toint.okauth.client.model.*;
 
 /**
  * OkAuth客户端
@@ -30,6 +29,16 @@ public interface OkAuthClient {
      * 获取oauth2授权地址
      */
     OkAuthGetOauth2AuthorizeUriResponse getOauth2AuthorizeUri(OkAuthGetOauth2AuthorizeUriRequest request);
+
+    /**
+     * 获取token
+     */
+    OkAuthOauth2TokenResponse token(OkAuthOauth2TokenRequest request);
+
+    /**
+     * 刷新token
+     */
+    OkAuthOauth2TokenResponse refresh(OkAuthOauth2RefreshRequest request);
 
 //    /**
 //     * 缓存state, 以便回调时校验来源合法
