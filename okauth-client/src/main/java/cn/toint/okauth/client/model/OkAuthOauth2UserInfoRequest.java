@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.oauth2.model;
+package cn.toint.okauth.client.model;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
  * @author Toint
- * @date 2025/7/2
+ * @date 2025/7/3
  */
 @Data
-public class OkAuthOauth2CodeResponse {
-    /**
-     * 拼接完毕的回调地址, 前端重定向至该地址
-     */
-    private String redirectUri;
+public class OkAuthOauth2UserInfoRequest {
+    @NotBlank(message = "accessToken不能为空")
+    private String accessToken;
 }

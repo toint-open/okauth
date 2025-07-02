@@ -48,7 +48,7 @@
             <dependency>
                 <groupId>cn.toint</groupId>
                 <artifactId>okauth-client</artifactId>
-                <version>${okauth.version}</version>
+                <version>1.0.0-20250702111427</version>
             </dependency>
 
             <dependency>

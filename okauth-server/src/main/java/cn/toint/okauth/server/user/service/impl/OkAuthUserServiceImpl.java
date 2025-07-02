@@ -98,4 +98,10 @@ public class OkAuthUserServiceImpl implements OkAuthUserService {
         SpringUtil.publishEvent(new OkAuthUserLoginEvent(loginResponse));
         return loginResponse;
     }
+
+    @Override
+    public OkAuthUserDo getById(Long userId) {
+        Assert.notNull(userId, "userId不能为空");
+        return okAuthUserMapper.selectOneById(userId);
+    }
 }

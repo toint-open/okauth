@@ -18,6 +18,7 @@ package cn.toint.okauth.server.oauth2.manager;
 
 import cn.dev33.satoken.oauth2.config.SaOAuth2ServerConfig;
 import cn.dev33.satoken.oauth2.data.generate.SaOAuth2DataGenerate;
+import cn.dev33.satoken.oauth2.data.loader.SaOAuth2DataLoader;
 import cn.dev33.satoken.oauth2.template.SaOAuth2Template;
 import cn.dev33.satoken.spring.oauth2.SaOAuth2BeanInject;
 import jakarta.annotation.Resource;
@@ -48,4 +49,8 @@ public class OkAuthOauth2Manager {
     @Resource
     @Getter
     private SaOAuth2Template saOAuth2Template;
+
+    @Resource
+    @Getter
+    private SaOAuth2DataLoader saOAuth2DataLoader;
 }

@@ -24,10 +24,14 @@ import cn.toint.okauth.client.model.*;
 import cn.toint.oktool.util.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.data.id.IdUtil;
+import org.dromara.hutool.core.lang.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 应用端服务
@@ -47,28 +51,34 @@ public class OkAuthDemoClientServerController {
         okAuthConfig.setAuthorizeUri("http://127.0.0.1:18080/oauth2/authorize");
         okAuthConfig.setClientId("10000");
         okAuthConfig.setClientSecret("okauth");
-        okAuthConfig.setRedirectUri("http://127.0.0.1:18080/oauth2/callback");
+        okAuthConfig.setRedirectUri("http://127.0.0.1:18080/client");
         return new OkAuthClientImpl(okAuthConfig);
     }
 
+    private final Map<String, String> stateCache = new ConcurrentHashMap<>();
+
     /**
-     * 1. 获取授权地址
-     * 2. 跳转授权地址
+     * 1. 获取前端授权地址
+     * 2. 跳转前端授权地址
      */
     @GetMapping("/login")
     public RedirectView login() {
+        // 缓存state, 等待验证
+        String state = IdUtil.fastSimpleUUID();
+        stateCache.put(state, "");
+
         OkAuthOauth2BuildAuthorizeUriRequest request = new OkAuthOauth2BuildAuthorizeUriRequest();
         request.setResponseType(OkAuthConstant.ResponseType.code);
         request.setScope(null);
-        request.setState(IdUtil.fastSimpleUUID());
+        request.setState(state);
         OkAuthOauth2BuildAuthorizeUriResponse response = okAuthClient.buildAuthorizeUri(request);
         log.info("授权地址={}", response.getAuthorizeUri());
         return new RedirectView(response.getAuthorizeUri());
     }
 
     /**
-     * 3. 授权登录
-     * 4. 成功登录后携带code跳转回调地址
+     * 3. 账号登录
+     * 4. 访问后端执行授权[authorize]获取带code的回调地址
      */
     @GetMapping("/oauth2/authorize")
     public RedirectView authorize(@RequestParam(required = false) String state) {
@@ -76,24 +86,32 @@ public class OkAuthDemoClientServerController {
         OkAuthUserLoginByPasswordRequest request = new OkAuthUserLoginByPasswordRequest();
         request.setUsername("admin");
         request.setPassword("okauth-admin");
-        request.setResponseType(OkAuthConstant.ResponseType.code);
-        request.setClientId("10000");
-        request.setRedirectUri("http://127.0.0.1:18080/oauth2/callback");
-        request.setScope("");
-        request.setState(state);
-        OkAuthUserLoginResponse passwordResponse = okAuthClient.login(request);
-        log.info("密码登录成功, 回调地址={}", passwordResponse.getRedirectUri());
+        OkAuthUserLoginResponse loginResponse = okAuthClient.login(request);
+        log.info("密码登录成功, 响应={}", JacksonUtil.writeValueAsString(loginResponse));
 
-        // 读取回调地址
-        return new RedirectView(passwordResponse.getRedirectUri());
+        // 访问后端执行授权[authorize]获取带code的回调地址
+        OkAuthOauth2AuthorizeRequest codeRequest = new OkAuthOauth2AuthorizeRequest();
+        codeRequest.setResponseType(OkAuthConstant.ResponseType.code);
+        codeRequest.setClientId("10000");
+        codeRequest.setRedirectUri("http://127.0.0.1:18080/client");
+        codeRequest.setScope("");
+        codeRequest.setState(state);
+        OkAuthOauth2AuthorizeResponse codeResponse = okAuthClient.authorize(loginResponse.getToken().getTokenValue(), codeRequest);
+        String redirectUri = codeResponse.getRedirectUri();
+        log.info("获取code成功, 回调地址={}", redirectUri);
+        return new RedirectView(redirectUri);
     }
 
     /**
      * 5. 拿code换取accessToken
      * 6. 刷新accessToken
      */
-    @GetMapping("/oauth2/callback")
-    public Object callback(@RequestParam String code) {
+    @GetMapping("/client")
+    public void client(@RequestParam String code, @RequestParam String state) {
+        // 验证state
+        Assert.isTrue(stateCache.containsKey(state), "state不匹配");
+        stateCache.remove(state);
+
         //  拿code换取accessToken
         OkAuthConfig okAuthConfig = okAuthClient.getConfig();
         OkAuthOauth2TokenRequest okAuthOauth2TokenRequest = new OkAuthOauth2TokenRequest();
@@ -113,6 +131,11 @@ public class OkAuthDemoClientServerController {
         okAuthOauth2RefreshRequest.setRefreshToken(tokenResponse.getRefreshToken());
         OkAuthOauth2TokenResponse refreshResponse = okAuthClient.refresh(okAuthOauth2RefreshRequest);
         log.info("刷新token成功, token={}", JacksonUtil.writeValueAsString(refreshResponse));
-        return tokenResponse;
+
+        // 获取userInfo
+        OkAuthOauth2UserInfoRequest userInfoRequest = new OkAuthOauth2UserInfoRequest();
+        userInfoRequest.setAccessToken(refreshResponse.getAccessToken());
+        OkAuthOauth2UserInfoResponse okAuthOauth2UserInfoResponse = okAuthClient.userInfo(userInfoRequest);
+        log.info("获取userInfo成功, userInfo={}", JacksonUtil.writeValueAsString(okAuthOauth2UserInfoResponse));
     }
 }

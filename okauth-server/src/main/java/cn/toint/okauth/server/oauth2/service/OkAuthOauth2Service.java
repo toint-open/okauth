@@ -31,7 +31,7 @@ public interface OkAuthOauth2Service {
      * @param userId 用户ID
      * @return 登录响应信息
      */
-    OkAuthOauth2CodeResponse code(Long userId, OkAuthOauth2CodeRequest request);
+    OkAuthOauth2AuthorizeResponse authorize(Long userId, OkAuthOauth2AuthorizeRequest request);
 
     /**
      * 获取token
@@ -42,4 +42,9 @@ public interface OkAuthOauth2Service {
      * 刷新token
      */
     OkAuthOauth2TokenResponse refresh(OkAuthOauth2RefreshRequest request);
+
+    /**
+     * 获取用户信息
+     */
+    OkAuthOauth2UserInfoResponse userInfo(OkAuthOauth2UserInfoRequest request);
 }

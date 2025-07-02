@@ -30,23 +30,4 @@ public class OkAuthUserLoginByPasswordRequest {
 
     @NotBlank(message = "密码不能为空")
     private String password;
-
-    @NotBlank(message = "授权类型不能为空")
-    public String responseType;
-
-    @NotBlank(message = "应用ID不能为空")
-    public String clientId;
-
-    @NotBlank(message = "重定向URL不能为空")
-    public String redirectUri;
-
-    /**
-     * 授权范围
-     */
-    public String scope;
-
-    /**
-     * 状态标识
-     */
-    public String state;
 }

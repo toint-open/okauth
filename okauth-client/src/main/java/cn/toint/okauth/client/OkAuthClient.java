@@ -34,6 +34,11 @@ public interface OkAuthClient {
     OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request);
 
     /**
+     * 授权认证, 注意区分前端的authorize和后端的authorize
+     */
+    OkAuthOauth2AuthorizeResponse authorize(String token, OkAuthOauth2AuthorizeRequest request);
+
+    /**
      * 获取oauth2授权地址
      */
     OkAuthOauth2BuildAuthorizeUriResponse buildAuthorizeUri(OkAuthOauth2BuildAuthorizeUriRequest request);
@@ -47,4 +52,9 @@ public interface OkAuthClient {
      * 刷新token
      */
     OkAuthOauth2TokenResponse refresh(OkAuthOauth2RefreshRequest request);
+
+    /**
+     * 获取用户信息
+     */
+    OkAuthOauth2UserInfoResponse userInfo(OkAuthOauth2UserInfoRequest request);
 }

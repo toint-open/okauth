@@ -24,7 +24,7 @@ import lombok.Data;
  * @date 2025/7/2
  */
 @Data
-public class OkAuthOauth2CodeRequest {
+public class OkAuthOauth2AuthorizeRequest {
     /**
      * 授权类型
      */

@@ -29,6 +29,7 @@ import org.dromara.hutool.core.net.url.UrlQuery;
 import org.dromara.hutool.http.HttpUtil;
 import org.dromara.hutool.http.client.Request;
 import org.dromara.hutool.http.meta.Method;
+import org.springframework.http.HttpHeaders;
 
 import java.util.Optional;
 
@@ -107,11 +108,25 @@ public class OkAuthClientImpl implements OkAuthClient {
     }
 
     @Override
+    public OkAuthOauth2UserInfoResponse userInfo(OkAuthOauth2UserInfoRequest request) {
+        Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
+        // 请求认证服务端
+        Request tokenRequest = HttpUtil.createPost(okAuthConfig.getServerUri() + "/oauth2/userInfo")
+                .body(JacksonUtil.writeValueAsString(request));
+        OkAuthResponse<OkAuthOauth2UserInfoResponse> response = JacksonUtil.readValue(OkAuthHttpUtil.request(tokenRequest), new TypeReference<>() {
+        });
+        Assert.isTrue(response.isSuccess(), response.getMsg());
+        return response.getData();
+    }
+
+    @Override
     public OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request) {
         Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request);
 
-        Request httpRequest = Request.of(okAuthConfig.getServerUri() + "/oauth2/login/password")
+        Request httpRequest = Request.of(okAuthConfig.getServerUri() + "/user/login/password")
                 .method(Method.POST)
                 .body(JacksonUtil.writeValueAsString(request));
         String resBodyStr = OkAuthHttpUtil.request(httpRequest);
@@ -119,5 +134,22 @@ public class OkAuthClientImpl implements OkAuthClient {
         });
         Assert.isTrue(okAuthResponse.isSuccess(), okAuthResponse.getMsg());
         return okAuthResponse.getData();
+    }
+
+    @Override
+    public OkAuthOauth2AuthorizeResponse authorize(String token, OkAuthOauth2AuthorizeRequest request) {
+        Assert.notBlank(token, "token不能为空");
+        Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
+        Request httpRequest = Request.of(okAuthConfig.getServerUri() + "/oauth2/authorize")
+                .method(Method.POST)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .body(JacksonUtil.writeValueAsString(request));
+        String resBodyStr = OkAuthHttpUtil.request(httpRequest);
+        OkAuthResponse<OkAuthOauth2AuthorizeResponse> codeResponse = JacksonUtil.readValue(resBodyStr, new TypeReference<>() {
+        });
+        Assert.isTrue(codeResponse.isSuccess(), codeResponse.getMsg());
+        return codeResponse.getData();
     }
 }

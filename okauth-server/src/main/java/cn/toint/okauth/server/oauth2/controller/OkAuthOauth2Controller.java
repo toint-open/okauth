@@ -24,7 +24,6 @@ import cn.toint.okauth.server.oauth2.service.OkAuthOauth2Service;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -34,16 +33,17 @@ public class OkAuthOauth2Controller {
     private OkAuthOauth2Service oauth2Service;
 
     /**
-     * 获取验证码
+     * 授权认证
+     * 访问本接口用户必须已登录
      */
-    @PostMapping("/oauth2/code")
-    public OkAuthResponse<OkAuthOauth2CodeResponse> code(@RequestBody OkAuthOauth2CodeRequest request) {
-        OkAuthOauth2CodeResponse response = oauth2Service.code(StpUtil.getLoginIdAsLong(), request);
+    @PostMapping("/oauth2/authorize")
+    public OkAuthResponse<OkAuthOauth2AuthorizeResponse> authorize(@RequestBody OkAuthOauth2AuthorizeRequest request) {
+        OkAuthOauth2AuthorizeResponse response = oauth2Service.authorize(StpUtil.getLoginIdAsLong(), request);
         return OkAuthResponse.success(response);
     }
 
     /**
-     * code换accessToken
+     * 获取accessToken
      */
     @SaIgnore
     @PostMapping("/oauth2/token")
@@ -53,12 +53,22 @@ public class OkAuthOauth2Controller {
     }
 
     /**
-     * Refresh-Token刷新 Access-Token
+     * 刷新accessToken
      */
     @SaIgnore
-    @RequestMapping("/oauth2/refresh")
+    @PostMapping("/oauth2/refresh")
     public OkAuthResponse<OkAuthOauth2TokenResponse> refresh(@RequestBody OkAuthOauth2RefreshRequest request) {
         OkAuthOauth2TokenResponse response = oauth2Service.refresh(request);
         return OkAuthResponse.success(response);
+    }
+
+    /**
+     * 获取用户信息
+     */
+    @SaIgnore
+    @PostMapping("/oauth2/userInfo")
+    public OkAuthResponse<OkAuthOauth2UserInfoResponse> userInfo(@RequestBody OkAuthOauth2UserInfoRequest request) {
+        OkAuthOauth2UserInfoResponse okAuthOauth2UserInfoResponse = oauth2Service.userInfo(request);
+        return OkAuthResponse.success(okAuthOauth2UserInfoResponse);
     }
 }

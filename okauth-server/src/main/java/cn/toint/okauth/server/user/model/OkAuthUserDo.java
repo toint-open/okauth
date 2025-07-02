@@ -44,5 +44,4 @@ public class OkAuthUserDo extends BaseDo {
 
     @Column
     private String phone;
-
 }

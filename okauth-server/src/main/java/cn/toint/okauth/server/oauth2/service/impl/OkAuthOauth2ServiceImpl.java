@@ -24,6 +24,8 @@ import cn.toint.okauth.server.constant.OkAuthConstant;
 import cn.toint.okauth.server.oauth2.manager.OkAuthOauth2Manager;
 import cn.toint.okauth.server.oauth2.model.*;
 import cn.toint.okauth.server.oauth2.service.OkAuthOauth2Service;
+import cn.toint.okauth.server.user.model.OkAuthUserDo;
+import cn.toint.okauth.server.user.service.OkAuthUserService;
 import cn.toint.oktool.util.Assert;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +43,11 @@ public class OkAuthOauth2ServiceImpl implements OkAuthOauth2Service {
     @Resource
     private OkAuthOauth2Manager okAuthOauth2Manager;
 
+    @Resource
+    private OkAuthUserService  okAuthUserService;
+
     @Override
-    public OkAuthOauth2CodeResponse code(Long userId, OkAuthOauth2CodeRequest request) {
+    public OkAuthOauth2AuthorizeResponse authorize(Long userId, OkAuthOauth2AuthorizeRequest request) {
         Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request);
 
@@ -73,7 +78,7 @@ public class OkAuthOauth2ServiceImpl implements OkAuthOauth2Service {
                 .buildRedirectUri(redirectUri, codeModel.getCode(), state);
 
         // 响应对象
-        OkAuthOauth2CodeResponse response = new OkAuthOauth2CodeResponse();
+        OkAuthOauth2AuthorizeResponse response = new OkAuthOauth2AuthorizeResponse();
         response.setRedirectUri(clientRedirectUri);
         return response;
     }
@@ -117,5 +122,22 @@ public class OkAuthOauth2ServiceImpl implements OkAuthOauth2Service {
         okAuthOauth2Manager.getSaOAuth2Template().checkRefreshToken(refreshToken);
         AccessTokenModel accessTokenModel = okAuthOauth2Manager.getSaOAuth2DataGenerate().refreshAccessToken(refreshToken);
         return BeanUtil.copyProperties(accessTokenModel, new OkAuthOauth2TokenResponse());
+    }
+
+    @Override
+    public OkAuthOauth2UserInfoResponse userInfo(OkAuthOauth2UserInfoRequest request) {
+        Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
+        // 校验token获取用户信息
+        String accessToken = request.getAccessToken();
+        AccessTokenModel accessTokenModel = okAuthOauth2Manager.getSaOAuth2Template().checkAccessToken(accessToken);
+        Long userId = Long.valueOf(accessTokenModel.getLoginId().toString());
+        OkAuthUserDo okAuthUserDo = okAuthUserService.getById(userId);
+
+        // 返回部分用户信息给客户端
+        OkAuthOauth2UserInfoResponse okAuthOauth2UserInfoResponse = new OkAuthOauth2UserInfoResponse();
+        BeanUtil.copyProperties(okAuthUserDo, okAuthOauth2UserInfoResponse);
+        return okAuthOauth2UserInfoResponse;
     }
 }
