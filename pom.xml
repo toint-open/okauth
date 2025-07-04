@@ -43,14 +43,21 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <oktool.version>1.2.0-20250703022312</oktool.version>
+        <oktool.version>1.2.0-20250703022758</oktool.version>
         <sa-token.version>1.44.0</sa-token.version>
         <mybatis-flex.version>1.10.9</mybatis-flex.version>
         <druid.version>1.2.25</druid.version>
+        <aliyun-sms-version>4.1.2</aliyun-sms-version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>dysmsapi20170525</artifactId>
+                <version>${aliyun-sms-version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>cn.toint</groupId>
                 <artifactId>okauth-permission</artifactId>

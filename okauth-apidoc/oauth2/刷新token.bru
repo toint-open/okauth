@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{host}}/oauth2/token
+  url: {{host}}/oauth2/refresh
   body: json
   auth: inherit
 }
@@ -14,7 +14,24 @@ body:json {
   {
     "clientId": "10000",
     "clientSecret": "okauth",
-    "grantType": "authorization_code",
-    "refreshToken": ""
+    "grantType": "refresh_token",
+    "refreshToken": "dPOxUs5mO64eYpVk5Lpim6r1ogmx2bLqhTEG2DtEkDSPjN9x45JbUozU2apQ"
   }
+}
+
+docs {
+  ```
+  {
+    "code": 0,
+    "msg": "成功",
+    "data": {
+      "accessToken": "Eo1972X0aF7ckQavICeBk9Fb77x8KeCtxjlb2Uijnj9hdenn62WLbqOJ68Zf",
+      "refreshToken": "dPOxUs5mO64eYpVk5Lpim6r1ogmx2bLqhTEG2DtEkDSPjN9x45JbUozU2apQ",
+      "expiresTime": 1751529718595,
+      "refreshExpiresTime": 1754114448925
+    },
+    "timestamp": 1751522518727,
+    "traceId": "97158cc67052243097158cc670522430"
+  }
+  ```
 }
