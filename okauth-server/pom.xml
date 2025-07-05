@@ -23,7 +23,7 @@
     <parent>
         <groupId>cn.toint</groupId>
         <artifactId>okauth</artifactId>
-        <version>${project.version}</version>
+        <version>1.0.0-20250702111427</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,6 +33,7 @@
         <dependency>
             <groupId>cn.toint</groupId>
             <artifactId>okauth-permission</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
@@ -63,7 +64,7 @@
 
         <dependency>
             <groupId>cn.toint</groupId>
-            <artifactId>oktool</artifactId>
+            <artifactId>oktool-spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>
@@ -100,7 +101,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

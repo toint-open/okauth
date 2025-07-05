@@ -24,7 +24,7 @@ import lombok.Data;
  * @date 2025/7/2
  */
 @Data
-public class OkAuthConfig {
+public class OkAuthClientConfig {
     /**
      * 认证服务地址
      */

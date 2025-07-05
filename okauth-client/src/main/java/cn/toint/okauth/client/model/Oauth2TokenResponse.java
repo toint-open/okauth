@@ -20,12 +20,27 @@ import lombok.Data;
 
 /**
  * @author Toint
- * @date 2025/7/1
+ * @date 2025/7/2
  */
 @Data
-public class OkAuthOauth2BuildAuthorizeUriResponse {
+public class Oauth2TokenResponse {
     /**
-     * 授权链接, 前端拿到地址后跳转该链接
+     * Access-Token 值
      */
-    private String authorizeUri;
+    public String accessToken;
+
+    /**
+     * Refresh-Token 值
+     */
+    public String refreshToken;
+
+    /**
+     * Access-Token 到期时间
+     */
+    public long expiresTime;
+
+    /**
+     * Refresh-Token 到期时间
+     */
+    public long refreshExpiresTime;
 }

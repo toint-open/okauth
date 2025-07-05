@@ -20,27 +20,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-
     <groupId>cn.toint</groupId>
     <artifactId>okauth-demo</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+
     <packaging>pom</packaging>
+
     <modules>
         <module>okauth-demo-client-server</module>
     </modules>
 
     <properties>
+        <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <ok-dependencies.version>1.0.3</ok-dependencies.version>
         <okauth.version>1.0.0-20250702111427</okauth.version>
-        <sa-token.version>1.44.0</sa-token.version>
     </properties>
 
     <dependencyManagement>
@@ -52,9 +50,11 @@
             </dependency>
 
             <dependency>
-                <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-spring-boot3-starter</artifactId>
-                <version>${sa-token.version}</version>
+                <groupId>cn.toint</groupId>
+                <artifactId>ok-dependencies</artifactId>
+                <version>${ok-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

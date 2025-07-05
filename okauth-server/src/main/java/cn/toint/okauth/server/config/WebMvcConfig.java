@@ -18,7 +18,7 @@ package cn.toint.okauth.server.config;
 
 import cn.toint.okauth.server.interceptor.OkAuthLoginInterceptor;
 import cn.toint.okauth.server.properties.OkAuthProperties;
-import cn.toint.oktool.interceptor.TraceIdInterceptor;
+import cn.toint.oktool.spring.boot.interceptor.TraceIdInterceptor;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;

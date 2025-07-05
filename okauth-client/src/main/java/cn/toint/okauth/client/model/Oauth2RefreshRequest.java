@@ -16,23 +16,24 @@
 
 package cn.toint.okauth.client.model;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 /**
  * @author Toint
- * @date 2025/7/3
+ * @date 2025/7/2
  */
 @Data
-public class OkAuthOauth2UserInfoResponse {
-    private Long id;
+public class Oauth2RefreshRequest {
+    @NotBlank
+    private String clientId;
 
-    private String username;
+    @NotBlank
+    private String clientSecret;
 
-    private String name;
+    @NotBlank
+    private String grantType;
 
-    private String phone;
-
-    private LocalDateTime createTime;
+    @NotBlank
+    private String refreshToken;
 }

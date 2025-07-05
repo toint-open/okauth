@@ -23,7 +23,7 @@
     <parent>
         <groupId>cn.toint</groupId>
         <artifactId>okauth</artifactId>
-        <version>${project.version}</version>
+        <version>1.0.0-20250702111427</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -52,7 +52,7 @@
 
         <dependency>
             <groupId>cn.toint</groupId>
-            <artifactId>oktool</artifactId>
+            <artifactId>oktool-spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>
@@ -72,7 +72,7 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

@@ -19,16 +19,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-
     <groupId>cn.toint</groupId>
     <artifactId>okauth</artifactId>
-    <version>${project.version}</version>
+    <version>1.0.0-20250702111427</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -38,42 +31,25 @@
     </modules>
 
     <properties>
-        <project.version>1.0.0-20250702111427</project.version>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <oktool.version>1.2.0-20250703022758</oktool.version>
-        <sa-token.version>1.44.0</sa-token.version>
-        <mybatis-flex.version>1.10.9</mybatis-flex.version>
-        <druid.version>1.2.25</druid.version>
-        <aliyun-sms-version>4.1.2</aliyun-sms-version>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <ok-dependencies.version>1.0.3</ok-dependencies.version>
+        <oktool.version>2.0.0-alpha-3</oktool.version>
+        <springboot.version>3.5.3</springboot.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.aliyun</groupId>
-                <artifactId>dysmsapi20170525</artifactId>
-                <version>${aliyun-sms-version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>cn.toint</groupId>
-                <artifactId>okauth-permission</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.mybatis-flex</groupId>
-                <artifactId>mybatis-flex-spring-boot3-starter</artifactId>
-                <version>${mybatis-flex.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-3-starter</artifactId>
-                <version>${druid.version}</version>
+                <artifactId>ok-dependencies</artifactId>
+                <version>${ok-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>
@@ -83,32 +59,40 @@
             </dependency>
 
             <dependency>
-                <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-spring-boot3-starter</artifactId>
-                <version>${sa-token.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-redis-template</artifactId>
-                <version>${sa-token.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-oauth2</artifactId>
-                <version>${sa-token.version}</version>
+                <groupId>cn.toint</groupId>
+                <artifactId>oktool-spring-boot-starter</artifactId>
+                <version>${oktool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${springboot.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
-            <!--推送maven中央仓库-->
+            <!-- 统一更新pom版本 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.18.0</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+            </plugin>
+
+            <!--上传中央仓库-->
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.7.0</version>
+                <version>0.8.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -133,6 +117,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -146,6 +131,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
                 <configuration>
                     <doclint>none</doclint>
                 </configuration>

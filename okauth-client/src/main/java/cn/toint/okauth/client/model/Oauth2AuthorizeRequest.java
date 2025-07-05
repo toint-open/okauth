@@ -16,6 +16,7 @@
 
 package cn.toint.okauth.client.model;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -23,24 +24,32 @@ import lombok.Data;
  * @date 2025/7/2
  */
 @Data
-public class OkAuthOauth2TokenResponse {
+public class Oauth2AuthorizeRequest {
     /**
-     * Access-Token 值
+     * 授权类型
      */
-    public String accessToken;
+    @NotBlank
+    public String responseType;
 
     /**
-     * Refresh-Token 值
+     * 应用id
      */
-    public String refreshToken;
+    @NotBlank
+    public String clientId;
 
     /**
-     * Access-Token 到期时间
+     * 重定向URL
      */
-    public long expiresTime;
+    @NotBlank
+    public String redirectUri;
 
     /**
-     * Refresh-Token 到期时间
+     * 授权范围
      */
-    public long refreshExpiresTime;
+    public String scope;
+
+    /**
+     * 状态标识
+     */
+    public String state;
 }

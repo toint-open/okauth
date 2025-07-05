@@ -16,24 +16,16 @@
 
 package cn.toint.okauth.client.model;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
  * @author Toint
- * @date 2025/7/2
+ * @date 2025/7/1
  */
 @Data
-public class OkAuthOauth2RefreshRequest {
-    @NotBlank
-    private String clientId;
-
-    @NotBlank
-    private String clientSecret;
-
-    @NotBlank
-    private String grantType;
-
-    @NotBlank
-    private String refreshToken;
+public class Oauth2BuildAuthorizeUriResponse {
+    /**
+     * 授权链接, 前端拿到地址后跳转该链接
+     */
+    private String authorizeUri;
 }

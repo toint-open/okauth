@@ -5,7 +5,7 @@ spring:
             max-wait: 5000
             validation-query: SELECT 1
     profiles:
-        active: @profile.active@
+        active: dev
 server:
     servlet:
         encoding:

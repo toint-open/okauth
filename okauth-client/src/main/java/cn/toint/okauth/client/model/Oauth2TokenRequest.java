@@ -21,10 +21,21 @@ import lombok.Data;
 
 /**
  * @author Toint
- * @date 2025/7/3
+ * @date 2025/7/2
  */
 @Data
-public class OkAuthOauth2UserInfoRequest {
-    @NotBlank(message = "accessToken不能为空")
-    private String accessToken;
+public class Oauth2TokenRequest {
+    @NotBlank
+    private String clientId;
+
+    @NotBlank
+    private String clientSecret;
+
+    @NotBlank
+    private String grantType;
+
+    private String scope;
+
+    @NotBlank
+    private String code;
 }

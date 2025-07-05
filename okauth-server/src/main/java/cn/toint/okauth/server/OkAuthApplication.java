@@ -29,7 +29,7 @@ import java.time.Duration;
 
 @SpringBootApplication(exclude = {SpringDataWebAutoConfiguration.class, SaOAuth2BeanInject.class})
 @Slf4j
-public class TointAuthApplication {
+public class OkAuthApplication {
 
     static {
         Duration timeout = Duration.ofSeconds(10);
@@ -38,6 +38,6 @@ public class TointAuthApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(TointAuthApplication.class, args);
+        SpringApplication.run(OkAuthApplication.class, args);
     }
 }
