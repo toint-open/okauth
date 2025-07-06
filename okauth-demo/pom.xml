@@ -37,24 +37,48 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <ok-dependencies.version>1.0.3</ok-dependencies.version>
         <okauth.version>1.0.0-20250702111427</okauth.version>
+
+        <ok-dependencies.version>1.0.3</ok-dependencies.version>
+        <oktool.version>2.0.0-alpha-4</oktool.version>
+        <oksms.version>1.0.1</oksms.version>
+        <springboot.version>3.5.3</springboot.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>cn.toint</groupId>
-                <artifactId>okauth-client</artifactId>
-                <version>1.0.0-20250702111427</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.toint</groupId>
                 <artifactId>ok-dependencies</artifactId>
                 <version>${ok-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${springboot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.toint</groupId>
+                <artifactId>oktool</artifactId>
+                <version>${oktool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.toint</groupId>
+                <artifactId>oktool-spring-boot-starter</artifactId>
+                <version>${oktool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.toint</groupId>
+                <artifactId>oksms</artifactId>
+                <version>${oksms.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

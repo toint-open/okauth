@@ -23,6 +23,9 @@ import org.dromara.hutool.core.lang.Assert;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.util.Map;
+
 /**
  * @author Toint
  * @date 2025/6/30
@@ -42,10 +45,48 @@ public class OkAuthProperties {
      */
     private String userEncryptKey;
 
+    private Sms sms = new Sms();
+
+
     @PostConstruct
     public void init() {
         Assert.notBlank(userEncryptKey, "用户加密Key不能为空");
         int passwordAesKeyLength = Base64.decode(userEncryptKey).length;
         Assert.isTrue(passwordAesKeyLength == 16, "用户加密Key应为16位字节数组Base64后的字符串, 实际长度: {}", passwordAesKeyLength);
+    }
+
+    /**
+     * 短信
+     */
+    @Data
+    public static class Sms {
+        private boolean enableSms;
+        private String smsKey;
+        private String smsSecret;
+
+        /**
+         * 登录短信
+         */
+        private LoginCode loginCode = new LoginCode();
+
+        @Data
+        public static class LoginCode {
+            private String signName;
+            private String templateCode;
+
+            /**
+             * 验证码有效时间
+             */
+            private Duration timeout =  Duration.ofMinutes(5);
+
+            /**
+             * 模版参数
+             * 可选生成器:
+             * - code4()
+             * - code6()
+             */
+            private Map<String, Object> templateParam;
+
+        }
     }
 }

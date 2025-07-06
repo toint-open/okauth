@@ -17,7 +17,7 @@
 package cn.toint.okauth.demo.clientserver;
 
 import cn.toint.okauth.client.OkAuthClient;
-import cn.toint.okauth.client.OkAuthConfig;
+import cn.toint.okauth.client.OkAuthClientConfig;
 import cn.toint.okauth.client.constant.OkAuthConstant;
 import cn.toint.okauth.client.impl.OkAuthClientImpl;
 import cn.toint.okauth.client.model.*;
@@ -46,7 +46,7 @@ public class OkAuthDemoClientServerController {
     private final OkAuthClient okAuthClient = initClient();
 
     private OkAuthClient initClient() {
-        OkAuthConfig okAuthConfig = new OkAuthConfig();
+        OkAuthClientConfig okAuthConfig = new OkAuthClientConfig();
         okAuthConfig.setServerUri("http://127.0.0.1:8080");
         okAuthConfig.setAuthorizeUri("http://127.0.0.1:18080/oauth2/authorize");
         okAuthConfig.setClientId("10000");
@@ -81,7 +81,7 @@ public class OkAuthDemoClientServerController {
      * 4. 访问后端执行授权[authorize]获取带code的回调地址
      */
     @GetMapping("/oauth2/authorize")
-    public RedirectView authorize(@RequestParam(required = false) String state) {
+    public RedirectView authorize(@RequestParam("state") String state) {
         // 账号密码登录
         OkAuthUserLoginByPasswordRequest request = new OkAuthUserLoginByPasswordRequest();
         request.setUsername("admin");
@@ -107,13 +107,13 @@ public class OkAuthDemoClientServerController {
      * 6. 刷新accessToken
      */
     @GetMapping("/client")
-    public void client(@RequestParam String code, @RequestParam String state) {
+    public void client(@RequestParam("code") String code, @RequestParam("state") String state) {
         // 验证state
         Assert.isTrue(stateCache.containsKey(state), "state不匹配");
         stateCache.remove(state);
 
         //  拿code换取accessToken
-        OkAuthConfig okAuthConfig = okAuthClient.getConfig();
+        OkAuthClientConfig okAuthConfig = okAuthClient.getConfig();
         Oauth2TokenRequest oauth2TokenRequest = new Oauth2TokenRequest();
         oauth2TokenRequest.setClientId(okAuthConfig.getClientId());
         oauth2TokenRequest.setClientSecret(okAuthConfig.getClientSecret());

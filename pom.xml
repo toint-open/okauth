@@ -38,7 +38,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <ok-dependencies.version>1.0.3</ok-dependencies.version>
-        <oktool.version>2.0.0-alpha-3</oktool.version>
+        <oktool.version>2.0.0-alpha-4</oktool.version>
+        <oksms.version>1.0.1</oksms.version>
         <springboot.version>3.5.3</springboot.version>
     </properties>
 
@@ -53,6 +54,14 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${springboot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>cn.toint</groupId>
                 <artifactId>oktool</artifactId>
                 <version>${oktool.version}</version>
@@ -62,6 +71,12 @@
                 <groupId>cn.toint</groupId>
                 <artifactId>oktool-spring-boot-starter</artifactId>
                 <version>${oktool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.toint</groupId>
+                <artifactId>oksms</artifactId>
+                <version>${oksms.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

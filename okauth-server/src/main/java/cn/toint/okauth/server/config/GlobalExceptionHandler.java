@@ -18,10 +18,10 @@ package cn.toint.okauth.server.config;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
-import cn.toint.okauth.server.exception.OkAuthUserNotExistException;
-import cn.toint.okauth.server.exception.OkAuthUserPasswordException;
+import cn.toint.okauth.server.exception.UserNotExistException;
+import cn.toint.okauth.server.exception.UserPasswordException;
 import cn.toint.okauth.server.model.ErrEnum;
-import cn.toint.okauth.server.model.OkAuthResponse;
+import cn.toint.okauth.server.model.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,45 +38,45 @@ public class GlobalExceptionHandler {
     /**
      * 用户不存在
      */
-    @ExceptionHandler(OkAuthUserNotExistException.class)
-    public OkAuthResponse<Void> exception(OkAuthUserNotExistException e) {
+    @ExceptionHandler(UserNotExistException.class)
+    public Response<Void> exception(UserNotExistException e) {
         log.error(e.getMessage());
-        return OkAuthResponse.fail(OkAuthUserNotExistException.ERR);
+        return Response.fail(UserNotExistException.ERR);
     }
 
     /**
      * 密码异常
      */
-    @ExceptionHandler(OkAuthUserPasswordException.class)
-    public OkAuthResponse<Void> exception(OkAuthUserPasswordException e) {
+    @ExceptionHandler(UserPasswordException.class)
+    public Response<Void> exception(UserPasswordException e) {
         log.error(e.getMessage());
-        return OkAuthResponse.fail(OkAuthUserPasswordException.ERR);
+        return Response.fail(UserPasswordException.ERR);
     }
 
     /**
      * 无权限
      */
     @ExceptionHandler(NotPermissionException.class)
-    public OkAuthResponse<Void> exception(NotPermissionException e) {
+    public Response<Void> exception(NotPermissionException e) {
         log.error(e.getMessage());
-        return OkAuthResponse.fail(ErrEnum.NOT_PERMISSION);
+        return Response.fail(ErrEnum.NOT_PERMISSION);
     }
 
     /**
      * 未登录
      */
     @ExceptionHandler(NotLoginException.class)
-    public OkAuthResponse<Void> exception(NotLoginException e) {
+    public Response<Void> exception(NotLoginException e) {
         log.error(e.getMessage());
-        return OkAuthResponse.fail(ErrEnum.NOT_LOGIN);
+        return Response.fail(ErrEnum.NOT_LOGIN);
     }
 
     /**
      * 通用异常
      */
     @ExceptionHandler(Exception.class)
-    public OkAuthResponse<Void> exception(Exception e) {
+    public Response<Void> exception(Exception e) {
         log.error(e.getMessage(), e);
-        return OkAuthResponse.fail(e.getMessage());
+        return Response.fail(e.getMessage());
     }
 }

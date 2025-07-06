@@ -16,7 +16,7 @@
 
 package cn.toint.okauth.server.config;
 
-import cn.toint.okauth.server.interceptor.OkAuthLoginInterceptor;
+import cn.toint.okauth.server.interceptor.LoginInterceptor;
 import cn.toint.okauth.server.properties.OkAuthProperties;
 import cn.toint.oktool.spring.boot.interceptor.TraceIdInterceptor;
 import jakarta.annotation.Resource;
@@ -33,7 +33,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private OkAuthProperties okAuthProperties;
 
     @Resource
-    private OkAuthLoginInterceptor loginInterceptor;
+    private LoginInterceptor loginInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

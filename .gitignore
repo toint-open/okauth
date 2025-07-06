@@ -100,3 +100,5 @@ log/
 # 部署目录
 *.zip
 
+application-local.yml
+

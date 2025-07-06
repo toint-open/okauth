@@ -16,9 +16,9 @@
 
 package cn.toint.okauth.server.openclient.service;
 
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientDo;
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientSaveRequest;
-import cn.toint.okauth.server.openclient.model.OkAuthOpenClientUpdateRequest;
+import cn.toint.okauth.server.openclient.model.OpenClientDo;
+import cn.toint.okauth.server.openclient.model.OpenClientSaveRequest;
+import cn.toint.okauth.server.openclient.model.OpenClientUpdateRequest;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public interface OkAuthOpenClientService {
     /**
      * 加载开放应用
      */
-    void load(OkAuthOpenClientDo openClientDo);
+    void load(OpenClientDo openClientDo);
 
     /**
      * 写在开放应用
@@ -42,12 +42,12 @@ public interface OkAuthOpenClientService {
     /**
      * 添加开放应用
      */
-    OkAuthOpenClientDo save(OkAuthOpenClientSaveRequest req);
+    OpenClientDo save(OpenClientSaveRequest req);
 
     /**
      * 修改开放应用
      */
-    void update(OkAuthOpenClientUpdateRequest res);
+    void update(OpenClientUpdateRequest res);
 
     /**
      * 开放应用是否存在
@@ -57,7 +57,7 @@ public interface OkAuthOpenClientService {
     /**
      * 列表查询所有开放应用
      */
-    List<OkAuthOpenClientDo> listAll();
+    List<OpenClientDo> listAll();
 
     /**
      * 查询客户端
@@ -65,5 +65,5 @@ public interface OkAuthOpenClientService {
      * @param id 客户端ID
      * @return 客户端对象
      */
-    OkAuthOpenClientDo getById(Long id);
+    OpenClientDo getById(Long id);
 }
