@@ -1,0 +1,19 @@
+meta {
+  name: 发送验证码
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/user/login/sendSms
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "clientId": 10000,
+    "phone": "15857899732",
+    "token": "token_baab1a60a89c"
+  }
+}

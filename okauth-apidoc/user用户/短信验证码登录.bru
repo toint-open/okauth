@@ -1,0 +1,41 @@
+meta {
+  name: 短信验证码登录
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}/user/login/sms
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "code": "6537"
+  }
+}
+
+docs {
+  ```
+  {
+    "code": 0,
+    "msg": "成功",
+    "data": {
+      "user": {
+        "id": 10000,
+        "username": "admin",
+        "name": "admin",
+        "phone": null
+      },
+      "token": {
+        "tokenName": "Authorization",
+        "tokenValue": "df9508973d6548a0917313a86300afe2",
+        "tokenTimeout": 2592000
+      }
+    },
+    "timestamp": 1751522172771,
+    "traceId": "81e438dbd687301281e438dbd6873012"
+  }
+  ```
+}

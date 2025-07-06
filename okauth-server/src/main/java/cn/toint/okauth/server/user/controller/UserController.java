@@ -43,8 +43,8 @@ public class UserController {
      */
     @PostMapping("/user/login/sendSms")
     @SaIgnore
-    public Response<Void> sendSms(@RequestBody UserLoginSendSmsRequest request) {
-        userService.sendSms(request);
+    public Response<Void> sendLoginSms(@RequestBody UserLoginSendSmsRequest request) {
+        userService.sendLoginSms(request);
         return Response.success();
     }
 

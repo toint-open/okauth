@@ -43,5 +43,5 @@ public interface UserService {
     /**
      * 发送登录短信验证码
      */
-    void sendSms(UserLoginSendSmsRequest request);
+    void sendLoginSms(UserLoginSendSmsRequest request);
 }

@@ -44,4 +44,7 @@ public class UserDo extends BaseDo {
 
     @Column
     private String phone;
+
+    @Column
+    private String email;
 }

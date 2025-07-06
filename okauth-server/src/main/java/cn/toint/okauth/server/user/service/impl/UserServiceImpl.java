@@ -19,7 +19,6 @@ package cn.toint.okauth.server.user.service.impl;
 import cn.dev33.satoken.context.mock.SaTokenContextMockUtil;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.toint.okauth.server.exception.UserNotExistException;
 import cn.toint.okauth.server.exception.UserPasswordException;
 import cn.toint.okauth.server.properties.OkAuthProperties;
 import cn.toint.okauth.server.user.event.UserLoginEvent;
@@ -38,12 +37,14 @@ import cn.toint.oktool.util.Assert;
 import cn.toint.oktool.util.JacksonUtil;
 import cn.toint.oktool.util.KeyBuilderUtil;
 import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.util.SqlUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.bean.BeanUtil;
+import org.dromara.hutool.core.data.PasswdStrength;
 import org.dromara.hutool.core.lang.Validator;
-import org.dromara.hutool.core.text.StrUtil;
+import org.dromara.hutool.core.util.RandomUtil;
 import org.dromara.hutool.extra.spring.SpringUtil;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
@@ -97,20 +99,25 @@ public class UserServiceImpl implements UserService {
 
         // 校验用户是否存在
         UserDo userDo = userMapper.selectOneByQuery(
-                QueryWrapper.create().eq(UserDo::getUsername, username));
+                QueryWrapper.create()
+                        .where(UserDo::getUsername).eq(username)
+                        .or(UserDo::getPhone).eq(username)
+                        .or(UserDo::getEmail).eq(username));
+
         if (userDo == null) {
-            throw new UserNotExistException(StrUtil.format("账号[{}]不存在", username));
+            // 用户不存在, 自动注册
+            userDo = register(username, password);
+        } else {
+            // 用户存在, 登录校验
+            if (!Objects.equals(userDo.getPassword(), userEncryptService.encrypt(password))) {
+                throw new UserPasswordException("密码错误");
+            }
         }
 
-        // 校验密码是否一致
-        password = userEncryptService.encrypt(password);
-        if (!Objects.equals(userDo.getPassword(), password)) {
-            throw new UserPasswordException("密码错误");
-        }
-
-        // 登录
+        // 执行到这里说明这个用户一切正常, 获取用户的登录信息返回给客户端
+        AtomicReference<UserDo> finalUserDo = new AtomicReference<>(userDo);
         SaTokenInfo tokenInfo = SaTokenContextMockUtil.setMockContext(() -> {
-            StpUtil.login(userDo.getId());
+            StpUtil.login(finalUserDo.get().getId());
             return StpUtil.getTokenInfo();
         });
 
@@ -130,6 +137,46 @@ public class UserServiceImpl implements UserService {
         return loginResponse;
     }
 
+    /**
+     * 注册用户
+     *
+     * @param username 账号
+     * @param password 密码明文
+     * @return 注册的用户对象
+     */
+    private UserDo register(String username, String password) {
+        Assert.notBlank(username, "用户名不能为空");
+        Assert.notBlank(password, "密码不能为空");
+
+        // 校验用户名
+        Assert.isTrue(username.length() >= 3, "您的用户名过短");
+        Assert.isTrue(username.length() <= 20, "您的用户名过长");
+        Assert.isTrue(username.matches("^[a-z0-9]+$"), "用户名只允许包含小写字母或数字");
+
+        // 校验密码
+        Assert.isTrue(password.length() >= 6, "您的密码过短");
+        Assert.isTrue(password.length() <= 20, "您的密码过长");
+        Assert.isTrue(password.matches("^[A-Za-z0-9]+$"), "密码只允许包含字母或数字");
+        Assert.isTrue(PasswdStrength.check(password) >= 4, "您的密码太简单");
+        String encryptPassword = userEncryptService.encrypt(password);
+
+        // 昵称
+        StringBuilder nickName = new StringBuilder();
+        nickName.append("用户");
+        for (int i = 0; i < 5; i++) {
+            nickName.append(RandomUtil.randomChar(RandomUtil.BASE_CHAR));
+        }
+
+        UserDo userDo = new UserDo();
+        userDo.init();
+        userDo.setUsername(username);
+        userDo.setPassword(encryptPassword);
+        userDo.setName(nickName.toString());
+        int insertStatus = userMapper.insert(userDo);
+        Assert.isTrue(SqlUtil.toBool(insertStatus), "用户账号创建失败");
+        return userDo;
+    }
+
     @Override
     public UserDo getById(Long userId) {
         Assert.notNull(userId, "userId不能为空");
@@ -141,7 +188,7 @@ public class UserServiceImpl implements UserService {
         Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request, "请求参数校验失败: {}");
 
-        // 校验验证码
+        // 校验验证码, 成功后删除
         String phone = cache.get(buildLoginCodeCacheKey(request.getCode()));
         Assert.notBlank(phone, "验证码错误");
 
@@ -151,7 +198,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendSms(UserLoginSendSmsRequest request) {
+    public void sendLoginSms(UserLoginSendSmsRequest request) {
         Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request, "请求参数校验失败: {}");
         Assert.notNull(aliyunSmsClient, "未开启短信服务");
@@ -234,5 +281,6 @@ public class UserServiceImpl implements UserService {
         aliyunSmsClientConfig.setAccessKeySecret(smsSecret);
         aliyunSmsClientConfig.regionId(AliyunRegionEnum.CN_HANGZHOU);
         aliyunSmsClient = SmsUtil.aliyunSms(aliyunSmsClientConfig);
+        log.info("阿里云短信客户端初始化成功");
     }
 }
