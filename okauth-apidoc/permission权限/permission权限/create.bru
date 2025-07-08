@@ -1,0 +1,25 @@
+meta {
+  name: create
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/permission/create
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "parentId": 0,
+    "type": 0,
+    "name": "name_e1e392f6cc5d",
+    "path": "path_2a91987141d7",
+    "component": "component_69ee0d6f1616",
+    "componentName": "componentName_acd2c5096cb7",
+    "icon": "icon_985759b0ee7e",
+    "order": 0,
+    "code": "code_6e252565f716"
+  }
+}

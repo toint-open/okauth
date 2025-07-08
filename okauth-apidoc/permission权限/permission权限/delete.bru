@@ -1,0 +1,15 @@
+meta {
+  name: delete
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{host}}/permission/delete?id=123
+  body: none
+  auth: inherit
+}
+
+params:query {
+  id: 123
+}

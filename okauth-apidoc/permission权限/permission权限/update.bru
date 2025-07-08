@@ -1,0 +1,25 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{host}}/permission/update
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "parentId": 0,
+    "type": 0,
+    "name": "name_6e62c47b092a",
+    "path": "path_a204c5fae6e3",
+    "component": "component_6ad109c017b2",
+    "componentName": "componentName_618b3cec416c",
+    "icon": "icon_36d47535beab",
+    "order": 0,
+    "code": "code_9c8b6007db88"
+  }
+}
