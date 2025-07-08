@@ -21,20 +21,15 @@ import cn.toint.okauth.permission.model.*;
 import cn.toint.okauth.permission.service.PermissionService;
 import cn.toint.oktool.util.Assert;
 import cn.toint.oktool.util.ExceptionUtil;
-import cn.toint.oktool.util.JacksonUtil;
-import cn.toint.oktool.util.KeyBuilderUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.util.SqlUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,15 +95,14 @@ public class PermissionServiceImpl implements PermissionService {
     public Set<String> listPermissionCode(Long userId) {
         Assert.notNull(userId, "用户ID不能为空");
 
-        // 从缓存找
-        String key = KeyBuilderUtil.of("okauth").add("permissionCode").build(userId.toString());
-        String cacheValue = stringRedisTemplate.opsForValue().get(key);
-
-        if (StringUtils.isNotBlank(cacheValue)) {
-            log.debug("listPermission命中缓存");
-            return JacksonUtil.readValue(cacheValue, new TypeReference<>() {
-            });
-        }
+//        // 从缓存找
+//        String key = KeyBuilderUtil.of("okauth").add("permissionCode").build(userId.toString());
+//        String cacheValue = stringRedisTemplate.opsForValue().get(key);
+//        if (StringUtils.isNotBlank(cacheValue)) {
+//            log.debug("listPermission命中缓存");
+//            return JacksonUtil.readValue(cacheValue, new TypeReference<>() {
+//            });
+//        }
 
         log.debug("listPermission未命中缓存");
         Set<Long> allPermissionIds = new HashSet<>();
@@ -138,9 +132,9 @@ public class PermissionServiceImpl implements PermissionService {
                     .forEach(codes::add);
         }
 
-        stringRedisTemplate.opsForValue().set(key,
-                JacksonUtil.writeValueAsString(codes),
-                Duration.ofHours(1));
+//        stringRedisTemplate.opsForValue().set(key,
+//                JacksonUtil.writeValueAsString(codes),
+//                Duration.ofHours(1));
         return codes;
     }
 
@@ -269,13 +263,13 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<DeptTreeResponse> listDeptTree() {
-        // 尝试从缓存中查找
-        String key = KeyBuilderUtil.of("okauth").add("deptTree").build("all");
-        String cacheStr = stringRedisTemplate.opsForValue().get(key);
-        if (StringUtils.isNotBlank(cacheStr)) {
-            return JacksonUtil.readValue(cacheStr, new TypeReference<>() {
-            });
-        }
+//        // 尝试从缓存中查找
+//        String key = KeyBuilderUtil.of("okauth").add("deptTree").build("all");
+//        String cacheStr = stringRedisTemplate.opsForValue().get(key);
+//        if (StringUtils.isNotBlank(cacheStr)) {
+//            return JacksonUtil.readValue(cacheStr, new TypeReference<>() {
+//            });
+//        }
 
         // 查询所有部门
         List<DeptDo> deptDos = deptMapper.selectAll();
@@ -328,7 +322,7 @@ public class PermissionServiceImpl implements PermissionService {
             }
         }
 
-        stringRedisTemplate.opsForValue().set(key, JacksonUtil.writeValueAsString(roots), Duration.ofHours(1));
+//        stringRedisTemplate.opsForValue().set(key, JacksonUtil.writeValueAsString(roots), Duration.ofHours(1));
         return roots;
     }
 
@@ -344,6 +338,7 @@ public class PermissionServiceImpl implements PermissionService {
         Assert.validate(request);
 
         PermissionDo permissionDo = BeanUtil.copyProperties(request, new PermissionDo());
+        permissionDo.init();
         if (permissionDo.getOrder() == null) {
             permissionDo.setOrder(0);
         }
@@ -354,10 +349,23 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public void updatePermission(PermissionUpdateRequest request) {
         Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
+        // 检查是否存在
+        boolean hasPermissionById = hasPermissionById(request.getId());
+        Assert.isTrue(hasPermissionById, "权限不存在");
 
         PermissionDo permissionDo = BeanUtil.copyProperties(request, new PermissionDo());
         int updated = permissionMapper.update(permissionDo);
         Assert.isTrue(SqlUtil.toBool(updated), "修改失败");
+    }
+
+    @Override
+    public boolean hasPermissionById(Long id) {
+        if (id == null) {
+            return false;
+        }
+        return permissionMapper.selectOneById(id) != null;
     }
 
     @Override
@@ -368,13 +376,13 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<PermissionTreeResponse> listPermissionTree() {
-        // 尝试从缓存中查找
-        String key = KeyBuilderUtil.of("okauth").add("permissionTree").build("all");
-        String cacheStr = stringRedisTemplate.opsForValue().get(key);
-        if (StringUtils.isNotBlank(cacheStr)) {
-            return JacksonUtil.readValue(cacheStr, new TypeReference<>() {
-            });
-        }
+//        // 尝试从缓存中查找
+//        String key = KeyBuilderUtil.of("okauth").add("permissionTree").build("all");
+//        String cacheStr = stringRedisTemplate.opsForValue().get(key);
+//        if (StringUtils.isNotBlank(cacheStr)) {
+//            return JacksonUtil.readValue(cacheStr, new TypeReference<>() {
+//            });
+//        }
 
         // 查询所有权限
         List<PermissionDo> permissionDos = permissionMapper.selectAll();
@@ -425,7 +433,7 @@ public class PermissionServiceImpl implements PermissionService {
             }
         }
 
-        stringRedisTemplate.opsForValue().set(key, JacksonUtil.writeValueAsString(roots), Duration.ofHours(1));
+//        stringRedisTemplate.opsForValue().set(key, JacksonUtil.writeValueAsString(roots), Duration.ofHours(1));
         return roots;
     }
 }

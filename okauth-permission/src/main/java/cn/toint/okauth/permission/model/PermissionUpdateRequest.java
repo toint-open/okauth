@@ -16,10 +16,17 @@
 
 package cn.toint.okauth.permission.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class PermissionUpdateRequest {
+    /**
+     * 权限ID
+     */
+    @NotNull
+    private Long id;
+
     /**
      * 父菜单ID
      */

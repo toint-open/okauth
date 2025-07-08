@@ -43,13 +43,16 @@ public class PermissionController {
     /**
      * 查询权限树
      */
-    @PostMapping("/permission/listPermissionTree")
+    @PostMapping("/permission/listTree")
     public Response<List<PermissionTreeResponse>> listPermissionTree() {
         StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
         List<PermissionTreeResponse> permissionTreeResponses = permissionService.listPermissionTree();
         return Response.success(permissionTreeResponses);
     }
 
+    /**
+     * 查询权限
+     */
     @PostMapping("/permission/getById")
     Response<PermissionDo> getById(@RequestParam("id") Long id) {
         StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
@@ -57,6 +60,9 @@ public class PermissionController {
         return Response.success(permissionDo);
     }
 
+    /**
+     * 添加权限
+     */
     @PostMapping("/permission/create")
     Response<Void> createPermissionAdmin(@RequestBody PermissionCreateRequest request) {
         StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
@@ -64,6 +70,9 @@ public class PermissionController {
         return Response.success();
     }
 
+    /**
+     * 修改权限
+     */
     @PostMapping("/permission/update")
     Response<Void> updatePermission(@RequestBody PermissionUpdateRequest request) {
         StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
@@ -71,6 +80,9 @@ public class PermissionController {
         return Response.success();
     }
 
+    /**
+     * 删除权限
+     */
     @PostMapping("/permission/delete")
     Response<Void> deletePermission(@RequestParam("id") Long id) {
         StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
@@ -79,7 +91,7 @@ public class PermissionController {
     }
 
     /**
-     * 列表查询角色
+     * 查询角色
      */
     @PostMapping("/role/list")
     public Response<List<RoleDo>> listRole() {

@@ -59,5 +59,7 @@ public interface PermissionService {
 
     void updatePermission(PermissionUpdateRequest request);
 
+    boolean hasPermissionById(Long id);
+
     void deletePermission(Long id);
 }
