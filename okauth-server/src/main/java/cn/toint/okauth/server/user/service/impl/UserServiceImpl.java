@@ -52,7 +52,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
@@ -114,10 +113,18 @@ public class UserServiceImpl implements UserService {
             }
         }
 
+        return checkSuccessThenLogin(userDo);
+    }
+
+    /**
+     * 校验成功后执行登录, 特别注意: 必须是经过登录判断后才可调用本方法, 本方法无任何判断能力
+     */
+    private UserLoginResponse checkSuccessThenLogin(UserDo userDo) {
+        Assert.notNull(userDo, "非法参数");
+
         // 执行到这里说明这个用户一切正常, 获取用户的登录信息返回给客户端
-        AtomicReference<UserDo> finalUserDo = new AtomicReference<>(userDo);
         SaTokenInfo tokenInfo = SaTokenContextMockUtil.setMockContext(() -> {
-            StpUtil.login(finalUserDo.get().getId());
+            StpUtil.login(userDo.getId());
             return StpUtil.getTokenInfo();
         });
 
@@ -161,20 +168,28 @@ public class UserServiceImpl implements UserService {
         String encryptPassword = userEncryptService.encrypt(password);
 
         // 昵称
-        StringBuilder nickName = new StringBuilder();
-        nickName.append("用户");
-        for (int i = 0; i < 5; i++) {
-            nickName.append(RandomUtil.randomChar(RandomUtil.BASE_CHAR));
-        }
+        String nickName = genNickName();
 
         UserDo userDo = new UserDo();
         userDo.init();
         userDo.setUsername(username);
         userDo.setPassword(encryptPassword);
-        userDo.setName(nickName.toString());
+        userDo.setName(nickName);
         int insertStatus = userMapper.insert(userDo);
         Assert.isTrue(SqlUtil.toBool(insertStatus), "用户账号创建失败");
         return userDo;
+    }
+
+    /**
+     * 生成用户昵称
+     */
+    private String genNickName() {
+        StringBuilder nickNameBuilder = new StringBuilder();
+        nickNameBuilder.append("用户");
+        for (int i = 0; i < 5; i++) {
+            nickNameBuilder.append(RandomUtil.randomChar(RandomUtil.BASE_CHAR));
+        }
+        return nickNameBuilder.toString();
     }
 
     @Override
@@ -189,12 +204,30 @@ public class UserServiceImpl implements UserService {
         Assert.validate(request, "请求参数校验失败: {}");
 
         // 校验验证码, 成功后删除
-        String phone = cache.get(buildLoginCodeCacheKey(request.getCode()));
+        String cacheKey = buildLoginCodeCacheKey(request.getCode());
+        String phone = cache.get(cacheKey);
         Assert.notBlank(phone, "验证码错误");
+        // todo 等待oktool更新后替换本方法
+        cache.put(cacheKey, "", Duration.ofSeconds(1));
 
-        log.info("手机号码验证成功: {}", phone);
+        // 查询账号,
+        UserDo userDo = getByPhone(phone);
+        if (userDo == null) {
+            userDo = new UserDo();
+            userDo.init();
+            userDo.setPhone(phone);
+            userDo.setName(genNickName());
+            int inserted = userMapper.insert(userDo);
+            Assert.isTrue(SqlUtil.toBool(inserted), "账号创建失败");
+        }
 
-        return null;
+        return checkSuccessThenLogin(userDo);
+    }
+
+    @Override
+    public UserDo getByPhone(String phone) {
+        Assert.notBlank(phone, "查询的手机号码不能为空");
+        return userMapper.selectOneByQuery(QueryWrapper.create().eq(UserDo::getPhone, phone));
     }
 
     @Override

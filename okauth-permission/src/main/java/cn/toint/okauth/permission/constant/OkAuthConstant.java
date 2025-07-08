@@ -25,4 +25,11 @@ public class OkAuthConstant {
      * 数据源名称
      */
     public static final String DATA_SOURCE = "okauth-permission";
+
+    public static class Role {
+        /**
+         * 管理员角色
+         */
+        public static final String ROLE_ADMIN = "admin";
+    }
 }

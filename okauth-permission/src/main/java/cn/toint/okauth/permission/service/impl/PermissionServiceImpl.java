@@ -25,6 +25,7 @@ import cn.toint.oktool.util.JacksonUtil;
 import cn.toint.oktool.util.KeyBuilderUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.util.SqlUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -329,6 +330,40 @@ public class PermissionServiceImpl implements PermissionService {
 
         stringRedisTemplate.opsForValue().set(key, JacksonUtil.writeValueAsString(roots), Duration.ofHours(1));
         return roots;
+    }
+
+    @Override
+    public PermissionDo getById(Long id) {
+        Assert.notNull(id, "id不能为空");
+        return permissionMapper.selectOneById(id);
+    }
+
+    @Override
+    public void create(PermissionCreateRequest request) {
+        Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
+        PermissionDo permissionDo = BeanUtil.copyProperties(request, new PermissionDo());
+        if (permissionDo.getOrder() == null) {
+            permissionDo.setOrder(0);
+        }
+        int inserted = permissionMapper.insert(permissionDo);
+        Assert.isTrue(SqlUtil.toBool(inserted), "添加失败");
+    }
+
+    @Override
+    public void updatePermission(PermissionUpdateRequest request) {
+        Assert.notNull(request, "请求参数不能为空");
+
+        PermissionDo permissionDo = BeanUtil.copyProperties(request, new PermissionDo());
+        int updated = permissionMapper.update(permissionDo);
+        Assert.isTrue(SqlUtil.toBool(updated), "修改失败");
+    }
+
+    @Override
+    public void deletePermission(Long id) {
+        Assert.notNull(id, "id不能为空");
+        permissionMapper.deleteById(id);
     }
 
     @Override

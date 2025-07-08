@@ -16,9 +16,7 @@
 
 package cn.toint.okauth.permission.service;
 
-import cn.toint.okauth.permission.model.DeptTreeResponse;
-import cn.toint.okauth.permission.model.PermissionTreeResponse;
-import cn.toint.okauth.permission.model.RoleDo;
+import cn.toint.okauth.permission.model.*;
 
 import java.util.List;
 import java.util.Set;
@@ -54,4 +52,12 @@ public interface PermissionService {
      * 有缓存
      */
     List<DeptTreeResponse> listDeptTree();
+
+    PermissionDo getById(Long id);
+
+    void create(PermissionCreateRequest request);
+
+    void updatePermission(PermissionUpdateRequest request);
+
+    void deletePermission(Long id);
 }

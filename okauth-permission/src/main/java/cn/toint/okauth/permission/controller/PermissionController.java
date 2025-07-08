@@ -16,9 +16,17 @@
 
 package cn.toint.okauth.permission.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
+import cn.toint.okauth.permission.constant.OkAuthConstant;
+import cn.toint.okauth.permission.model.*;
 import cn.toint.okauth.permission.service.PermissionService;
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 权限
@@ -28,26 +36,65 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class PermissionController {
+
     @Resource
     private PermissionService permissionService;
 
-//    /**
-//     * 列表查询角色
-//     */
-//    @PostMapping("/role/list")
-//    public ResponseVo<List<RoleDo>> listRole() {
-//        List<RoleDo> roleDos = permissionService.listRole(StpUtil.getLoginIdAsLong());
-//        return ResponseVo.success(roleDos);
-//    }
-//
+    /**
+     * 查询权限树
+     */
+    @PostMapping("/permission/listPermissionTree")
+    public Response<List<PermissionTreeResponse>> listPermissionTree() {
+        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
+        List<PermissionTreeResponse> permissionTreeResponses = permissionService.listPermissionTree();
+        return Response.success(permissionTreeResponses);
+    }
+
+    @PostMapping("/permission/getById")
+    Response<PermissionDo> getById(@RequestParam("id") Long id) {
+        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
+        PermissionDo permissionDo = permissionService.getById(id);
+        return Response.success(permissionDo);
+    }
+
+    @PostMapping("/permission/create")
+    Response<Void> createPermissionAdmin(@RequestBody PermissionCreateRequest request) {
+        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
+        permissionService.create(request);
+        return Response.success();
+    }
+
+    @PostMapping("/permission/update")
+    Response<Void> updatePermission(@RequestBody PermissionUpdateRequest request) {
+        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
+        permissionService.updatePermission(request);
+        return Response.success();
+    }
+
+    @PostMapping("/permission/delete")
+    Response<Void> deletePermission(@RequestParam("id") Long id) {
+        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
+        permissionService.deletePermission(id);
+        return Response.success();
+    }
+
+    /**
+     * 列表查询角色
+     */
+    @PostMapping("/role/list")
+    public Response<List<RoleDo>> listRole() {
+        List<RoleDo> roleDos = permissionService.listRole(StpUtil.getLoginIdAsLong());
+        return Response.success(roleDos);
+    }
+
 //    /**
 //     * 列表查询角色-admin
 //     */
 //    @PostMapping("/role/list/admin")
 //    @SaCheckPermission("role:list")
-//    public ResponseVo<List<RoleDo>> listRoleAdmin() {
+//    public Response<List<RoleDo>> listRoleAdmin() {
 //        List<RoleDo> roleDos = permissionService.listRole();
-//        return ResponseVo.success(roleDos);
+//        return Response.success(roleDos);
 //    }
 
 }

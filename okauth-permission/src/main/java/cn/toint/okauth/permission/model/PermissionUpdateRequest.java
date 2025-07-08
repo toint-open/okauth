@@ -14,39 +14,54 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.service;
+package cn.toint.okauth.permission.model;
 
-import cn.toint.okauth.server.user.model.*;
+import lombok.Data;
 
-/**
- * 用户
- *
- * @author Toint
- * @date 2025/6/29
- */
-public interface UserService {
+@Data
+public class PermissionUpdateRequest {
     /**
-     * 账号密码登录
+     * 父菜单ID
      */
-    UserLoginResponse login(UserLoginByPasswordRequest request);
+    private Long parentId;
 
     /**
-     * 短信验证码登录
+     * 菜单类型
      */
-    UserLoginResponse login(UserLoginBySmsRequest request);
+    private Integer type;
 
     /**
-     * 发送登录短信验证码
+     * 权限名称
      */
-    void sendLoginSms(UserLoginSendSmsRequest request);
+    private String name;
 
     /**
-     * 查询用户
+     * 访问路径
      */
-    UserDo getById(Long userId);
+    private String path;
 
     /**
-     * 查询用户
+     * 前端组件
      */
-    UserDo getByPhone(String phone);
+    private String component;
+
+    /**
+     * 组件名称
+     */
+    private String componentName;
+
+    /**
+     * 菜单图标
+     */
+    private String icon;
+
+    /**
+     * 排序
+     */
+    private Integer order;
+
+    /**
+     * 权限标识
+     */
+    private String code;
 }
