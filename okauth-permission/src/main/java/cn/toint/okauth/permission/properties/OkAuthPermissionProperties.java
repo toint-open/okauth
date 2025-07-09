@@ -14,27 +14,18 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.model;
+package cn.toint.okauth.permission.properties;
 
-import cn.toint.okauth.permission.constant.OkAuthConstant;
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Table;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-/**
- * 部门关联权限
- *
- * @author Toint
- * @date 2025/6/29
- */
-@Table(value = "dept_mtm_permission", dataSource = OkAuthConstant.DATA_SOURCE)
-@EqualsAndHashCode(callSuper = true)
+import java.time.Duration;
+
 @Data
-public class DeptMtmPermissionDo extends BaseDo {
-    @Column
-    private Long deptId;
-
-    @Column
-    private Long permissionId;
+@ConfigurationProperties(prefix = "okauth.permission")
+public class OkAuthPermissionProperties {
+    /**
+     * 缓存时间
+     */
+    private Duration cacheTimeout = Duration.ofHours(1);
 }

@@ -16,25 +16,11 @@
 
 package cn.toint.okauth.permission.model;
 
-import cn.toint.okauth.permission.constant.OkAuthConstant;
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Table;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-/**
- * 用户关联菜单权限
- *
- * @author Toint
- * @date 2025/6/29
- */
-@Table(value = "user_mtm_permission", dataSource = OkAuthConstant.DATA_SOURCE)
-@EqualsAndHashCode(callSuper = true)
+import java.util.List;
+
 @Data
-public class UserMtmPermissionDo extends BaseDo {
-    @Column
-    private Long userId;
-
-    @Column
-    private Long permissionId;
+public class PermissionDeleteRequest {
+    private List<Long> ids;
 }

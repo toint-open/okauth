@@ -16,15 +16,15 @@
 
 package cn.toint.okauth.server.user.service.impl;
 
+import cn.toint.okauth.permission.model.PermissionDo;
 import cn.toint.okauth.permission.model.RoleDo;
 import cn.toint.okauth.permission.service.PermissionService;
+import cn.toint.okauth.permission.service.RoleService;
 import cn.toint.okauth.server.user.service.AccessPermissionService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Toint
@@ -32,8 +32,12 @@ import java.util.Set;
  */
 @Service
 public class AccessPermissionServiceImpl implements AccessPermissionService {
+
     @Resource
     private PermissionService permissionService;
+
+    @Resource
+    private RoleService roleService;
 
     /**
      * 返回指定账号id所拥有的权限码集合
@@ -45,8 +49,10 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
         Long userId = Long.valueOf(loginId.toString());
-        Set<String> codes = permissionService.listPermissionCode(userId);
-        return new ArrayList<>(codes);
+        List<PermissionDo> permissionDos = permissionService.listByUserId(userId);
+        return permissionDos.stream()
+                .map(PermissionDo::getCode)
+                .toList();
     }
 
     /**
@@ -59,7 +65,7 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         Long userId = Long.valueOf(loginId.toString());
-        List<RoleDo> roleDos = permissionService.listRole(userId);
+        List<RoleDo> roleDos = roleService.listByUserId(userId);
         return roleDos.stream().map(RoleDo::getCode).toList();
     }
 }

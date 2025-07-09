@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.mapper;
+package cn.toint.okauth.permission.service;
 
-import cn.toint.okauth.permission.model.UserMtmPermissionDo;
-import com.mybatisflex.core.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
+import cn.toint.okauth.permission.model.DeptTreeResponse;
 
-/**
- * @author Toint
- * @date 2025/6/29
- */
-@Mapper
-public interface UserMtmPermissionMapper extends BaseMapper<UserMtmPermissionDo> {
+import java.util.List;
+
+public interface DeptService {
+    /**
+     * 全量查询部门树
+     */
+    List<DeptTreeResponse> listDeptTree();
 }

@@ -44,9 +44,9 @@ public class PermissionController {
      * 查询权限树
      */
     @PostMapping("/permission/listTree")
-    public Response<List<PermissionTreeResponse>> listPermissionTree() {
+    public Response<List<PermissionTreeResponse>> listTree() {
         StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
-        List<PermissionTreeResponse> permissionTreeResponses = permissionService.listPermissionTree();
+        List<PermissionTreeResponse> permissionTreeResponses = permissionService.listTree();
         return Response.success(permissionTreeResponses);
     }
 
@@ -64,7 +64,7 @@ public class PermissionController {
      * 添加权限
      */
     @PostMapping("/permission/create")
-    Response<Void> createPermissionAdmin(@RequestBody PermissionCreateRequest request) {
+    Response<Void> create(@RequestBody PermissionCreateRequest request) {
         StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
         permissionService.create(request);
         return Response.success();
@@ -74,9 +74,9 @@ public class PermissionController {
      * 修改权限
      */
     @PostMapping("/permission/update")
-    Response<Void> updatePermission(@RequestBody PermissionUpdateRequest request) {
+    Response<Void> update(@RequestBody PermissionUpdateRequest request) {
         StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
-        permissionService.updatePermission(request);
+        permissionService.update(request);
         return Response.success();
     }
 
@@ -84,29 +84,18 @@ public class PermissionController {
      * 删除权限
      */
     @PostMapping("/permission/delete")
-    Response<Void> deletePermission(@RequestParam("id") Long id) {
+    Response<Void> delete(@RequestBody PermissionDeleteRequest request) {
         StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
-        permissionService.deletePermission(id);
+        permissionService.delete(request);
         return Response.success();
     }
-
-    /**
-     * 查询角色
-     */
-    @PostMapping("/role/list")
-    public Response<List<RoleDo>> listRole() {
-        List<RoleDo> roleDos = permissionService.listRole(StpUtil.getLoginIdAsLong());
-        return Response.success(roleDos);
-    }
-
+//
 //    /**
-//     * 列表查询角色-admin
+//     * 查询角色
 //     */
-//    @PostMapping("/role/list/admin")
-//    @SaCheckPermission("role:list")
-//    public Response<List<RoleDo>> listRoleAdmin() {
-//        List<RoleDo> roleDos = permissionService.listRole();
+//    @PostMapping("/role/list")
+//    public Response<List<RoleDo>> listRole() {
+//        List<RoleDo> roleDos = permissionService.listRoleByUserId(StpUtil.getLoginIdAsLong());
 //        return Response.success(roleDos);
 //    }
-
 }

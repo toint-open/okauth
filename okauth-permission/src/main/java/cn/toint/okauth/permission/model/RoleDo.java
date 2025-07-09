@@ -31,7 +31,18 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class RoleDo extends BaseDo {
+    /**
+     * 角色码
+     */
     private String code;
+
+    /**
+     * 角色名称
+     */
     private String name;
+
+    /**
+     * 角色备注
+     */
     private String remark;
 }

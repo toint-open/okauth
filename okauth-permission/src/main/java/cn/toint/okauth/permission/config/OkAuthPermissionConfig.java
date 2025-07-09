@@ -16,8 +16,10 @@
 
 package cn.toint.okauth.permission.config;
 
+import cn.toint.okauth.permission.properties.OkAuthPermissionProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -30,6 +32,7 @@ import org.springframework.context.annotation.ComponentScan;
         "cn.toint.okauth.permission.controller"
 })
 @MapperScan("cn.toint.okauth.permission.mapper")
+@EnableConfigurationProperties({OkAuthPermissionProperties.class})
 public class OkAuthPermissionConfig {
 
 }

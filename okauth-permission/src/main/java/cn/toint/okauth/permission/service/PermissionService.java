@@ -19,7 +19,6 @@ package cn.toint.okauth.permission.service;
 import cn.toint.okauth.permission.model.*;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 菜单权限
@@ -34,32 +33,41 @@ public interface PermissionService {
      * @param userId 用户ID
      * @return 权限集合
      */
-    Set<String> listPermissionCode(Long userId);
+    List<PermissionDo> listByUserId(Long userId);
 
     /**
      * 全量查询权限树
-     * 有缓存
      */
-    List<PermissionTreeResponse> listPermissionTree();
+    List<PermissionTreeResponse> listTree();
 
     /**
-     * 根据用户查询所有角色
+     * 查询权限
+     *
+     * @param id 权限ID
+     * @return 权限对象
      */
-    List<RoleDo> listRole(Long userId);
-
-    /**
-     * 全量查询部门树
-     * 有缓存
-     */
-    List<DeptTreeResponse> listDeptTree();
-
     PermissionDo getById(Long id);
 
+    /**
+     * 添加权限
+     */
     void create(PermissionCreateRequest request);
 
-    void updatePermission(PermissionUpdateRequest request);
+    /**
+     * 修改权限
+     */
+    void update(PermissionUpdateRequest request);
 
-    boolean hasPermissionById(Long id);
+    /**
+     * 删除权限
+     */
+    void delete(PermissionDeleteRequest request);
 
-    void deletePermission(Long id);
+    /**
+     * 是否存在权限
+     *
+     * @param id 权限ID
+     * @return 是否存在
+     */
+    boolean hasById(Long id);
 }

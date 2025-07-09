@@ -38,7 +38,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <ok-dependencies.version>1.0.4</ok-dependencies.version>
-        <oktool.version>2.0.0-alpha-4</oktool.version>
+        <oktool.version>2.0.0-alpha-6</oktool.version>
         <oksms.version>1.0.1</oksms.version>
         <springboot.version>3.5.3</springboot.version>
     </properties>
@@ -87,7 +87,13 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${springboot.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

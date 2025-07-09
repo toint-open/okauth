@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.mapper;
+package cn.toint.okauth.permission.service;
 
-import cn.toint.okauth.permission.model.DeptMtmPermissionDo;
-import com.mybatisflex.core.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
+import cn.toint.okauth.permission.model.RoleDo;
 
-/**
- * @author Toint
- * @date 2025/6/29
- */
-@Mapper
-public interface DeptMtmPermissionMapper extends BaseMapper<DeptMtmPermissionDo> {
+import java.util.List;
+
+public interface RoleService {
+    /**
+     * 根据用户查询所有角色
+     * 查询方法有缓存功能
+     *
+     * @return notNull
+     */
+    List<RoleDo> listByUserId(Long userId);
 }
