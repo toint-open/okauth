@@ -37,6 +37,7 @@ import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.*;
 
 /**
@@ -69,78 +70,101 @@ public class PermissionServiceImpl implements PermissionService {
         Assert.notNull(userId, "用户ID不能为空");
 
         // 当前用户拥有的所有权限
-        List<PermissionDo> allPermissionDos = new ArrayList<>();
+        Set<PermissionDo> allPermissionDos = new HashSet<>();
 
-        // 查询用户的所有角色
+        // 1. 查询用户的所有角色
         List<RoleDo> roleDos = roleService.listByUserId(userId);
         List<Long> roleIds = roleDos.stream()
                 .map(RoleDo::getId)
                 .filter(Objects::nonNull)
                 .toList();
-        if (roleIds.isEmpty()) return allPermissionDos;
 
-        // 尝试从缓存中查找所有角色拥有的所有权限
-        List<Long> uncacheRoleIds = new ArrayList<>(); // 未命中缓存的权限, 需要到数据库加载
+        // 2. 当前用户没有任何角色, 退出
+        if (roleIds.isEmpty()) return new ArrayList<>();
+
+        // 3. 尝试从缓存中查找所有角色拥有的所有权限
         List<String> cacheKeys = roleIds.stream()
                 .map(String::valueOf)
                 .map(rolePermissionCacheKeyBuilder::build)
                 .toList();
+
+        // 角色在缓存中的权限字符串, 未找到对应的缓存用null占位
         List<String> cacheValues = cache.multiGet(cacheKeys);
+        // 未命中缓存的权限ID集合, 需要到数据库加载
+        List<Long> uncacheRoleIds = new ArrayList<>();
         for (int i = 0, cacheValuesSize = cacheValues.size(); i < cacheValuesSize; i++) {
+            // 单个角色的权限缓存
+            // 如果是空值, 说明这个角色没有权限缓存, 需要到数据库加载
+            // 如果是[], 说明这个角色没有对应的权限, 不需要到数据库加载
             String cacheValue = cacheValues.get(i);
-            if (StringUtils.isNotBlank(cacheValue)) {
+            if (StringUtils.isBlank(cacheValue)) {
+                uncacheRoleIds.add(roleIds.get(i));
+            } else {
                 List<PermissionDo> cachePermissionDos = JacksonUtil.readValue(cacheValue, new TypeReference<>() {
                 });
                 cachePermissionDos.stream()
                         .filter(Objects::nonNull)
                         .forEach(allPermissionDos::add);
-            } else {
-                uncacheRoleIds.add(roleIds.get(i));
             }
         }
 
-        // 用户角色全部命中缓存
+        // 4. 用户角色全部命中缓存, 直接返回缓存内容
         if (uncacheRoleIds.isEmpty()) {
-            return allPermissionDos;
+            return new ArrayList<>(allPermissionDos);
         }
 
-        // 查询角色与权限关联关系
-        QueryWrapper roleMtmPermissionQueryWrapper = QueryWrapper.create().in(RoleMtmPermissionDo::getRoleId, uncacheRoleIds);
-        List<RoleMtmPermissionDo> roleMtmPermissionDos = roleMtmPermissionMapper.selectListByQuery(roleMtmPermissionQueryWrapper);
-        if (roleMtmPermissionDos.isEmpty()) return allPermissionDos;
-
-        // 角色与权限的映射
-        Map<Long, List<Long>> roleMtmPermissionMap = new HashMap<>();
-        for (RoleMtmPermissionDo roleMtmPermissionDo : roleMtmPermissionDos) {
-            Long roleId = roleMtmPermissionDo.getRoleId();
-            Long permissionId = roleMtmPermissionDo.getPermissionId();
-            roleMtmPermissionMap.computeIfAbsent(roleId, k -> new ArrayList<>())
-                    .add(permissionId);
+        // 5. 剩余未命中缓存的角色, 查询其对应的所有权限
+        List<PermissionDo> uncachePermissionDos = new ArrayList<>();
+        List<RoleMtmPermissionDo> uncacheRoleMtmPermissionDos = roleMtmPermissionMapper.selectListByQuery(
+                QueryWrapper.create().in(RoleMtmPermissionDo::getRoleId, uncacheRoleIds));
+        if (CollUtil.isNotEmpty(uncacheRoleMtmPermissionDos)) {
+            List<Long> permissionIds = uncacheRoleMtmPermissionDos.stream().map(RoleMtmPermissionDo::getPermissionId).toList();
+            uncachePermissionDos.addAll(permissionMapper.selectListByIds(permissionIds));
+            allPermissionDos.addAll(uncachePermissionDos);
         }
 
-        // 从数据库查询角色对应的权限
-        List<Long> permissionIds = roleMtmPermissionDos.stream().map(RoleMtmPermissionDo::getPermissionId).toList();
-        QueryWrapper permissionQueryWrapper = QueryWrapper.create().in(PermissionDo::getId, permissionIds);
-        List<PermissionDo> permissionDos = permissionMapper.selectListByQuery(permissionQueryWrapper);
-        if (permissionDos.isEmpty()) return allPermissionDos;
-        allPermissionDos.addAll(permissionDos);
+        // 6. 每个角色对应的缓存集合, 如果角色没有对应的权限, 用空集合占位
+        Map<Long, List<PermissionDo>> uncacheRolePermissionMap = new HashMap<>(); // 最终要得到的
 
-        Map<Long, PermissionDo> permissionDoMap = new HashMap<>();
-        permissionDos.forEach(permissionDo -> {
-            permissionDoMap.put(permissionDo.getId(), permissionDo);
-        });
+        // 权限ID:权限对象, 方便查找
+        Map<Long, PermissionDo> uncachePermissionMap = new HashMap<>();
+        for (PermissionDo permissionDo : uncachePermissionDos) {
+            uncachePermissionMap.put(permissionDo.getId(), permissionDo);
+        }
 
-        // 加入缓存
-        roleMtmPermissionMap.forEach((roleId, permissionIds2) -> {
+        for (RoleMtmPermissionDo roleMtmPermission : uncacheRoleMtmPermissionDos) {
+            Long roleId = roleMtmPermission.getRoleId();
+            Long permissionId = roleMtmPermission.getPermissionId();
+
+            // 从权限映射中获取权限对象
+            PermissionDo permissionDo = uncachePermissionMap.get(permissionId);
+            if (permissionDo != null) {
+                uncacheRolePermissionMap.computeIfAbsent(roleId, k -> new ArrayList<>())
+                        .add(permissionDo);
+            }
+        }
+
+        // 检查映射中是否存在所有角色, 不包含的用空集合占位
+        for (Long uncacheRoleId : uncacheRoleIds) {
+            uncacheRolePermissionMap.putIfAbsent(uncacheRoleId, new ArrayList<>());
+        }
+
+        // 7. 缓存角色与权限信息
+        for (Map.Entry<Long, List<PermissionDo>> entry : uncacheRolePermissionMap.entrySet()) {
+            Long roleId = entry.getKey();
+            List<PermissionDo> permissionDos = entry.getValue();
+
+            // 过滤掉null权限
+            permissionDos.removeIf(Objects::isNull);
+
             String cacheKey = rolePermissionCacheKeyBuilder.build(String.valueOf(roleId));
-            List<PermissionDo> cachePermissionDos = permissionIds2.stream()
-                    .map(permissionDoMap::get)
-                    .toList();
-            String cacheValue = JacksonUtil.writeValueAsString(cachePermissionDos);
-            cache.put(cacheKey, cacheValue, okAuthPermissionProperties.getCacheTimeout());
-        });
+            String cacheValue = JacksonUtil.writeValueAsString(permissionDos);
+            Duration cacheTimeout = okAuthPermissionProperties.getCacheTimeout();
 
-        return allPermissionDos;
+            cache.put(cacheKey, cacheValue, cacheTimeout);
+        }
+
+        return new ArrayList<>(allPermissionDos);
     }
 
     @Override
@@ -202,11 +226,10 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         // 全部对象转为vo
-        ArrayList<PermissionTreeResponse> permissionVos = new ArrayList<>();
+        List<PermissionTreeResponse> permissionVos = new ArrayList<>();
         for (PermissionDo permissionDo : permissionDos) {
             PermissionTreeResponse permissionVo = new PermissionTreeResponse();
             BeanUtil.copyProperties(permissionDo, permissionVo);
-            permissionVo.setChildren(new ArrayList<>());
             permissionVos.add(permissionVo);
         }
 
@@ -239,6 +262,9 @@ public class PermissionServiceImpl implements PermissionService {
             } else {
                 PermissionTreeResponse parent = permissionVoMap.get(permissionVo.getParentId());
                 if (parent != null) {
+                    if (parent.getChildren() == null) {
+                        parent.setChildren(new ArrayList<>());
+                    }
                     parent.getChildren().add(permissionVo);
                 }
             }
