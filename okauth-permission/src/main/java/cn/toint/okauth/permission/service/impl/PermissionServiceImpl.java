@@ -204,7 +204,7 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         // 3. 执行入库
-        int inserted = permissionMapper.insert(permissionDo);
+        int inserted = permissionMapper.insert(permissionDo, false);
 
         // 4. 发布事件
         SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionDo));
@@ -226,7 +226,7 @@ public class PermissionServiceImpl implements PermissionService {
             permissionDo.setOrder(0);
         }
 
-        int updated = permissionMapper.update(permissionDo);
+        int updated = permissionMapper.update(permissionDo, false);
         Assert.isTrue(SqlUtil.toBool(updated), "修改失败");
 
         // 权限写事件
@@ -272,7 +272,7 @@ public class PermissionServiceImpl implements PermissionService {
             roleMtmPermissionDo.init();
             roleMtmPermissionDo.setRoleId(roleId);
             roleMtmPermissionDo.setPermissionId(permissionId);
-            roleMtmPermissionMapper.insert(roleMtmPermissionDo);
+            roleMtmPermissionMapper.insert(roleMtmPermissionDo, false);
         }
 
         // 最后全部没问题, 发布缓存清除事件

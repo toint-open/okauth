@@ -18,7 +18,9 @@ package cn.toint.okauth.permission.service.impl;
 
 import cn.toint.okauth.permission.mapper.RoleMapper;
 import cn.toint.okauth.permission.mapper.UserMtmRoleMapper;
+import cn.toint.okauth.permission.model.RoleCreateRequest;
 import cn.toint.okauth.permission.model.RoleDo;
+import cn.toint.okauth.permission.model.RoleUpdateRequest;
 import cn.toint.okauth.permission.model.UserMtmRoleDo;
 import cn.toint.okauth.permission.properties.OkAuthPermissionProperties;
 import cn.toint.okauth.permission.service.RoleService;
@@ -32,6 +34,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.hutool.core.collection.CollUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -91,5 +94,80 @@ public class RoleServiceImpl implements RoleService {
                 .select(RoleDo::getId)
                 .eq(RoleDo::getId, id);
         return roleMapper.selectOneByQuery(queryWrapper) != null;
+    }
+
+    @Override
+    public RoleDo getById(Long id) {
+        Assert.notNull(id, "角色ID不能为空");
+        return roleMapper.selectOneById(id);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void create(RoleCreateRequest request) {
+        String code = request.getCode();
+
+        // 1. 参数校验
+        Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
+        // 角色码不能重复
+        Assert.isNull(roleMapper.selectOneByQuery(QueryWrapper.create()
+                .select(RoleDo::getCode)
+                .eq(RoleDo::getCode, code)), "角色码不能重复");
+
+        // 2. 数据初始化
+        RoleDo roleDo = new RoleDo();
+        roleDo.init();
+        BeanUtils.copyProperties(request, roleDo);
+
+        // 3. 数据入库
+        roleMapper.insert(roleDo, false);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void update(RoleUpdateRequest request) {
+        String code = request.getCode();
+        Long id = request.getId();
+
+        // 1. 参数校验
+        Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
+        // 角色码不能重复
+        Assert.isNull(roleMapper.selectOneByQuery(QueryWrapper.create()
+                .select(RoleDo::getCode)
+                .eq(RoleDo::getCode, code)), "角色码不能重复");
+
+        // 2. 数据初始化
+        RoleDo roleDo = roleMapper.selectOneById(id);
+        Assert.notNull(roleDo, "角色不存在");
+        BeanUtils.copyProperties(request, roleDo);
+        roleDo.freshUpdateTime();
+
+        // 3. 数据入库
+        roleMapper.update(roleDo, false);
+
+        // todo 4. 清除缓存
+    }
+
+    @Override
+    public void delete(List<Long> ids) {
+        if (CollUtil.isEmpty(ids)) return;
+
+        // 删除角色数据
+        roleMapper.deleteBatchByIds(ids);
+
+        // todo 删除用户-角色绑定关系
+
+        // todo 删除角色-权限绑定关系
+
+        // todo 清除缓存
+    }
+
+    @Override
+    public void bind(Long roleId, List<Long> userIds) {
+        // todo bind
     }
 }

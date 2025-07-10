@@ -95,7 +95,7 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
         OpenClientDo openClientDo = BeanUtil.copyProperties(req, new OpenClientDo());
         openClientDo.init();
         openClientDo.setStatus(OpenClientStatusEnum.ENABLE.getValue());
-        int inserted = openClientMapper.insert(openClientDo);
+        int inserted = openClientMapper.insert(openClientDo, false);
         Assert.isTrue(SqlUtil.toBool(inserted), "开放应用保存失败");
 
         // 加载至satoken
@@ -115,7 +115,7 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
 
         OpenClientDo openClientDo = BeanUtil.copyProperties(request, new OpenClientDo());
         openClientDo.freshUpdateTime();
-        int updated = openClientMapper.update(openClientDo);
+        int updated = openClientMapper.update(openClientDo, false);
         Assert.isTrue(SqlUtil.toBool(updated), "开放应用更新失败");
 
         // 重新加载应用

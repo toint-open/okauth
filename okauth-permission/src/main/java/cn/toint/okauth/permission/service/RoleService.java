@@ -16,7 +16,9 @@
 
 package cn.toint.okauth.permission.service;
 
+import cn.toint.okauth.permission.model.RoleCreateRequest;
 import cn.toint.okauth.permission.model.RoleDo;
+import cn.toint.okauth.permission.model.RoleUpdateRequest;
 
 import java.util.List;
 
@@ -33,4 +35,14 @@ public interface RoleService {
      * 角色是否存在
      */
     boolean hasById(Long id);
+
+    RoleDo getById(Long id);
+
+    void create(RoleCreateRequest request);
+
+    void update(RoleUpdateRequest request);
+
+    void delete(List<Long> ids);
+
+    void bind(Long roleId, List<Long> userIds);
 }

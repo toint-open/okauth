@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService {
         userDo.setUsername(username);
         userDo.setPassword(encryptPassword);
         userDo.setName(nickName);
-        int insertStatus = userMapper.insert(userDo);
+        int insertStatus = userMapper.insert(userDo, false);
         Assert.isTrue(SqlUtil.toBool(insertStatus), "用户账号创建失败");
         return userDo;
     }
@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService {
             userDo.init();
             userDo.setPhone(phone);
             userDo.setName(genNickName());
-            int inserted = userMapper.insert(userDo);
+            int inserted = userMapper.insert(userDo, false);
             Assert.isTrue(SqlUtil.toBool(inserted), "账号创建失败");
         }
 
