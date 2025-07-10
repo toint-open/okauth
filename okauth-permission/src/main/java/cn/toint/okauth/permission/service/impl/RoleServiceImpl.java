@@ -31,13 +31,11 @@ import com.mybatisflex.core.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -54,13 +52,13 @@ public class RoleServiceImpl implements RoleService {
     @Resource
     private OkAuthPermissionProperties okAuthPermissionProperties;
 
-    private final KeyBuilderUtil userRoleCacheKeyBuilder = KeyBuilderUtil.of("userRole");
+    private final KeyBuilderUtil userRoleCacheKeyBuilder = KeyBuilderUtil.of("userMtmRole");
 
     @Override
     public List<RoleDo> listByUserId(Long userId) {
         Assert.notNull(userId, "用户ID不能为空");
 
-        // 尝试从缓存中获取
+        // 1. 尝试从缓存中获取
         String cacheKey = userRoleCacheKeyBuilder.build(String.valueOf(userId));
         String cacheValue = cache.get(cacheKey);
         if (StringUtils.isNotBlank(cacheValue)) {
@@ -68,21 +66,30 @@ public class RoleServiceImpl implements RoleService {
             });
         }
 
-        // 查询用户关联角色
+        // 2. 从数据库中获取用户的所有角色
         QueryWrapper userMtmRoleQueryWrapper = QueryWrapper.create().eq(UserMtmRoleDo::getUserId, userId);
         List<UserMtmRoleDo> userMtmRoleDos = userMtmRoleMapper.selectListByQuery(userMtmRoleQueryWrapper);
-        Set<Long> roleIds = userMtmRoleDos.stream()
+        List<Long> roleIds = userMtmRoleDos.stream()
                 .map(UserMtmRoleDo::getRoleId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        if (roleIds.isEmpty()) return new ArrayList<>();
+                .toList();
 
-        // 查询角色
-        QueryWrapper roleQueryWrapper = QueryWrapper.create().in(RoleDo::getId, roleIds);
-        List<RoleDo> roleDos = roleMapper.selectListByQuery(roleQueryWrapper);
+        List<RoleDo> roleDos = new ArrayList<>();
+        if (CollUtil.isNotEmpty(roleIds)) {
+            QueryWrapper roleQueryWrapper = QueryWrapper.create().in(RoleDo::getId, roleIds);
+            roleDos.addAll(roleMapper.selectListByQuery(roleQueryWrapper));
+        }
 
-        // 加入缓存
+        // 3. 加入缓存
         cache.put(cacheKey, JacksonUtil.writeValueAsString(roleDos), okAuthPermissionProperties.getCacheTimeout());
         return roleDos;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean hasById(Long id) {
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .select(RoleDo::getId)
+                .eq(RoleDo::getId, id);
+        return roleMapper.selectOneByQuery(queryWrapper) != null;
     }
 }

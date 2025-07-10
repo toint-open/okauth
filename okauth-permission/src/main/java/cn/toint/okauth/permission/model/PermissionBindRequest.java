@@ -16,62 +16,17 @@
 
 package cn.toint.okauth.permission.model;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class PermissionUpdateRequest {
-    /**
-     * 权限ID
-     */
+public class PermissionBindRequest {
     @NotNull
-    private Long id;
+    private Long roleId;
 
-    /**
-     * 父菜单ID
-     */
-    @NotNull
-    private Long parentId;
-
-    /**
-     * 菜单类型
-     */
-    @NotNull
-    private Integer type;
-
-    /**
-     * 权限名称
-     */
-    @NotNull
-    private String name;
-
-    /**
-     * 访问路径
-     */
-    private String path;
-
-    /**
-     * 前端组件
-     */
-    private String component;
-
-    /**
-     * 组件名称
-     */
-    private String componentName;
-
-    /**
-     * 菜单图标
-     */
-    private String icon;
-
-    /**
-     * 排序
-     */
-    private Integer order;
-
-    /**
-     * 权限标识
-     */
-    private String code;
+    @NotEmpty
+    private List<Long> permissionIds;
 }

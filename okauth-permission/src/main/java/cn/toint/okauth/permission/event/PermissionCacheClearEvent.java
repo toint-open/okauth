@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.service;
+package cn.toint.okauth.permission.event;
 
-import cn.toint.okauth.permission.model.RoleDo;
+import cn.toint.okauth.permission.model.PermissionDo;
+import org.springframework.context.ApplicationEvent;
 
-import java.util.List;
-
-public interface RoleService {
-    /**
-     * 根据用户查询所有角色
-     * 查询方法有缓存功能
-     *
-     * @return notNull
-     */
-    List<RoleDo> listByUserId(Long userId);
+/**
+ * 权限缓存清除事件
+ */
+public class PermissionCacheClearEvent extends ApplicationEvent {
 
     /**
-     * 角色是否存在
+     * @param source 最新的对象
      */
-    boolean hasById(Long id);
+    public PermissionCacheClearEvent(PermissionDo source) {
+        super(source);
+    }
+
+    @Override
+    public PermissionDo getSource() {
+        return (PermissionDo) super.getSource();
+    }
 }

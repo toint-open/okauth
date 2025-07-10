@@ -70,4 +70,9 @@ public interface PermissionService {
      * @return 是否存在
      */
     boolean hasById(Long id);
+
+    /**
+     * 角色绑定权限
+     */
+    void bind(Long roleId, List<Long> permissionIds);
 }

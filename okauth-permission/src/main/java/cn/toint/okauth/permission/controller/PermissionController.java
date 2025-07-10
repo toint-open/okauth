@@ -16,10 +16,11 @@
 
 package cn.toint.okauth.permission.controller;
 
-import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.toint.okauth.permission.constant.OkAuthConstant;
 import cn.toint.okauth.permission.model.*;
 import cn.toint.okauth.permission.service.PermissionService;
+import cn.toint.oktool.util.Assert;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,8 +45,8 @@ public class PermissionController {
      * 查询权限树
      */
     @PostMapping("/permission/listTree")
+    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
     public Response<List<PermissionTreeResponse>> listTree() {
-        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
         List<PermissionTreeResponse> permissionTreeResponses = permissionService.listTree();
         return Response.success(permissionTreeResponses);
     }
@@ -54,8 +55,8 @@ public class PermissionController {
      * 查询权限
      */
     @PostMapping("/permission/getById")
-    Response<PermissionDo> getById(@RequestParam("id") Long id) {
-        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
+    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    public Response<PermissionDo> getById(@RequestParam("id") Long id) {
         PermissionDo permissionDo = permissionService.getById(id);
         return Response.success(permissionDo);
     }
@@ -64,8 +65,8 @@ public class PermissionController {
      * 添加权限
      */
     @PostMapping("/permission/create")
-    Response<Void> create(@RequestBody PermissionCreateRequest request) {
-        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
+    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    public Response<Void> create(@RequestBody PermissionCreateRequest request) {
         permissionService.create(request);
         return Response.success();
     }
@@ -74,8 +75,8 @@ public class PermissionController {
      * 修改权限
      */
     @PostMapping("/permission/update")
-    Response<Void> update(@RequestBody PermissionUpdateRequest request) {
-        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
+    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    public Response<Void> update(@RequestBody PermissionUpdateRequest request) {
         permissionService.update(request);
         return Response.success();
     }
@@ -84,18 +85,20 @@ public class PermissionController {
      * 删除权限
      */
     @PostMapping("/permission/delete")
-    Response<Void> delete(@RequestBody PermissionDeleteRequest request) {
-        StpUtil.checkRole(OkAuthConstant.Role.ROLE_ADMIN);
+    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    public Response<Void> delete(@RequestBody PermissionDeleteRequest request) {
         permissionService.delete(request);
         return Response.success();
     }
-//
-//    /**
-//     * 查询角色
-//     */
-//    @PostMapping("/role/list")
-//    public Response<List<RoleDo>> listRole() {
-//        List<RoleDo> roleDos = permissionService.listRoleByUserId(StpUtil.getLoginIdAsLong());
-//        return Response.success(roleDos);
-//    }
+
+    /**
+     * 角色绑定权限
+     */
+    @PostMapping("/permission/bind")
+    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    public Response<Void> bind(@RequestBody PermissionBindRequest request) {
+        Assert.validate(request);
+        permissionService.bind(request.getRoleId(), request.getPermissionIds());
+        return Response.success();
+    }
 }
