@@ -236,6 +236,11 @@ public class RoleServiceImpl implements RoleService {
         SpringUtil.publishEvent(new RoleCacheClearEvent(List.of(roleId)));
     }
 
+    @Override
+    public List<RoleDo> listAll() {
+        return roleMapper.selectAll();
+    }
+
     /**
      * 角色缓存清除事件
      */

@@ -16,36 +16,16 @@
 
 package cn.toint.okauth.permission.service;
 
-import cn.toint.okauth.permission.model.RoleCreateRequest;
-import cn.toint.okauth.permission.model.RoleDo;
-import cn.toint.okauth.permission.model.RoleUpdateRequest;
+import cn.toint.okauth.permission.model.DictCreateRequest;
+import cn.toint.okauth.permission.model.DictDo;
+import cn.toint.okauth.permission.model.DictUpdateRequest;
 
 import java.util.List;
 
-public interface RoleService {
-    /**
-     * 根据用户查询所有角色
-     *
-     * @return notNull
-     */
-    List<RoleDo> listByUserId(Long userId);
+public interface DictService {
+    List<DictDo> list();
 
-    /**
-     * 角色是否存在
-     */
-    boolean hasById(Long id);
+    void create(DictCreateRequest request);
 
-    RoleDo getById(Long id);
-
-    void create(RoleCreateRequest request);
-
-    void update(RoleUpdateRequest request);
-
-    void delete(List<Long> ids);
-
-    void bind(Long roleId, List<Long> userIds);
-
-    void unbind(Long roleId, List<Long> userIds);
-
-    List<RoleDo> listAll();
+    void update(DictUpdateRequest request);
 }

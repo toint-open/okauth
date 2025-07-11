@@ -68,7 +68,8 @@ public class PermissionUpdateRequest {
     /**
      * 排序
      */
-    private Integer order;
+    @NotNull
+    private Integer sort;
 
     /**
      * 权限标识

@@ -73,7 +73,7 @@ public class PermissionTreeResponse {
     /**
      * 排序
      */
-    private Integer order;
+    private Integer sort;
 
     /**
      * 权限标识

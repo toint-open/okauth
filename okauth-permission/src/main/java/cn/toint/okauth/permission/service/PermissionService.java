@@ -38,7 +38,7 @@ public interface PermissionService {
     /**
      * 全量查询权限树
      */
-    List<PermissionTreeResponse> listTree();
+    List<PermissionTreeResponse> listTree(Long userId);
 
     /**
      * 查询权限

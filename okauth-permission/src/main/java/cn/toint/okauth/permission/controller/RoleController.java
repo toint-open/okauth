@@ -17,6 +17,7 @@
 package cn.toint.okauth.permission.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.toint.okauth.permission.constant.OkAuthConstant;
 import cn.toint.okauth.permission.model.*;
 import cn.toint.okauth.permission.service.RoleService;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 角色
@@ -38,7 +41,27 @@ public class RoleController {
 
     @Resource
     private RoleService roleService;
-    
+
+    /**
+     * 查询角色
+     */
+    @PostMapping("/role/listAll")
+    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    public Response<List<RoleDo>> listAll() {
+        List<RoleDo> roleDos = roleService.listAll();
+        return Response.success(roleDos);
+    }
+
+    /**
+     * 查询角色
+     */
+    @PostMapping("/role/list")
+    public Response<List<RoleDo>> list() {
+        long userId = StpUtil.getLoginIdAsLong();
+        List<RoleDo> roleDos = roleService.listByUserId(userId);
+        return Response.success(roleDos);
+    }
+
     /**
      * 查询角色
      */

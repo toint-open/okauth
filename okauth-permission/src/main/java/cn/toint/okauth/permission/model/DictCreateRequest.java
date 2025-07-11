@@ -17,56 +17,18 @@
 package cn.toint.okauth.permission.model;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class PermissionCreateRequest {
-    /**
-     * 父菜单ID
-     */
-    @NotNull
-    private Long parentId;
-
-    /**
-     * 菜单类型
-     */
-    @NotNull
-    private Integer type;
-
-    /**
-     * 权限名称
-     */
+public class DictCreateRequest {
     @NotBlank
-    private String name;
+    private String type;
 
-    /**
-     * 访问路径
-     */
-    private String path;
+    @NotBlank
+    private String key;
 
-    /**
-     * 前端组件
-     */
-    private String component;
+    @NotBlank
+    private String value;
 
-    /**
-     * 组件名称
-     */
-    private String componentName;
-
-    /**
-     * 菜单图标
-     */
-    private String icon;
-
-    /**
-     * 排序
-     */
-    private Integer sort;
-
-    /**
-     * 权限标识
-     */
-    private String code;
+    private String remark;
 }

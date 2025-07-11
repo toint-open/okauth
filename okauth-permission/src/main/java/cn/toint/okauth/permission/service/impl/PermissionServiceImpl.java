@@ -68,7 +68,6 @@ public class PermissionServiceImpl implements PermissionService {
     private OkAuthPermissionProperties okAuthPermissionProperties;
 
     private final KeyBuilderUtil rolePermissionCacheKeyBuilder = KeyBuilderUtil.of("roleMtmPermission");
-    private final String permissionTreeCacheKey = "permissionTree";
 
     @Override
     public List<PermissionDo> listByUserId(Long userId) {
@@ -201,8 +200,8 @@ public class PermissionServiceImpl implements PermissionService {
         BeanUtil.copyProperties(request, permissionDo);
         permissionDo.init();
 
-        if (permissionDo.getOrder() == null) {
-            permissionDo.setOrder(0);
+        if (permissionDo.getSort() == null) {
+            permissionDo.setSort(0);
         }
 
         // 3. 执行入库
@@ -220,10 +219,6 @@ public class PermissionServiceImpl implements PermissionService {
 
         BeanUtil.copyProperties(request, permissionDo);
         permissionDo.freshUpdateTime();
-
-        if (permissionDo.getOrder() == null) {
-            permissionDo.setOrder(0);
-        }
 
         int updated = permissionMapper.update(permissionDo, false);
         Assert.isTrue(SqlUtil.toBool(updated), "修改失败");
@@ -312,37 +307,32 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public List<PermissionTreeResponse> listTree() {
-        // 先读取缓存
-        String cacheKey = permissionTreeCacheKey;
-        String cacheValue = cache.get(cacheKey);
-        if (StringUtils.isNotEmpty(cacheValue)) {
-            return JacksonUtil.readValue(cacheValue, new TypeReference<>() {
-            });
-        }
-
+    public List<PermissionTreeResponse> listTree(Long userId) {
         // 查询所有权限
-        List<PermissionDo> permissionDos = permissionMapper.selectAll();
+        List<PermissionDo> permissionDos = listByUserId(userId);
         if (permissionDos.isEmpty()) {
             return new ArrayList<>();
         }
 
         // 全部对象转为vo
-        List<PermissionTreeResponse> permissionVos = new ArrayList<>();
+        List<PermissionTreeResponse> permissionTreeResponses = new ArrayList<>();
         for (PermissionDo permissionDo : permissionDos) {
             PermissionTreeResponse permissionVo = new PermissionTreeResponse();
             BeanUtil.copyProperties(permissionDo, permissionVo);
-            permissionVos.add(permissionVo);
+            permissionTreeResponses.add(permissionVo);
         }
+
+        // 排序
+        permissionTreeResponses.sort(Comparator.comparingInt(PermissionTreeResponse::getSort));
 
         // 创建Map方便查找
         Map<Long, PermissionTreeResponse> permissionVoMap = new HashMap<>();
-        for (PermissionTreeResponse permissionVo : permissionVos) {
+        for (PermissionTreeResponse permissionVo : permissionTreeResponses) {
             permissionVoMap.put(permissionVo.getId(), permissionVo);
         }
 
         // 检测循环依赖
-        for (PermissionTreeResponse permissionVo : permissionVos) {
+        for (PermissionTreeResponse permissionVo : permissionTreeResponses) {
             Set<Long> path = new HashSet<>();
             Long currentId = permissionVo.getId();
 
@@ -358,7 +348,7 @@ public class PermissionServiceImpl implements PermissionService {
 
         // 构建树关系
         List<PermissionTreeResponse> roots = new ArrayList<>();
-        for (PermissionTreeResponse permissionVo : permissionVos) {
+        for (PermissionTreeResponse permissionVo : permissionTreeResponses) {
             if (permissionVo.getParentId() == 0) {
                 roots.add(permissionVo);
             } else {
@@ -371,10 +361,6 @@ public class PermissionServiceImpl implements PermissionService {
                 }
             }
         }
-
-        // 加入缓存
-        cacheValue = JacksonUtil.writeValueAsString(roots);
-        cache.put(cacheKey, cacheValue, okAuthPermissionProperties.getCacheTimeout());
 
         return roots;
     }
@@ -403,8 +389,5 @@ public class PermissionServiceImpl implements PermissionService {
                 .map(String::valueOf)
                 .map(rolePermissionCacheKeyBuilder::build)
                 .forEach(cache::delete);
-
-        // 3. 清除权限树缓存
-        cache.delete(permissionTreeCacheKey);
     }
 }

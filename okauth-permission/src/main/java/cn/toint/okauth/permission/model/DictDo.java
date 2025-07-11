@@ -22,69 +22,19 @@ import com.mybatisflex.annotation.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * 菜单权限
- *
- * @author Toint
- * @date 2025/6/29
- */
-@Table(value = "permission", dataSource = OkAuthConstant.DATA_SOURCE)
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PermissionDo extends BaseDo {
-    /**
-     * 父菜单ID
-     */
+@Table(value = "dict", dataSource = OkAuthConstant.DATA_SOURCE)
+public class DictDo extends BaseDo{
     @Column
-    private Long parentId;
+    private String type;
 
-    /**
-     * 菜单类型
-     */
     @Column
-    private Integer type;
+    private String key;
 
-    /**
-     * 权限名称
-     */
     @Column
-    private String name;
+    private String value;
 
-    /**
-     * 访问路径
-     */
     @Column
-    private String path;
-
-    /**
-     * 前端组件
-     */
-    @Column
-    private String component;
-
-    /**
-     * 组件名称
-     */
-    @Column
-    private String componentName;
-
-    /**
-     * 菜单图标
-     */
-    @Column
-    private String icon;
-
-    /**
-     * 排序
-     */
-    @Column
-    private Integer sort;
-
-    /**
-     * 权限标识
-     */
-    @Column
-    private String code;
-
-
+    private String remark;
 }

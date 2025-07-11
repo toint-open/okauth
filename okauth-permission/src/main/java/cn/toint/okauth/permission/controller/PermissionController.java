@@ -17,6 +17,7 @@
 package cn.toint.okauth.permission.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.toint.okauth.permission.constant.OkAuthConstant;
 import cn.toint.okauth.permission.model.*;
 import cn.toint.okauth.permission.service.PermissionService;
@@ -45,9 +46,9 @@ public class PermissionController {
      * 查询权限树
      */
     @PostMapping("/permission/listTree")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
     public Response<List<PermissionTreeResponse>> listTree() {
-        List<PermissionTreeResponse> permissionTreeResponses = permissionService.listTree();
+        long userId = StpUtil.getLoginIdAsLong();
+        List<PermissionTreeResponse> permissionTreeResponses = permissionService.listTree(userId);
         return Response.success(permissionTreeResponses);
     }
 
