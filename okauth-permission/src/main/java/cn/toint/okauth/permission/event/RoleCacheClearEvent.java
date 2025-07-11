@@ -21,14 +21,14 @@ import org.springframework.context.ApplicationEvent;
 import java.util.List;
 
 /**
- * 权限缓存清除事件
+ * 角色缓存清除事件
  */
-public class PermissionCacheClearEvent extends ApplicationEvent {
+public class RoleCacheClearEvent extends ApplicationEvent {
 
     /**
-     * @param source 权限ID
+     * @param source 角色ID
      */
-    public PermissionCacheClearEvent(List<Long> source) {
+    public RoleCacheClearEvent(List<Long> source) {
         super(source);
     }
 

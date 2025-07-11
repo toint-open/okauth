@@ -61,7 +61,7 @@ public interface PermissionService {
     /**
      * 删除权限
      */
-    void delete(PermissionDeleteRequest request);
+    void delete(List<Long> ids);
 
     /**
      * 是否存在权限
@@ -75,4 +75,9 @@ public interface PermissionService {
      * 角色绑定权限
      */
     void bind(Long roleId, List<Long> permissionIds);
+
+    /**
+     * 角色解绑权限
+     */
+    void unbind(Long roleId, List<Long> permissionIds);
 }

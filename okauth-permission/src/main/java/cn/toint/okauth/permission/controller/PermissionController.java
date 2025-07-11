@@ -87,7 +87,7 @@ public class PermissionController {
     @PostMapping("/permission/delete")
     @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
     public Response<Void> delete(@RequestBody PermissionDeleteRequest request) {
-        permissionService.delete(request);
+        permissionService.delete(request.getIds());
         return Response.success();
     }
 

@@ -68,6 +68,7 @@ public class PermissionServiceImpl implements PermissionService {
     private OkAuthPermissionProperties okAuthPermissionProperties;
 
     private final KeyBuilderUtil rolePermissionCacheKeyBuilder = KeyBuilderUtil.of("roleMtmPermission");
+    private final String permissionTreeCacheKey = "permissionTree";
 
     @Override
     public List<PermissionDo> listByUserId(Long userId) {
@@ -177,6 +178,7 @@ public class PermissionServiceImpl implements PermissionService {
         return permissionMapper.selectOneById(id);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void create(PermissionCreateRequest request) {
         String code = request.getCode();
@@ -204,10 +206,7 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         // 3. 执行入库
-        int inserted = permissionMapper.insert(permissionDo, false);
-
-        // 4. 发布事件
-        SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionDo));
+        permissionMapper.insert(permissionDo, false);
     }
 
     @Override
@@ -229,8 +228,8 @@ public class PermissionServiceImpl implements PermissionService {
         int updated = permissionMapper.update(permissionDo, false);
         Assert.isTrue(SqlUtil.toBool(updated), "修改失败");
 
-        // 权限写事件
-        SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionDo));
+        // 清除缓存
+        SpringUtil.publishEvent(new PermissionCacheClearEvent(List.of(permissionDo.getId())));
     }
 
     @Override
@@ -247,6 +246,7 @@ public class PermissionServiceImpl implements PermissionService {
     public void bind(Long roleId, List<Long> permissionIds) {
         Assert.notNull(roleId, "角色ID不能为空");
         Assert.notEmpty(permissionIds, "权限ID不能为空");
+
         for (Long permissionId : permissionIds) {
             Assert.notNull(permissionId, "权限ID不能为空");
         }
@@ -258,34 +258,45 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         // 检查角色和权限是否已经绑定关系, 绑定过了就跳过
-        permissionIds.removeIf(permissionId -> {
-            QueryWrapper queryWrapper = QueryWrapper.create()
-                    .select(RoleMtmPermissionDo::getId)
-                    .eq(RoleMtmPermissionDo::getRoleId, roleId)
-                    .eq(RoleMtmPermissionDo::getPermissionId, permissionId);
-            return roleMtmPermissionMapper.selectOneByQuery(queryWrapper) != null;
-        });
+        permissionIds.removeIf(permissionId -> roleMtmPermissionMapper.selectOneByQuery(QueryWrapper.create()
+                .select(RoleMtmPermissionDo::getId)
+                .eq(RoleMtmPermissionDo::getRoleId, roleId)
+                .eq(RoleMtmPermissionDo::getPermissionId, permissionId)) != null);
 
         // 保存到数据库
+        List<RoleMtmPermissionDo> roleMtmPermissionDos = new ArrayList<>();
         for (Long permissionId : permissionIds) {
             RoleMtmPermissionDo roleMtmPermissionDo = new RoleMtmPermissionDo();
             roleMtmPermissionDo.init();
             roleMtmPermissionDo.setRoleId(roleId);
             roleMtmPermissionDo.setPermissionId(permissionId);
-            roleMtmPermissionMapper.insert(roleMtmPermissionDo, false);
+            roleMtmPermissionDos.add(roleMtmPermissionDo);
         }
+        roleMtmPermissionMapper.insertBatch(roleMtmPermissionDos);
 
-        // 最后全部没问题, 发布缓存清除事件
-        List<PermissionDo> permissionDos = permissionMapper.selectListByIds(permissionIds);
-        for (PermissionDo permissionDo : permissionDos) {
-            SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionDo));
-        }
+        // 最后全部没问题, 清除缓存
+        SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionIds));
+    }
+
+    @Override
+    public void unbind(Long roleId, List<Long> permissionIds) {
+        Assert.notNull(roleId, "角色ID不能为空");
+        if (CollUtil.isEmpty(permissionIds)) return;
+        permissionIds.removeIf(Objects::isNull);
+
+        // 删除角色和权限关联关系
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .eq(RoleMtmPermissionDo::getRoleId, roleId)
+                .in(RoleMtmPermissionDo::getPermissionId, permissionIds);
+        roleMtmPermissionMapper.deleteByQuery(queryWrapper);
+
+        // 清除缓存
+        SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionIds));
     }
 
     @Override
     @Transactional
-    public void delete(PermissionDeleteRequest request) {
-        List<Long> ids = request.getIds();
+    public void delete(List<Long> ids) {
         if (CollUtil.isEmpty(ids)) return;
 
         // 删除权限本身
@@ -295,10 +306,21 @@ public class PermissionServiceImpl implements PermissionService {
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .in(RoleMtmPermissionDo::getPermissionId, ids);
         roleMtmPermissionMapper.deleteByQuery(queryWrapper);
+
+        // 清除缓存
+        SpringUtil.publishEvent(new PermissionCacheClearEvent(ids));
     }
 
     @Override
     public List<PermissionTreeResponse> listTree() {
+        // 先读取缓存
+        String cacheKey = permissionTreeCacheKey;
+        String cacheValue = cache.get(cacheKey);
+        if (StringUtils.isNotEmpty(cacheValue)) {
+            return JacksonUtil.readValue(cacheValue, new TypeReference<>() {
+            });
+        }
+
         // 查询所有权限
         List<PermissionDo> permissionDos = permissionMapper.selectAll();
         if (permissionDos.isEmpty()) {
@@ -350,27 +372,39 @@ public class PermissionServiceImpl implements PermissionService {
             }
         }
 
+        // 加入缓存
+        cacheValue = JacksonUtil.writeValueAsString(roots);
+        cache.put(cacheKey, cacheValue, okAuthPermissionProperties.getCacheTimeout());
+
         return roots;
     }
 
     /**
      * 权限写入事件监听器, 当权限发生变动时清除对应的缓存
      */
+    @SuppressWarnings("unchecked")
     @EventListener
-    protected void writeEvent(PermissionCacheClearEvent event) {
-        PermissionDo permissionDo = event.getSource();
+    protected void onCacheClear(PermissionCacheClearEvent event) {
+        List<Long> permissionIds = event.getSource();
+        permissionIds.removeIf(Objects::isNull);
+        if (CollUtil.isEmpty(permissionIds)) return;
 
         // 1. 查询权限对应的所有角色
-        QueryWrapper queryWrapper = QueryWrapper.create()
-                .eq(RoleMtmPermissionDo::getPermissionId, permissionDo.getId());
-        List<RoleMtmPermissionDo> roleMtmPermissionDos = roleMtmPermissionMapper.selectListByQuery(queryWrapper);
-        if (roleMtmPermissionDos.isEmpty()) return;
+        List<Long> roleIds = roleMtmPermissionMapper.selectListByQuery(QueryWrapper.create()
+                        .select(RoleMtmPermissionDo::getRoleId)
+                        .in(RoleMtmPermissionDo::getPermissionId, permissionIds))
+                .stream()
+                .map(RoleMtmPermissionDo::getRoleId)
+                .toList();
+        if (roleIds.isEmpty()) return;
 
         // 2. 清除角色对应的缓存
-        roleMtmPermissionDos.stream()
-                .map(RoleMtmPermissionDo::getRoleId)
+        roleIds.stream()
                 .map(String::valueOf)
                 .map(rolePermissionCacheKeyBuilder::build)
                 .forEach(cache::delete);
+
+        // 3. 清除权限树缓存
+        cache.delete(permissionTreeCacheKey);
     }
 }

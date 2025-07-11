@@ -16,12 +16,12 @@
 
 package cn.toint.okauth.permission.service.impl;
 
+import cn.toint.okauth.permission.event.PermissionCacheClearEvent;
+import cn.toint.okauth.permission.event.RoleCacheClearEvent;
 import cn.toint.okauth.permission.mapper.RoleMapper;
+import cn.toint.okauth.permission.mapper.RoleMtmPermissionMapper;
 import cn.toint.okauth.permission.mapper.UserMtmRoleMapper;
-import cn.toint.okauth.permission.model.RoleCreateRequest;
-import cn.toint.okauth.permission.model.RoleDo;
-import cn.toint.okauth.permission.model.RoleUpdateRequest;
-import cn.toint.okauth.permission.model.UserMtmRoleDo;
+import cn.toint.okauth.permission.model.*;
 import cn.toint.okauth.permission.properties.OkAuthPermissionProperties;
 import cn.toint.okauth.permission.service.RoleService;
 import cn.toint.oktool.spring.boot.cache.Cache;
@@ -34,11 +34,15 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.hutool.core.collection.CollUtil;
+import org.dromara.hutool.extra.spring.SpringUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -56,6 +60,9 @@ public class RoleServiceImpl implements RoleService {
     private OkAuthPermissionProperties okAuthPermissionProperties;
 
     private final KeyBuilderUtil userRoleCacheKeyBuilder = KeyBuilderUtil.of("userMtmRole");
+
+    @Resource
+    private RoleMtmPermissionMapper roleMtmPermissionMapper;
 
     @Override
     public List<RoleDo> listByUserId(Long userId) {
@@ -149,25 +156,108 @@ public class RoleServiceImpl implements RoleService {
         // 3. 数据入库
         roleMapper.update(roleDo, false);
 
-        // todo 4. 清除缓存
+        // 4. 清除缓存
+        SpringUtil.publishEvent(new RoleCacheClearEvent(List.of(roleDo.getId())));
     }
 
     @Override
+    @Transactional
     public void delete(List<Long> ids) {
         if (CollUtil.isEmpty(ids)) return;
 
         // 删除角色数据
         roleMapper.deleteBatchByIds(ids);
 
-        // todo 删除用户-角色绑定关系
+        // 删除用户与角色的绑定关系
+        userMtmRoleMapper.deleteByQuery(QueryWrapper.create()
+                .in(UserMtmRoleDo::getRoleId, ids));
 
-        // todo 删除角色-权限绑定关系
+        // 删除角色与权限绑定关系
+        List<RoleMtmPermissionDo> roleMtmPermissionDos = roleMtmPermissionMapper.selectListByQuery(QueryWrapper.create()
+                .in(RoleMtmPermissionDo::getRoleId, ids));
+        List<Long> roleMtmPermissionIds = roleMtmPermissionDos.stream().map(RoleMtmPermissionDo::getId).toList();
+        List<Long> permissionIds = roleMtmPermissionDos.stream().map(RoleMtmPermissionDo::getPermissionId).toList();
+        if (CollUtil.isNotEmpty(roleMtmPermissionIds)) {
+            roleMtmPermissionMapper.deleteBatchByIds(roleMtmPermissionIds);
+        }
 
-        // todo 清除缓存
+        // 清除缓存
+        SpringUtil.publishEvent(new RoleCacheClearEvent(ids));
+        SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionIds));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    @Transactional
+    public void bind(Long roleId, List<Long> userIds) {
+        Assert.notNull(roleId, "角色ID不能为空");
+        Assert.notEmpty(userIds, "用户ID不能为空");
+
+        for (Long userId : userIds) {
+            Assert.notNull(userId, "用户ID不能为空");
+        }
+
+        // 校验角色存在
+        Assert.isTrue(hasById(roleId), "角色[{}]不存在", roleId);
+
+        // 忽略用户已经绑定角色关系
+        userIds.removeIf(userId -> roleMtmPermissionMapper.selectOneByQuery(QueryWrapper.create()
+                .select(UserMtmRoleDo::getId)
+                .eq(UserMtmRoleDo::getUserId, userId)
+                .eq(UserMtmRoleDo::getRoleId, roleId)) != null);
+
+        // 入库
+        List<UserMtmRoleDo> userMtmRoleDos = new ArrayList<>();
+        for (Long userId : userIds) {
+            UserMtmRoleDo userMtmRoleDo = new UserMtmRoleDo();
+            userMtmRoleDo.init();
+            userMtmRoleDo.setRoleId(roleId);
+            userMtmRoleDo.setUserId(userId);
+            userMtmRoleDos.add(userMtmRoleDo);
+        }
+        userMtmRoleMapper.insertBatch(userMtmRoleDos);
+
+        // 清除缓存
+        SpringUtil.publishEvent(new RoleCacheClearEvent(List.of(roleId)));
     }
 
     @Override
-    public void bind(Long roleId, List<Long> userIds) {
-        // todo bind
+    public void unbind(Long roleId, List<Long> userIds) {
+        Assert.notNull(roleId, "角色ID不能为空");
+        if (CollUtil.isEmpty(userIds)) return;
+        userIds.removeIf(Objects::isNull);
+
+        // 删除用户和角色关联关系
+        userMtmRoleMapper.deleteByQuery(QueryWrapper.create()
+                .eq(UserMtmRoleDo::getRoleId, roleId)
+                .in(UserMtmRoleDo::getUserId, userIds));
+
+        // 清除缓存
+        SpringUtil.publishEvent(new RoleCacheClearEvent(List.of(roleId)));
+    }
+
+    /**
+     * 角色缓存清除事件
+     */
+    @SuppressWarnings("unchecked")
+    @EventListener
+    protected void onRoleClear(RoleCacheClearEvent event) {
+        List<Long> roleIds = event.getSource();
+        roleIds.removeIf(Objects::isNull);
+        if (CollUtil.isEmpty(roleIds)) return;
+
+        // 1. 查询角色对应的所有用户ID
+        List<Long> userIds = userMtmRoleMapper.selectListByQuery(QueryWrapper.create()
+                        .select(UserMtmRoleDo::getUserId)
+                        .in(UserMtmRoleDo::getRoleId, roleIds))
+                .stream()
+                .map(UserMtmRoleDo::getUserId)
+                .toList();
+
+        // 2. 删除用户对应的缓存
+        userIds.stream()
+                .map(String::valueOf)
+                .map(userRoleCacheKeyBuilder::build)
+                .forEach(cache::delete);
     }
 }

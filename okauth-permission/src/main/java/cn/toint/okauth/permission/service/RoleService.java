@@ -25,7 +25,6 @@ import java.util.List;
 public interface RoleService {
     /**
      * 根据用户查询所有角色
-     * 查询方法有缓存功能
      *
      * @return notNull
      */
@@ -45,4 +44,6 @@ public interface RoleService {
     void delete(List<Long> ids);
 
     void bind(Long roleId, List<Long> userIds);
+
+    void unbind(Long roleId, List<Long> userIds);
 }
