@@ -22,6 +22,7 @@
     <groupId>cn.toint</groupId>
     <artifactId>okauth</artifactId>
     <version>1.0.0-20250702111427</version>
+
     <packaging>pom</packaging>
 
     <modules>

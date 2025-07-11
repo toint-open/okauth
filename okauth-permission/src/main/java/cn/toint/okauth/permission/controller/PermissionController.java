@@ -101,4 +101,15 @@ public class PermissionController {
         permissionService.bind(request.getRoleId(), request.getPermissionIds());
         return Response.success();
     }
+
+    /**
+     * 角色绑定权限
+     */
+    @PostMapping("/permission/unbind")
+    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    public Response<Void> unbind(@RequestBody PermissionBindRequest request) {
+        Assert.validate(request);
+        permissionService.unbind(request.getRoleId(), request.getPermissionIds());
+        return Response.success();
+    }
 }
