@@ -47,7 +47,7 @@ public class RoleController {
      * 查询角色
      */
     @PostMapping("/role/listAll")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<List<RoleDo>> listAll() {
         List<RoleDo> roleDos = roleService.listAll();
         return Response.success(roleDos);
@@ -67,7 +67,7 @@ public class RoleController {
      * 查询角色
      */
     @PostMapping("/role/getById")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<RoleDo> getById(@RequestParam("id") Long id) {
         RoleDo roleDo = roleService.getById(id);
         return Response.success(roleDo);
@@ -77,7 +77,7 @@ public class RoleController {
      * 添加角色
      */
     @PostMapping("/role/create")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> create(@RequestBody RoleCreateRequest request) {
         roleService.create(request);
         return Response.success();
@@ -87,7 +87,7 @@ public class RoleController {
      * 修改角色
      */
     @PostMapping("/role/update")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> update(@RequestBody RoleUpdateRequest request) {
         roleService.update(request);
         return Response.success();
@@ -97,7 +97,7 @@ public class RoleController {
      * 删除角色
      */
     @PostMapping("/role/delete")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> delete(@RequestBody RoleDeleteRequest request) {
         roleService.delete(request.getIds());
         return Response.success();
@@ -107,7 +107,7 @@ public class RoleController {
      * 角色绑定用户
      */
     @PostMapping("/role/bind")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> bind(@RequestBody RoleBindRequest request) {
         Assert.validate(request);
         roleService.bind(request.getRoleId(), request.getUserIds());
@@ -118,7 +118,7 @@ public class RoleController {
      * 角色解绑用户
      */
     @PostMapping("/role/unbind")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> unbind(@RequestBody RoleBindRequest request) {
         Assert.validate(request);
         roleService.unbind(request.getRoleId(), request.getUserIds());

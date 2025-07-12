@@ -41,4 +41,6 @@ public interface RoleService {
     void unbind(Long roleId, List<Long> userIds);
 
     List<RoleDo> listAll();
+
+    RoleDo getByCode(String code);
 }

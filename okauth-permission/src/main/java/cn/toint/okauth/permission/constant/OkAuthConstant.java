@@ -30,6 +30,6 @@ public class OkAuthConstant {
         /**
          * 管理员角色
          */
-        public static final String ROLE_ADMIN = "admin";
+        public static final String ADMIN = "admin";
     }
 }

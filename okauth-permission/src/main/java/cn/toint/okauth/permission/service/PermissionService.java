@@ -36,7 +36,7 @@ public interface PermissionService {
     List<PermissionDo> listByUserId(Long userId);
 
     /**
-     * 全量查询权限树
+     * 查询权限树
      */
     List<PermissionTreeResponse> listTree(Long userId);
 

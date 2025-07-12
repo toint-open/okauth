@@ -241,8 +241,14 @@ public class RoleServiceImpl implements RoleService {
         return roleMapper.selectAll();
     }
 
+    @Override
+    public RoleDo getByCode(String code) {
+        return roleMapper.selectOneByQuery(QueryWrapper.create()
+                .eq(RoleDo::getCode, code));
+    }
+
     /**
-     * 角色缓存清除事件
+     * 角色缓存清除事件 (与发布者同步执行)
      */
     @SuppressWarnings("unchecked")
     @EventListener

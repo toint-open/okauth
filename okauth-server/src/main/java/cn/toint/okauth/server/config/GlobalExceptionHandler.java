@@ -18,6 +18,7 @@ package cn.toint.okauth.server.config;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import cn.toint.okauth.server.exception.UserNotExistException;
 import cn.toint.okauth.server.exception.UserPasswordException;
 import cn.toint.okauth.server.model.ErrEnum;
@@ -58,6 +59,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotPermissionException.class)
     public Response<Void> exception(NotPermissionException e) {
+        log.error(e.getMessage());
+        return Response.fail(ErrEnum.NOT_PERMISSION.getCode(), ErrEnum.NOT_PERMISSION.getMsg());
+    }
+
+    /**
+     * 无角色
+     */
+    @ExceptionHandler(NotRoleException.class)
+    public Response<Void> exception(NotRoleException e) {
         log.error(e.getMessage());
         return Response.fail(ErrEnum.NOT_PERMISSION.getCode(), ErrEnum.NOT_PERMISSION.getMsg());
     }

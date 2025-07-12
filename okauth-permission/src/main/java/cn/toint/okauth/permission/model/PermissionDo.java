@@ -17,6 +17,7 @@
 package cn.toint.okauth.permission.model;
 
 import cn.toint.okauth.permission.constant.OkAuthConstant;
+import cn.toint.oktool.spring.boot.model.BaseDo;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Table;
 import lombok.Data;

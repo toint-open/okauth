@@ -46,14 +46,14 @@ public class DictController {
     }
 
     @PostMapping("/dict/create")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> create(@RequestBody DictCreateRequest request) {
         dictService.create(request);
         return Response.success();
     }
 
     @PostMapping("/dict/update")
-    @SaCheckRole(OkAuthConstant.Role.ROLE_ADMIN)
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> update(@RequestBody DictUpdateRequest request) {
         dictService.update(request);
         return Response.success();
