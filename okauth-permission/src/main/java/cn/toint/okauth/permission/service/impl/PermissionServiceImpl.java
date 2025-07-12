@@ -236,6 +236,9 @@ public class PermissionServiceImpl implements PermissionService {
 
         // 3. 执行入库
         permissionMapper.insert(permissionDo, false);
+
+        // 清除缓存
+        SpringUtil.publishEvent(new PermissionCacheClearEvent(List.of(permissionDo.getId())));
     }
 
     @Override
@@ -337,11 +340,11 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public List<PermissionTreeResponse> listTree(Long userId) {
+    public PermissionTreeResponse listTree(Long userId) {
         // 查询所有权限
         List<PermissionDo> permissionDos = listByUserId(userId);
         if (permissionDos.isEmpty()) {
-            return new ArrayList<>();
+            return new PermissionTreeResponse();
         }
 
         // 全部对象转为vo
@@ -377,22 +380,20 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         // 构建树关系
-        List<PermissionTreeResponse> roots = new ArrayList<>();
-        for (PermissionTreeResponse permissionVo : permissionTreeResponses) {
+        PermissionTreeResponse root = new PermissionTreeResponse();
+        permissionTreeResponses.forEach(permissionVo -> {
             if (permissionVo.getParentId() == 0) {
-                roots.add(permissionVo);
-            } else {
-                PermissionTreeResponse parent = permissionVoMap.get(permissionVo.getParentId());
-                if (parent != null) {
-                    if (parent.getChildren() == null) {
-                        parent.setChildren(new ArrayList<>());
-                    }
-                    parent.getChildren().add(permissionVo);
-                }
+                root.getChildrenNotNull().add(permissionVo);
+                return;
             }
-        }
 
-        return roots;
+            PermissionTreeResponse parent = permissionVoMap.get(permissionVo.getParentId());
+            if (parent == null) return;
+
+            parent.getChildrenNotNull().add(permissionVo);
+        });
+
+        return root;
     }
 
     /**
@@ -405,16 +406,20 @@ public class PermissionServiceImpl implements PermissionService {
         permissionIds.removeIf(Objects::isNull);
         if (CollUtil.isEmpty(permissionIds)) return;
 
-        // 1. 查询权限对应的所有角色
-        List<Long> roleIds = roleMtmPermissionMapper.selectListByQuery(QueryWrapper.create()
+        // 1. 只要动了权限, 就清除admin的缓存
+        ArrayList<Long> roleIds = new ArrayList<>();
+        RoleDo adminRoleDo = roleService.getByCode(OkAuthConstant.Role.ADMIN);
+        roleIds.add(adminRoleDo.getId());
+
+        // 2. 查询权限对应的所有角色
+        roleMtmPermissionMapper.selectListByQuery(QueryWrapper.create()
                         .select(RoleMtmPermissionDo::getRoleId)
                         .in(RoleMtmPermissionDo::getPermissionId, permissionIds))
                 .stream()
                 .map(RoleMtmPermissionDo::getRoleId)
-                .toList();
-        if (roleIds.isEmpty()) return;
+                .forEach(roleIds::add);
 
-        // 2. 清除角色对应的缓存
+        // 3. 清除角色对应的缓存
         roleIds.stream()
                 .map(String::valueOf)
                 .map(rolePermissionCacheKeyBuilder::build)
