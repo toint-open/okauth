@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.client.model;
+package cn.toint.okauth.server.user.model;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -24,10 +24,10 @@ import lombok.Data;
  * @date 2025/7/2
  */
 @Data
-public class OkAuthUserLoginByPasswordRequest {
-    @NotBlank(message = "账号不能为空")
-    private String username;
+public class UserUpdatePasswordRequest {
+    @NotBlank(message = "旧密码不能为空")
+    private String oldPassword;
 
-    @NotBlank(message = "密码不能为空")
-    private String password;
+    @NotBlank(message = "新密码不能为空")
+    private String newPassword;
 }

@@ -371,7 +371,7 @@ public class PermissionServiceImpl implements PermissionService {
     @SuppressWarnings("unchecked")
     @EventListener
     protected void onCacheClear(PermissionCacheClearEvent event) {
-        List<Long> permissionIds = event.getSource();
+        List<Long> permissionIds = new ArrayList<>(event.getSource());
         permissionIds.removeIf(Objects::isNull);
         if (CollUtil.isEmpty(permissionIds)) return;
 

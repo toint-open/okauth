@@ -21,7 +21,7 @@ import cn.dev33.satoken.exception.NotPermissionException;
 import cn.toint.okauth.server.exception.UserNotExistException;
 import cn.toint.okauth.server.exception.UserPasswordException;
 import cn.toint.okauth.server.model.ErrEnum;
-import cn.toint.okauth.server.model.Response;
+import cn.toint.oktool.model.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotExistException.class)
     public Response<Void> exception(UserNotExistException e) {
         log.error(e.getMessage());
-        return Response.fail(UserNotExistException.ERR);
+        return Response.fail(UserNotExistException.ERR.getCode(), UserNotExistException.ERR.getMsg());
     }
 
     /**
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserPasswordException.class)
     public Response<Void> exception(UserPasswordException e) {
         log.error(e.getMessage());
-        return Response.fail(UserPasswordException.ERR);
+        return Response.fail(UserPasswordException.ERR.getCode(), UserPasswordException.ERR.getMsg());
     }
 
     /**
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotPermissionException.class)
     public Response<Void> exception(NotPermissionException e) {
         log.error(e.getMessage());
-        return Response.fail(ErrEnum.NOT_PERMISSION);
+        return Response.fail(ErrEnum.NOT_PERMISSION.getCode(), ErrEnum.NOT_PERMISSION.getMsg());
     }
 
     /**
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotLoginException.class)
     public Response<Void> exception(NotLoginException e) {
         log.error(e.getMessage());
-        return Response.fail(ErrEnum.NOT_LOGIN);
+        return Response.fail(ErrEnum.NOT_LOGIN.getCode(), ErrEnum.NOT_LOGIN.getMsg());
     }
 
     /**

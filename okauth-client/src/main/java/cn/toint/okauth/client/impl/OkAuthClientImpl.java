@@ -20,6 +20,7 @@ import cn.toint.okauth.client.OkAuthClient;
 import cn.toint.okauth.client.OkAuthClientConfig;
 import cn.toint.okauth.client.model.*;
 import cn.toint.okauth.client.util.OkAuthHttpUtil;
+import cn.toint.oktool.model.Response;
 import cn.toint.oktool.util.Assert;
 import cn.toint.oktool.util.JacksonUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -31,6 +32,7 @@ import org.dromara.hutool.http.client.Request;
 import org.dromara.hutool.http.meta.HeaderName;
 import org.dromara.hutool.http.meta.Method;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -87,9 +89,9 @@ public class OkAuthClientImpl implements OkAuthClient {
         // 请求认证服务端
         Request tokenRequest = HttpUtil.createPost(okAuthClientConfig.getServerUri() + "/oauth2/token")
                 .body(JacksonUtil.writeValueAsString(request));
-        OkAuthResponse<Oauth2TokenResponse> response = JacksonUtil.readValue(OkAuthHttpUtil.request(tokenRequest), new TypeReference<>() {
+        Response<Oauth2TokenResponse> response = JacksonUtil.readValue(OkAuthHttpUtil.request(tokenRequest), new TypeReference<>() {
         });
-        Assert.isTrue(response.isSuccess(), response.getMsg());
+        Assert.isTrue(Objects.equals(response.getCode(), 0), response.getMsg());
         return response.getData();
     }
 
@@ -101,9 +103,9 @@ public class OkAuthClientImpl implements OkAuthClient {
         // 请求认证服务端
         Request tokenRequest = HttpUtil.createPost(okAuthClientConfig.getServerUri() + "/oauth2/refresh")
                 .body(JacksonUtil.writeValueAsString(request));
-        OkAuthResponse<Oauth2TokenResponse> response = JacksonUtil.readValue(OkAuthHttpUtil.request(tokenRequest), new TypeReference<>() {
+        Response<Oauth2TokenResponse> response = JacksonUtil.readValue(OkAuthHttpUtil.request(tokenRequest), new TypeReference<>() {
         });
-        Assert.isTrue(response.isSuccess(), response.getMsg());
+        Assert.isTrue(Objects.equals(response.getCode(), 0), response.getMsg());
         return response.getData();
     }
 
@@ -115,14 +117,14 @@ public class OkAuthClientImpl implements OkAuthClient {
         // 请求认证服务端
         Request tokenRequest = HttpUtil.createPost(okAuthClientConfig.getServerUri() + "/oauth2/userInfo")
                 .body(JacksonUtil.writeValueAsString(request));
-        OkAuthResponse<Oauth2UserInfoResponse> response = JacksonUtil.readValue(OkAuthHttpUtil.request(tokenRequest), new TypeReference<>() {
+        Response<Oauth2UserInfoResponse> response = JacksonUtil.readValue(OkAuthHttpUtil.request(tokenRequest), new TypeReference<>() {
         });
-        Assert.isTrue(response.isSuccess(), response.getMsg());
+        Assert.isTrue(Objects.equals(response.getCode(), 0), response.getMsg());
         return response.getData();
     }
 
     @Override
-    public OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request) {
+    public Oauth2LoginResponse login(Oauth2LoginByPasswordRequest request) {
         Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request);
 
@@ -130,10 +132,10 @@ public class OkAuthClientImpl implements OkAuthClient {
                 .method(Method.POST)
                 .body(JacksonUtil.writeValueAsString(request));
         String resBodyStr = OkAuthHttpUtil.request(httpRequest);
-        OkAuthResponse<OkAuthUserLoginResponse> okAuthResponse = JacksonUtil.readValue(resBodyStr, new TypeReference<OkAuthResponse<OkAuthUserLoginResponse>>() {
+        Response<Oauth2LoginResponse> response = JacksonUtil.readValue(resBodyStr, new TypeReference<>() {
         });
-        Assert.isTrue(okAuthResponse.isSuccess(), okAuthResponse.getMsg());
-        return okAuthResponse.getData();
+        Assert.isTrue(Objects.equals(response.getCode(), 0), response.getMsg());
+        return response.getData();
     }
 
     @Override
@@ -147,9 +149,9 @@ public class OkAuthClientImpl implements OkAuthClient {
                 .header(HeaderName.AUTHORIZATION, "Bearer " + token)
                 .body(JacksonUtil.writeValueAsString(request));
         String resBodyStr = OkAuthHttpUtil.request(httpRequest);
-        OkAuthResponse<Oauth2AuthorizeResponse> codeResponse = JacksonUtil.readValue(resBodyStr, new TypeReference<>() {
+        Response<Oauth2AuthorizeResponse> codeResponse = JacksonUtil.readValue(resBodyStr, new TypeReference<>() {
         });
-        Assert.isTrue(codeResponse.isSuccess(), codeResponse.getMsg());
+        Assert.isTrue(Objects.equals(codeResponse.getCode(), 0), codeResponse.getMsg());
         return codeResponse.getData();
     }
 }

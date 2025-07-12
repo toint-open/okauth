@@ -247,7 +247,7 @@ public class RoleServiceImpl implements RoleService {
     @SuppressWarnings("unchecked")
     @EventListener
     protected void onRoleClear(RoleCacheClearEvent event) {
-        List<Long> roleIds = event.getSource();
+        List<Long> roleIds = new ArrayList<>(event.getSource());
         roleIds.removeIf(Objects::isNull);
         if (CollUtil.isEmpty(roleIds)) return;
 

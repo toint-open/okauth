@@ -23,7 +23,7 @@
     <parent>
         <groupId>cn.toint</groupId>
         <artifactId>okauth</artifactId>
-        <version>1.0.0-20250702111427</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 

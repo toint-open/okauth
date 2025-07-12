@@ -18,7 +18,7 @@ package cn.toint.okauth.server.oauth2.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.toint.okauth.server.model.Response;
+import cn.toint.oktool.model.Response;
 import cn.toint.okauth.server.oauth2.model.*;
 import cn.toint.okauth.server.oauth2.service.Oauth2Service;
 import jakarta.annotation.Resource;

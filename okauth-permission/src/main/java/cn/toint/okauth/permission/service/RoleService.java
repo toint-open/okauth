@@ -23,16 +23,9 @@ import cn.toint.okauth.permission.model.RoleUpdateRequest;
 import java.util.List;
 
 public interface RoleService {
-    /**
-     * 根据用户查询所有角色
-     *
-     * @return notNull
-     */
+
     List<RoleDo> listByUserId(Long userId);
 
-    /**
-     * 角色是否存在
-     */
     boolean hasById(Long id);
 
     RoleDo getById(Long id);

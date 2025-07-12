@@ -20,7 +20,7 @@ import cn.dev33.satoken.oauth2.data.model.loader.SaClientModel;
 import cn.toint.okauth.server.oauth2.manager.Oauth2Manager;
 import cn.toint.okauth.server.openclient.mapper.OpenClientMapper;
 import cn.toint.okauth.server.openclient.model.OpenClientDo;
-import cn.toint.okauth.server.openclient.model.OpenClientSaveRequest;
+import cn.toint.okauth.server.openclient.model.OpenClientCreateRequest;
 import cn.toint.okauth.server.openclient.model.OpenClientStatusEnum;
 import cn.toint.okauth.server.openclient.model.OpenClientUpdateRequest;
 import cn.toint.okauth.server.openclient.service.OkAuthOpenClientService;
@@ -88,7 +88,7 @@ public class OkAuthOpenClientServiceImpl implements OkAuthOpenClientService {
     }
 
     @Override
-    public OpenClientDo save(OpenClientSaveRequest req) {
+    public OpenClientDo create(OpenClientCreateRequest req) {
         Assert.notNull(req, "请求参数不能为空");
         Assert.validate(req);
 

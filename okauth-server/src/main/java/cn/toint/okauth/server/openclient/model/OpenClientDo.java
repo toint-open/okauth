@@ -17,7 +17,7 @@
 package cn.toint.okauth.server.openclient.model;
 
 import cn.toint.okauth.server.constant.OkAuthConstant;
-import cn.toint.okauth.server.model.BaseDo;
+import cn.toint.oktool.spring.boot.model.BaseDo;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.handler.JacksonTypeHandler;

@@ -14,37 +14,20 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.model;
+package cn.toint.okauth.client.model;
 
-import cn.toint.okauth.server.constant.OkAuthConstant;
-import cn.toint.oktool.spring.boot.model.BaseDo;
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
- * 用户
- *
  * @author Toint
- * @date 2025/6/30
+ * @date 2025/7/2
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@Table(value = "user", dataSource = OkAuthConstant.DATA_SOURCE)
-public class UserDo extends BaseDo {
-    @Column
+public class Oauth2LoginByPasswordRequest {
+    @NotBlank(message = "账号不能为空")
     private String username;
 
-    @Column
+    @NotBlank(message = "密码不能为空")
     private String password;
-
-    @Column
-    private String name;
-
-    @Column
-    private String phone;
-
-    @Column
-    private String email;
 }

@@ -1,6 +1,6 @@
 //package cn.toint.okauth.server.sms.controller;
 //
-//import cn.toint.okauth.server.model.Response;
+//import cn.toint.oktool.model.Response;
 //import cn.toint.okauth.server.sms.service.SmsService;
 //import cn.toint.okauth.server.user.model.UserLoginSendSmsRequest;
 //import cn.toint.okauth.server.sms.model.SmsCodeResponse;

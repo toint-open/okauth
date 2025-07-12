@@ -35,6 +35,8 @@ public interface UserService {
      */
     UserLoginResponse login(UserLoginBySmsRequest request);
 
+    UserDo getByUsername(String username);
+
     /**
      * 发送登录短信验证码
      */
@@ -49,4 +51,6 @@ public interface UserService {
      * 查询用户
      */
     UserDo getByPhone(String phone);
+
+    void updatePassword(Long userId, String oldPassword, String newPassword);
 }

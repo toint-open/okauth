@@ -29,7 +29,7 @@ import java.util.List;
  * @date 2025/6/27
  */
 @Data
-public class OpenClientSaveRequest {
+public class OpenClientCreateRequest {
     /**
      * 应用名称
      */
@@ -54,9 +54,9 @@ public class OpenClientSaveRequest {
     @NotEmpty(message = "应用授权回调地址不能为空")
     public List<String> allowRedirectUris;
 
-    /**
-     * 应用授权方式
-     */
-    @NotEmpty(message = "应用授权方式不能为空")
-    public List<String> allowGrantTypes;
+//    /**
+//     * 应用授权方式
+//     */
+//    @NotEmpty(message = "应用授权方式不能为空")
+//    public List<String> allowGrantTypes;
 }

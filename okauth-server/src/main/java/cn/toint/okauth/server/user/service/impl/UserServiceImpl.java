@@ -155,16 +155,11 @@ public class UserServiceImpl implements UserService {
         Assert.notBlank(username, "用户名不能为空");
         Assert.notBlank(password, "密码不能为空");
 
-        // 校验用户名
-        Assert.isTrue(username.length() >= 3, "您的用户名过短");
-        Assert.isTrue(username.length() <= 20, "您的用户名过长");
-        Assert.isTrue(username.matches("^[a-z0-9]+$"), "用户名只允许包含小写字母或数字");
+        // 校验用户名格式
+        checkUsernameFormat(username);
 
         // 校验密码
-        Assert.isTrue(password.length() >= 6, "您的密码过短");
-        Assert.isTrue(password.length() <= 20, "您的密码过长");
-        Assert.isTrue(password.matches("^[A-Za-z0-9]+$"), "密码只允许包含字母或数字");
-        Assert.isTrue(PasswdStrength.check(password) >= 4, "您的密码太简单");
+        checkPasswordFormat(password);
         String encryptPassword = userEncryptService.encrypt(password);
 
         // 昵称
@@ -178,6 +173,19 @@ public class UserServiceImpl implements UserService {
         int insertStatus = userMapper.insert(userDo, false);
         Assert.isTrue(SqlUtil.toBool(insertStatus), "用户账号创建失败");
         return userDo;
+    }
+
+    private static void checkPasswordFormat(String password) {
+        Assert.isTrue(password.length() >= 6, "您的密码过短");
+        Assert.isTrue(password.length() <= 20, "您的密码过长");
+        Assert.isTrue(password.matches("^[A-Za-z0-9]+$"), "密码只允许包含字母或数字");
+        Assert.isTrue(PasswdStrength.check(password) >= 4, "您的密码太简单");
+    }
+
+    private static void checkUsernameFormat(String username) {
+        Assert.isTrue(username.length() >= 3, "您的用户名过短");
+        Assert.isTrue(username.length() <= 20, "您的用户名过长");
+        Assert.isTrue(username.matches("^[a-z0-9]+$"), "用户名只允许包含小写字母或数字");
     }
 
     /**
@@ -207,8 +215,7 @@ public class UserServiceImpl implements UserService {
         String cacheKey = buildLoginCodeCacheKey(request.getCode());
         String phone = cache.get(cacheKey);
         Assert.notBlank(phone, "验证码错误");
-        // todo 等待oktool更新后替换本方法
-        cache.put(cacheKey, "", Duration.ofSeconds(1));
+        cache.delete(cacheKey);
 
         // 查询账号,
         UserDo userDo = getByPhone(phone);
@@ -228,6 +235,29 @@ public class UserServiceImpl implements UserService {
     public UserDo getByPhone(String phone) {
         Assert.notBlank(phone, "查询的手机号码不能为空");
         return userMapper.selectOneByQuery(QueryWrapper.create().eq(UserDo::getPhone, phone));
+    }
+
+    @Override
+    public void updatePassword(Long userId, String oldPassword, String newPassword) {
+        Assert.notNull(userId, "用户ID不能为空");
+        Assert.notBlank(oldPassword, "旧密码不能为空");
+        Assert.notBlank(newPassword, "新密码不能为空");
+        Assert.notEquals(oldPassword, newPassword, "新旧密码不能一致");
+        UserDo userDo = getById(userId);
+        Assert.notNull(userDo, "用户[{}]不存在", userId);
+
+        Assert.equals(userEncryptService.encrypt(oldPassword), userDo.getPassword(), "密码错误");
+        checkPasswordFormat(newPassword);
+        userDo.setPassword(userEncryptService.encrypt(newPassword));
+        userDo.freshUpdateTime();
+        userMapper.update(userDo, false);
+    }
+
+    @Override
+    public UserDo getByUsername(String username) {
+        Assert.notBlank(username, "账号不能为空");
+        return userMapper.selectOneByQuery(QueryWrapper.create()
+                .eq(UserDo::getUsername, username));
     }
 
     @Override

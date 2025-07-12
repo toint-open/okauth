@@ -31,7 +31,7 @@ public interface OkAuthClient {
     /**
      * 账号密码登录
      */
-    OkAuthUserLoginResponse login(OkAuthUserLoginByPasswordRequest request);
+    Oauth2LoginResponse login(Oauth2LoginByPasswordRequest request);
 
     /**
      * 授权认证, 注意区分前端的authorize和后端的authorize

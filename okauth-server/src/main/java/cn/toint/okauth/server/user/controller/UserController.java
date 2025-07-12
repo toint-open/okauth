@@ -17,11 +17,9 @@
 package cn.toint.okauth.server.user.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.toint.okauth.server.model.Response;
-import cn.toint.okauth.server.user.model.UserLoginSendSmsRequest;
-import cn.toint.okauth.server.user.model.UserLoginByPasswordRequest;
-import cn.toint.okauth.server.user.model.UserLoginBySmsRequest;
-import cn.toint.okauth.server.user.model.UserLoginResponse;
+import cn.dev33.satoken.stp.StpUtil;
+import cn.toint.okauth.server.user.model.*;
+import cn.toint.oktool.model.Response;
 import cn.toint.okauth.server.user.service.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,5 +64,17 @@ public class UserController {
     public Response<UserLoginResponse> login(@RequestBody UserLoginByPasswordRequest request) {
         UserLoginResponse response = userService.login(request);
         return Response.success(response);
+    }
+
+    /**
+     * 修改密码
+     */
+    @PostMapping("/user/updatePassword")
+    public Response<Void> updatePassword(@RequestBody UserUpdatePasswordRequest request) {
+        long userId = StpUtil.getLoginIdAsLong();
+        String oldPassword = request.getOldPassword();
+        String newPassword = request.getNewPassword();
+        userService.updatePassword(userId, oldPassword, newPassword);
+        return Response.success();
     }
 }

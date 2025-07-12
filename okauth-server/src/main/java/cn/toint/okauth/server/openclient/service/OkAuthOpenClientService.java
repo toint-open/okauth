@@ -17,7 +17,7 @@
 package cn.toint.okauth.server.openclient.service;
 
 import cn.toint.okauth.server.openclient.model.OpenClientDo;
-import cn.toint.okauth.server.openclient.model.OpenClientSaveRequest;
+import cn.toint.okauth.server.openclient.model.OpenClientCreateRequest;
 import cn.toint.okauth.server.openclient.model.OpenClientUpdateRequest;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public interface OkAuthOpenClientService {
     /**
      * 添加开放应用
      */
-    OpenClientDo save(OpenClientSaveRequest req);
+    OpenClientDo create(OpenClientCreateRequest req);
 
     /**
      * 修改开放应用

@@ -17,9 +17,9 @@
 package cn.toint.okauth.server.openclient.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.toint.okauth.server.model.Response;
+import cn.toint.oktool.model.Response;
 import cn.toint.okauth.server.openclient.model.OpenClientDo;
-import cn.toint.okauth.server.openclient.model.OpenClientSaveRequest;
+import cn.toint.okauth.server.openclient.model.OpenClientCreateRequest;
 import cn.toint.okauth.server.openclient.model.OpenClientUpdateRequest;
 import cn.toint.okauth.server.openclient.service.OkAuthOpenClientService;
 import jakarta.annotation.Resource;
@@ -43,10 +43,10 @@ public class OpenClientController {
     /**
      * 添加开放应用
      */
-    @PostMapping("/openClient/save")
-    @SaCheckPermission(value = "openClient:save", orRole = "admin")
-    public Response<Void> save(@RequestBody OpenClientSaveRequest res) {
-        okAuthOpenClientService.save(res);
+    @PostMapping("/openClient/create")
+    @SaCheckPermission(value = "openClient:create", orRole = "admin")
+    public Response<Void> create(@RequestBody OpenClientCreateRequest res) {
+        okAuthOpenClientService.create(res);
         return Response.success();
     }
 

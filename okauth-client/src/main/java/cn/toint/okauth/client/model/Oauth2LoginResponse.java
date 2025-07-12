@@ -23,7 +23,7 @@ import lombok.Data;
  * @date 2025/7/2
  */
 @Data
-public class OkAuthUserLoginResponse {
+public class Oauth2LoginResponse {
     /**
      * 用户信息
      */
