@@ -16,6 +16,7 @@
 
 package cn.toint.okauth.server.config;
 
+import cn.toint.okauth.server.interceptor.AccessLogInterceptor;
 import cn.toint.okauth.server.interceptor.LoginInterceptor;
 import cn.toint.okauth.server.properties.OkAuthProperties;
 import cn.toint.oktool.spring.boot.interceptor.TraceIdInterceptor;
@@ -35,12 +36,20 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Resource
     private LoginInterceptor loginInterceptor;
 
+    @Resource
+    private AccessLogInterceptor accessLogInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 任务ID拦截器
         registry.addInterceptor(new TraceIdInterceptor())
                 .addPathPatterns("/**");
         log.info("任务ID拦截器初始化成功");
+
+        // 访问日志拦截器
+        registry.addInterceptor(accessLogInterceptor)
+                .addPathPatterns("/**");
+        log.info("访问日志拦截器初始化成功");
 
         // 登录拦截器
         registry.addInterceptor(loginInterceptor)
