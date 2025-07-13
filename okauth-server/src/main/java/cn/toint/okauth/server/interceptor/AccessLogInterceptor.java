@@ -36,7 +36,6 @@ public class AccessLogInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String clientIP = ServletUtil.getClientIP(request);
         String uri = request.getRequestURI();
-        StringBuffer requestURL = request.getRequestURL();
         String method = request.getMethod();
 
         AccessLog accessLog = new AccessLog();
