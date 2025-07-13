@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 权限
  *
@@ -55,9 +57,9 @@ public class PermissionController {
      * 查询权限树
      */
     @PostMapping("/permission/listTree")
-    public Response<PermissionTreeResponse> listTree() {
+    public Response<List<PermissionTreeResponse>> listTree() {
         long userId = StpUtil.getLoginIdAsLong();
-        PermissionTreeResponse permissionTreeResponse = permissionService.listTree(userId);
+        List<PermissionTreeResponse> permissionTreeResponse = permissionService.listTree(userId);
         return Response.success(permissionTreeResponse);
     }
 

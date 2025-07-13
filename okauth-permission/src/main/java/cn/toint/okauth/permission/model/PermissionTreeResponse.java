@@ -19,7 +19,6 @@ package cn.toint.okauth.permission.model;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,11 +81,4 @@ public class PermissionTreeResponse {
     private String code;
 
     private List<PermissionTreeResponse> children;
-
-    public List<PermissionTreeResponse> getChildrenNotNull() {
-        if (this.children == null) {
-            this.children = new ArrayList<>();
-        }
-        return this.children;
-    }
 }

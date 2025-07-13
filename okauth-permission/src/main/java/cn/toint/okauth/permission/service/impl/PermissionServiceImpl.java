@@ -340,11 +340,11 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public PermissionTreeResponse listTree(Long userId) {
+    public List<PermissionTreeResponse> listTree(Long userId) {
         // 查询所有权限
         List<PermissionDo> permissionDos = listByUserId(userId);
         if (permissionDos.isEmpty()) {
-            return new PermissionTreeResponse();
+            return new ArrayList<>();
         }
 
         // 全部对象转为vo
@@ -380,20 +380,23 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         // 构建树关系
-        PermissionTreeResponse root = new PermissionTreeResponse();
+        List<PermissionTreeResponse> roots = new ArrayList<>();
         permissionTreeResponses.forEach(permissionVo -> {
             if (permissionVo.getParentId() == 0) {
-                root.getChildrenNotNull().add(permissionVo);
+                roots.add(permissionVo);
                 return;
             }
 
             PermissionTreeResponse parent = permissionVoMap.get(permissionVo.getParentId());
             if (parent == null) return;
 
-            parent.getChildrenNotNull().add(permissionVo);
+            if (parent.getChildren() == null) {
+                parent.setChildren(new ArrayList<>());
+            }
+            parent.getChildren().add(permissionVo);
         });
 
-        return root;
+        return roots;
     }
 
     /**
