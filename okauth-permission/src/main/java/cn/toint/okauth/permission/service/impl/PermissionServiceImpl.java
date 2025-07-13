@@ -300,6 +300,7 @@ public class PermissionServiceImpl implements PermissionService {
             roleMtmPermissionDo.setPermissionId(permissionId);
             roleMtmPermissionDos.add(roleMtmPermissionDo);
         }
+        if (roleMtmPermissionDos.isEmpty()) return;
         roleMtmPermissionMapper.insertBatch(roleMtmPermissionDos);
 
         // 最后全部没问题, 清除缓存
@@ -320,6 +321,28 @@ public class PermissionServiceImpl implements PermissionService {
 
         // 清除缓存
         SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionIds));
+    }
+
+    @Override
+    public PermissionListIdByRoleIdResponse listIdByRoleId(Long roleId) {
+        Assert.notNull(roleId, "角色ID不能为空");
+
+        PermissionListIdByRoleIdResponse response = new PermissionListIdByRoleIdResponse();
+        response.setRoleId(roleId);
+        response.setPermissionIds(new ArrayList<>());
+
+        String cacheKey = rolePermissionCacheKeyBuilder.build(String.valueOf(roleId));
+        String cacheValue = cache.get(cacheKey);
+        if (StringUtils.isNotBlank(cacheValue)) {
+            List<PermissionDo> cachePermissionDos = JacksonUtil.readValue(cacheValue, new TypeReference<>() {
+            });
+            List<Long> ids = cachePermissionDos.stream()
+                    .map(PermissionDo::getId)
+                    .toList();
+            response.getPermissionIds().addAll(ids);
+        }
+
+        return response;
     }
 
     @Override

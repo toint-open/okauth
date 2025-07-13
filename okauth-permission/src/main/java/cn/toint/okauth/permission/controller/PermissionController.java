@@ -43,16 +43,6 @@ public class PermissionController {
     @Resource
     private PermissionService permissionService;
 
-//    /**
-//     * 查询权限树
-//     */
-//    @PostMapping("/permission/listAllTree")
-//    public Response<List<PermissionTreeResponse>> listAllTree() {
-//        long userId = StpUtil.getLoginIdAsLong();
-//        List<PermissionTreeResponse> permissionTreeResponses = permissionService.listAllTree();
-//        return Response.success(permissionTreeResponses);
-//    }
-
     /**
      * 查询权限树
      */
@@ -123,5 +113,15 @@ public class PermissionController {
         Assert.validate(request);
         permissionService.unbind(request.getRoleId(), request.getPermissionIds());
         return Response.success();
+    }
+
+    /**
+     * 查询角色已经绑定的权限ID集合
+     */
+    @PostMapping("/permission/listId")
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
+    public Response<PermissionListIdByRoleIdResponse> listId(@RequestParam("roleId") Long roleId) {
+        PermissionListIdByRoleIdResponse response = permissionService.listIdByRoleId(roleId);
+        return Response.success(response);
     }
 }
