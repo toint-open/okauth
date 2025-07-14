@@ -24,6 +24,13 @@ import java.util.List;
 
 public interface RoleService {
 
+    /**
+     * 根据用户ID查询角色列表
+     * 内置缓存能力
+     *
+     * @param userId 用户ID
+     * @return 角色列表
+     */
     List<RoleDo> listByUserId(Long userId);
 
     boolean hasById(Long id);

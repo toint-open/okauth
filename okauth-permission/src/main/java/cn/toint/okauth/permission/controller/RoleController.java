@@ -43,9 +43,6 @@ public class RoleController {
     @Resource
     private RoleService roleService;
 
-    /**
-     * 查询所有角色
-     */
     @PostMapping("/role/listAll")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<List<RoleDo>> listAll() {
@@ -53,9 +50,6 @@ public class RoleController {
         return Response.success(roleDos);
     }
 
-    /**
-     * 查询角色
-     */
     @PostMapping("/role/list")
     public Response<List<RoleDo>> list() {
         long userId = StpUtil.getLoginIdAsLong();
@@ -63,9 +57,6 @@ public class RoleController {
         return Response.success(roleDos);
     }
 
-    /**
-     * 查询角色
-     */
     @PostMapping("/role/getById")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<RoleDo> getById(@RequestParam("id") Long id) {
@@ -73,9 +64,6 @@ public class RoleController {
         return Response.success(roleDo);
     }
 
-    /**
-     * 添加角色
-     */
     @PostMapping("/role/create")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> create(@RequestBody RoleCreateRequest request) {
@@ -83,9 +71,6 @@ public class RoleController {
         return Response.success();
     }
 
-    /**
-     * 修改角色
-     */
     @PostMapping("/role/update")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> update(@RequestBody RoleUpdateRequest request) {
@@ -93,9 +78,6 @@ public class RoleController {
         return Response.success();
     }
 
-    /**
-     * 删除角色
-     */
     @PostMapping("/role/delete")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> delete(@RequestBody RoleDeleteRequest request) {
@@ -104,7 +86,7 @@ public class RoleController {
     }
 
     /**
-     * 角色绑定用户, 全量覆盖模式
+     * 全量覆盖模式
      */
     @PostMapping("/role/bind")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)
