@@ -29,6 +29,24 @@ import lombok.Data;
 @Data
 public class Oauth2BuildAuthorizeUriRequest {
     /**
+     * 客户端ID
+     */
+    @NotBlank(message = "客户端ID不能为空")
+    private String clientId;
+
+    /**
+     * 回调地址
+     */
+    @NotBlank(message = "回调地址不能为空")
+    private String redirectUri;
+
+    /**
+     * 授权服务地址
+     */
+    @NotBlank(message = "授权地址不能为空")
+    private String authorizeUri;
+
+    /**
      * @see OkAuthConstant.ResponseType
      */
     @NotBlank(message = "responseType不能为空")

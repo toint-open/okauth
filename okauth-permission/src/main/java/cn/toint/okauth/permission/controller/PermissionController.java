@@ -110,7 +110,15 @@ public class PermissionController {
     @PostMapping("/permission/listId")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<PermissionListIdByRoleIdResponse> listId(@RequestParam("roleId") Long roleId) {
-        PermissionListIdByRoleIdResponse response = permissionService.listIdByRoleId(roleId);
+        List<Long> permissionIds = permissionService.listByRoleId(roleId)
+                .stream()
+                .map(PermissionDo::getId)
+                .toList();
+
+        PermissionListIdByRoleIdResponse response = new  PermissionListIdByRoleIdResponse();
+        response.setRoleId(roleId);
+        response.setPermissionIds(permissionIds);
+
         return Response.success(response);
     }
 }

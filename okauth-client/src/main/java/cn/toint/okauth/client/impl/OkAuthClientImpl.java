@@ -67,12 +67,12 @@ public class OkAuthClientImpl implements OkAuthClient {
         String state = Optional.ofNullable(request.getState()).orElse(IdUtil.fastSimpleUUID());
         UrlQuery urlQuery = UrlQuery.of()
                 .add("response_type", request.getResponseType())
-                .add("client_id", okAuthClientConfig.getClientId())
-                .add("redirect_uri", okAuthClientConfig.getRedirectUri())
+                .add("client_id", request.getClientId())
+                .add("redirect_uri", request.getRedirectUri())
                 .add("scope", request.getScope())
                 .add("state", state);
 
-        String authorizeUrl = UrlBuilder.of(okAuthClientConfig.getAuthorizeUri())
+        String authorizeUrl = UrlBuilder.of(request.getAuthorizeUri())
                 .setQuery(urlQuery)
                 .toString();
 

@@ -18,9 +18,9 @@ package cn.toint.okauth.server.oauth2.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.toint.oktool.model.Response;
 import cn.toint.okauth.server.oauth2.model.*;
 import cn.toint.okauth.server.oauth2.service.Oauth2Service;
+import cn.toint.oktool.model.Response;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

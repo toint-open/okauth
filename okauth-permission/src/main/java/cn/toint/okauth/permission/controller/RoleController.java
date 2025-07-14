@@ -44,7 +44,7 @@ public class RoleController {
     private RoleService roleService;
 
     /**
-     * 查询角色
+     * 查询角色, 只有管理员能访问
      */
     @PostMapping("/role/listAll")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)

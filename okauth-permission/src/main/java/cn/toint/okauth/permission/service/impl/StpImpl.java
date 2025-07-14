@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.service.impl;
+package cn.toint.okauth.permission.service.impl;
 
+import cn.dev33.satoken.model.wrapperInfo.SaDisableWrapperInfo;
+import cn.dev33.satoken.stp.StpInterface;
 import cn.toint.okauth.permission.model.PermissionDo;
 import cn.toint.okauth.permission.model.RoleDo;
 import cn.toint.okauth.permission.service.PermissionService;
 import cn.toint.okauth.permission.service.RoleService;
-import cn.toint.okauth.server.user.service.AccessPermissionService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +29,10 @@ import java.util.List;
 
 /**
  * @author Toint
- * @date 2025/6/30
+ * @date 2025/7/14
  */
 @Service
-public class AccessPermissionServiceImpl implements AccessPermissionService {
+public class StpImpl implements StpInterface {
 
     @Resource
     private PermissionService permissionService;
@@ -67,5 +68,10 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
         Long userId = Long.valueOf(loginId.toString());
         List<RoleDo> roleDos = roleService.listByUserId(userId);
         return roleDos.stream().map(RoleDo::getCode).toList();
+    }
+
+    @Override
+    public SaDisableWrapperInfo isDisabled(Object loginId, String service) {
+        return StpInterface.super.isDisabled(loginId, service);
     }
 }

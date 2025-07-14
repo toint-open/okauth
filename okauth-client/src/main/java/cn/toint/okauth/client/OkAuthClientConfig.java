@@ -32,12 +32,6 @@ public class OkAuthClientConfig {
     private String serverUri;
 
     /**
-     * 授权服务地址
-     */
-    @NotBlank(message = "授权地址不能为空")
-    private String authorizeUri;
-
-    /**
      * 客户端ID
      */
     @NotBlank(message = "客户端ID不能为空")
@@ -48,10 +42,4 @@ public class OkAuthClientConfig {
      */
     @NotBlank(message = "客户端密钥不能为空")
     private String clientSecret;
-
-    /**
-     * 回调地址
-     */
-    @NotBlank(message = "回调地址不能为空")
-    private String redirectUri;
 }

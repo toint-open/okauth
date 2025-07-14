@@ -76,5 +76,12 @@ public interface PermissionService {
      */
     void bind(Long roleId, List<Long> permissionIds);
 
-    PermissionListIdByRoleIdResponse listIdByRoleId(Long roleId);
+    /**
+     * 根据角色ID查询对应权限
+     * 内置缓存处理能力
+     *
+     * @param roleId 角色ID
+     * @return 权限集合 (非null)
+     */
+    List<PermissionDo> listByRoleId(Long roleId);
 }
