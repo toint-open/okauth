@@ -285,13 +285,11 @@ public class PermissionServiceImpl implements PermissionService {
             Assert.isTrue(hasById(permissionId), "权限[{}]不存在", permissionId);
         }
 
-        // 检查角色和权限是否已经绑定关系, 绑定过了就跳过
-        permissionIds.removeIf(permissionId -> roleMtmPermissionMapper.selectOneByQuery(QueryWrapper.create()
-                .select(RoleMtmPermissionDo::getId)
-                .eq(RoleMtmPermissionDo::getRoleId, roleId)
-                .eq(RoleMtmPermissionDo::getPermissionId, permissionId)) != null);
+        // 删除角色已经绑定的权限数据
+        roleMtmPermissionMapper.deleteByQuery(QueryWrapper.create()
+                .eq(RoleMtmPermissionDo::getRoleId, roleId));
 
-        // 保存到数据库
+        // 批量保存新数据到数据库
         List<RoleMtmPermissionDo> roleMtmPermissionDos = new ArrayList<>();
         for (Long permissionId : permissionIds) {
             RoleMtmPermissionDo roleMtmPermissionDo = new RoleMtmPermissionDo();
@@ -300,26 +298,9 @@ public class PermissionServiceImpl implements PermissionService {
             roleMtmPermissionDo.setPermissionId(permissionId);
             roleMtmPermissionDos.add(roleMtmPermissionDo);
         }
-        if (roleMtmPermissionDos.isEmpty()) return;
         roleMtmPermissionMapper.insertBatch(roleMtmPermissionDos);
 
         // 最后全部没问题, 清除缓存
-        SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionIds));
-    }
-
-    @Override
-    public void unbind(Long roleId, List<Long> permissionIds) {
-        Assert.notNull(roleId, "角色ID不能为空");
-        if (CollUtil.isEmpty(permissionIds)) return;
-        permissionIds.removeIf(Objects::isNull);
-
-        // 删除角色和权限关联关系
-        QueryWrapper queryWrapper = QueryWrapper.create()
-                .eq(RoleMtmPermissionDo::getRoleId, roleId)
-                .in(RoleMtmPermissionDo::getPermissionId, permissionIds);
-        roleMtmPermissionMapper.deleteByQuery(queryWrapper);
-
-        // 清除缓存
         SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionIds));
     }
 

@@ -186,7 +186,6 @@ public class RoleServiceImpl implements RoleService {
         SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionIds));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public void bind(Long roleId, List<Long> userIds) {
@@ -200,13 +199,11 @@ public class RoleServiceImpl implements RoleService {
         // 校验角色存在
         Assert.isTrue(hasById(roleId), "角色[{}]不存在", roleId);
 
-        // 忽略用户已经绑定角色关系
-        userIds.removeIf(userId -> roleMtmPermissionMapper.selectOneByQuery(QueryWrapper.create()
-                .select(UserMtmRoleDo::getId)
-                .eq(UserMtmRoleDo::getUserId, userId)
-                .eq(UserMtmRoleDo::getRoleId, roleId)) != null);
+        // 删除用户与角色已经绑定的数据
+        userMtmRoleMapper.deleteByQuery(QueryWrapper.create()
+                .eq(UserMtmRoleDo::getRoleId, roleId));
 
-        // 入库
+        // 批量绑定
         List<UserMtmRoleDo> userMtmRoleDos = new ArrayList<>();
         for (Long userId : userIds) {
             UserMtmRoleDo userMtmRoleDo = new UserMtmRoleDo();
@@ -216,21 +213,6 @@ public class RoleServiceImpl implements RoleService {
             userMtmRoleDos.add(userMtmRoleDo);
         }
         userMtmRoleMapper.insertBatch(userMtmRoleDos);
-
-        // 清除缓存
-        SpringUtil.publishEvent(new RoleCacheClearEvent(List.of(roleId)));
-    }
-
-    @Override
-    public void unbind(Long roleId, List<Long> userIds) {
-        Assert.notNull(roleId, "角色ID不能为空");
-        if (CollUtil.isEmpty(userIds)) return;
-        userIds.removeIf(Objects::isNull);
-
-        // 删除用户和角色关联关系
-        userMtmRoleMapper.deleteByQuery(QueryWrapper.create()
-                .eq(UserMtmRoleDo::getRoleId, roleId)
-                .in(UserMtmRoleDo::getUserId, userIds));
 
         // 清除缓存
         SpringUtil.publishEvent(new RoleCacheClearEvent(List.of(roleId)));

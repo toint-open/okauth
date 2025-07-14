@@ -76,10 +76,5 @@ public interface PermissionService {
      */
     void bind(Long roleId, List<Long> permissionIds);
 
-    /**
-     * 角色解绑权限
-     */
-    void unbind(Long roleId, List<Long> permissionIds);
-
     PermissionListIdByRoleIdResponse listIdByRoleId(Long roleId);
 }

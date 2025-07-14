@@ -104,24 +104,13 @@ public class RoleController {
     }
 
     /**
-     * 角色绑定用户
+     * 角色绑定用户, 全量覆盖模式
      */
     @PostMapping("/role/bind")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)
     public Response<Void> bind(@RequestBody RoleBindRequest request) {
         Assert.validate(request);
         roleService.bind(request.getRoleId(), request.getUserIds());
-        return Response.success();
-    }
-
-    /**
-     * 角色解绑用户
-     */
-    @PostMapping("/role/unbind")
-    @SaCheckRole(OkAuthConstant.Role.ADMIN)
-    public Response<Void> unbind(@RequestBody RoleBindRequest request) {
-        Assert.validate(request);
-        roleService.unbind(request.getRoleId(), request.getUserIds());
         return Response.success();
     }
 }
