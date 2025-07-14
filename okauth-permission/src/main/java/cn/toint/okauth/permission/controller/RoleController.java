@@ -44,7 +44,7 @@ public class RoleController {
     private RoleService roleService;
 
     /**
-     * 查询角色, 只有管理员能访问
+     * 查询所有角色
      */
     @PostMapping("/role/listAll")
     @SaCheckRole(OkAuthConstant.Role.ADMIN)
@@ -112,5 +112,15 @@ public class RoleController {
         Assert.validate(request);
         roleService.bind(request.getRoleId(), request.getUserIds());
         return Response.success();
+    }
+
+    /**
+     * 根据角色ID查询对应用户ID集合
+     */
+    @PostMapping("/role/listUserId")
+    @SaCheckRole(OkAuthConstant.Role.ADMIN)
+    public Response<List<Long>> listUserIdByRoleId(@RequestParam("roleId") Long roleId) {
+        List<Long> userIds = roleService.listUserIdByRoleId(roleId);
+        return Response.success(userIds);
     }
 }

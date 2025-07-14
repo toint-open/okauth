@@ -49,7 +49,7 @@ public class PermissionController {
     @PostMapping("/permission/listTree")
     public Response<List<PermissionTreeResponse>> listTree() {
         long userId = StpUtil.getLoginIdAsLong();
-        List<PermissionTreeResponse> permissionTreeResponse = permissionService.listTree(userId);
+        List<PermissionTreeResponse> permissionTreeResponse = permissionService.listTreeByUserId(userId);
         return Response.success(permissionTreeResponse);
     }
 

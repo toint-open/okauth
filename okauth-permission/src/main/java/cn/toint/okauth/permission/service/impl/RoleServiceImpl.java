@@ -43,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -227,6 +228,17 @@ public class RoleServiceImpl implements RoleService {
     public RoleDo getByCode(String code) {
         return roleMapper.selectOneByQuery(QueryWrapper.create()
                 .eq(RoleDo::getCode, code));
+    }
+
+    @Override
+    public List<Long> listUserIdByRoleId(Long roleId) {
+        Assert.notNull(roleId, "角色ID不能为空");
+
+        return userMtmRoleMapper.selectListByQuery(QueryWrapper.create()
+                        .eq(UserMtmRoleDo::getRoleId, roleId))
+                .stream()
+                .map(UserMtmRoleDo::getUserId)
+                .collect(Collectors.toList());
     }
 
     /**

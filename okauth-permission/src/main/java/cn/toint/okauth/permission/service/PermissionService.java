@@ -29,6 +29,7 @@ import java.util.List;
 public interface PermissionService {
     /**
      * 根据用户查询所有权限
+     * 内置缓存功能
      *
      * @param userId 用户ID
      * @return 权限集合
@@ -37,8 +38,9 @@ public interface PermissionService {
 
     /**
      * 查询权限树
+     * 内置缓存功能
      */
-    List<PermissionTreeResponse> listTree(Long userId);
+    List<PermissionTreeResponse> listTreeByUserId(Long userId);
 
     /**
      * 查询权限

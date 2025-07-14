@@ -41,4 +41,12 @@ public interface RoleService {
     List<RoleDo> listAll();
 
     RoleDo getByCode(String code);
+
+    /**
+     * 根据角色ID查询对应用户ID集合
+     *
+     * @param roleId 角色ID
+     * @return 用户ID集合 (非null)
+     */
+    List<Long> listUserIdByRoleId(Long roleId);
 }

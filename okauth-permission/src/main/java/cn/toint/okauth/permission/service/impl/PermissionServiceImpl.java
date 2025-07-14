@@ -288,7 +288,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public List<PermissionTreeResponse> listTree(Long userId) {
+    public List<PermissionTreeResponse> listTreeByUserId(Long userId) {
         // 查询所有权限
         List<PermissionDo> permissionDos = listByUserId(userId);
         if (permissionDos.isEmpty()) {
