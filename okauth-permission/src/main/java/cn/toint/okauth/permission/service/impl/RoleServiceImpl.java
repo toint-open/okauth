@@ -16,6 +16,7 @@
 
 package cn.toint.okauth.permission.service.impl;
 
+import cn.toint.okauth.permission.constant.OkAuthConstant;
 import cn.toint.okauth.permission.event.PermissionCacheClearEvent;
 import cn.toint.okauth.permission.event.RoleCacheClearEvent;
 import cn.toint.okauth.permission.mapper.RoleMapper;
@@ -137,6 +138,8 @@ public class RoleServiceImpl implements RoleService {
     @SuppressWarnings("unchecked")
     public void update(RoleUpdateRequest request) {
         String code = request.getCode();
+        Assert.notEquals(code, OkAuthConstant.Role.ADMIN, "admin角色不允许修改");
+
         Long id = request.getId();
 
         // 1. 参数校验
@@ -165,6 +168,12 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     public void delete(List<Long> ids) {
         if (CollUtil.isEmpty(ids)) return;
+
+        // 查询是否存在admin角色
+        RoleDo hasAdmin = roleMapper.selectOneByQuery(QueryWrapper.create()
+                .eq(RoleDo::getCode, OkAuthConstant.Role.ADMIN)
+                .in(RoleDo::getId, ids));
+        Assert.isNull(hasAdmin, "admin角色不允许删除");
 
         // 删除角色数据
         roleMapper.deleteBatchByIds(ids);
