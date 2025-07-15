@@ -23,6 +23,10 @@ import cn.toint.okauth.permission.model.RoleUpdateRequest;
 import java.util.List;
 
 public interface RoleService {
+    /**
+     * 检查用户是否admin角色
+     */
+    boolean isAdmin(Long userId);
 
     /**
      * 根据用户ID查询角色列表

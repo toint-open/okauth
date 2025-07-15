@@ -67,6 +67,13 @@ public class RoleServiceImpl implements RoleService {
     private RoleMtmPermissionMapper roleMtmPermissionMapper;
 
     @Override
+    public boolean isAdmin(Long userId) {
+        List<RoleDo> roleDos = listByUserId(userId);
+        return roleDos.stream()
+                .anyMatch(roleDo -> OkAuthConstant.Role.ADMIN.equals(roleDo.getCode()));
+    }
+
+    @Override
     public List<RoleDo> listByUserId(Long userId) {
         Assert.notNull(userId, "用户ID不能为空");
 
