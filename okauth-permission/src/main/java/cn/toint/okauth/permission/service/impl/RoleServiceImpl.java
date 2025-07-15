@@ -94,8 +94,13 @@ public class RoleServiceImpl implements RoleService {
 
         List<RoleDo> roleDos = new ArrayList<>();
         if (CollUtil.isNotEmpty(roleIds)) {
-            QueryWrapper roleQueryWrapper = QueryWrapper.create().in(RoleDo::getId, roleIds);
-            roleDos.addAll(roleMapper.selectListByQuery(roleQueryWrapper));
+            // 管理员拥有全部角色
+            if (roleIds.contains(OkAuthPermissionConstant.Role.ADMIN_ID)) {
+                roleDos.addAll(roleMapper.selectAll());
+            } else {
+                QueryWrapper roleQueryWrapper = QueryWrapper.create().in(RoleDo::getId, roleIds);
+                roleDos.addAll(roleMapper.selectListByQuery(roleQueryWrapper));
+            }
         }
 
         // 3. 加入缓存
@@ -145,9 +150,9 @@ public class RoleServiceImpl implements RoleService {
     @SuppressWarnings("unchecked")
     public void update(RoleUpdateRequest request) {
         String code = request.getCode();
-        Assert.notEquals(code, OkAuthPermissionConstant.Role.ADMIN, "admin角色不允许修改");
-
         Long id = request.getId();
+        Assert.notEquals(code, OkAuthPermissionConstant.Role.ADMIN, "admin角色不允许修改");
+        Assert.notEquals(id, OkAuthPermissionConstant.Role.ADMIN_ID, "admin角色不允许修改");
 
         // 1. 参数校验
         Assert.notNull(request, "请求参数不能为空");
@@ -177,10 +182,7 @@ public class RoleServiceImpl implements RoleService {
         if (CollUtil.isEmpty(ids)) return;
 
         // 查询是否存在admin角色
-        RoleDo hasAdmin = roleMapper.selectOneByQuery(QueryWrapper.create()
-                .eq(RoleDo::getCode, OkAuthPermissionConstant.Role.ADMIN)
-                .in(RoleDo::getId, ids));
-        Assert.isNull(hasAdmin, "admin角色不允许删除");
+        Assert.isFalse(ids.contains(OkAuthPermissionConstant.Role.ADMIN_ID), "admin角色不允许删除");
 
         // 删除角色数据
         roleMapper.deleteBatchByIds(ids);

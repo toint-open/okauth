@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.constant;
+package cn.toint.okauth.permission.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author Toint
- * @date 2025/6/29
+ * @date 2025/7/16
  */
-public class OkAuthPermissionConstant {
-    /**
-     * 数据源名称
-     */
-    public static final String DATA_SOURCE = "okauth-permission";
+@AllArgsConstructor
+@Getter
+public enum PermissionTypeEnum {
+    BUTTON_OR_PERMISSION(2),
+    SECONDARY_MENU(1),
+    PRIMARY_MENU(0);
 
-    public static class Role {
-        /**
-         * 管理员角色
-         */
-        public static final String ADMIN = "admin";
-
-        /**
-         * 管理员角色ID
-         */
-        public static final long ADMIN_ID = 10000L;
-    }
+    private final int value;
 }

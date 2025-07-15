@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
+import org.dromara.hutool.core.util.EnumUtil;
 import org.dromara.hutool.extra.spring.SpringUtil;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -138,10 +139,14 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public void create(PermissionCreateRequest request) {
         String code = request.getCode();
+        Integer type = request.getType();
 
         // 1. 数据校验
         Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request);
+
+        PermissionTypeEnum typeEnum = EnumUtil.getBy(PermissionTypeEnum::getValue, type);
+        Assert.notNull(typeEnum, "非法的权限类型");
 
         // 权限码不能重复
         if (StringUtils.isNotBlank(code)) {
@@ -176,6 +181,9 @@ public class PermissionServiceImpl implements PermissionService {
         // 检查是否存在
         PermissionDo permissionDo = getById(request.getId());
         Assert.notNull(permissionDo, "权限不存在");
+
+        PermissionTypeEnum typeEnum = EnumUtil.getBy(PermissionTypeEnum::getValue, request.getType());
+        Assert.notNull(typeEnum, "非法的权限类型");
 
         BeanUtil.copyProperties(request, permissionDo);
         permissionDo.freshUpdateTime();
@@ -247,9 +255,7 @@ public class PermissionServiceImpl implements PermissionService {
         // 检查admin角色, admin应拥有所有权限
         // 非admin角色, 查询角色对应的权限集合
         List<PermissionDo> permissionDos = new ArrayList<>();
-        RoleDo roleDo = roleService.getByCode(OkAuthPermissionConstant.Role.ADMIN);
-        boolean hasAdmin = roleDo != null && Objects.equals(roleId, roleDo.getId());
-        if (hasAdmin) {
+        if (OkAuthPermissionConstant.Role.ADMIN_ID == roleId) {
             permissionDos = permissionMapper.selectAll();
         } else {
             // 查询数据库角色对应的权限集合
@@ -359,8 +365,7 @@ public class PermissionServiceImpl implements PermissionService {
 
         // 1. 只要动了权限, 就清除admin的缓存
         ArrayList<Long> roleIds = new ArrayList<>();
-        RoleDo adminRoleDo = roleService.getByCode(OkAuthPermissionConstant.Role.ADMIN);
-        roleIds.add(adminRoleDo.getId());
+        roleIds.add(OkAuthPermissionConstant.Role.ADMIN_ID);
 
         // 2. 查询权限对应的所有角色
         roleMtmPermissionMapper.selectListByQuery(QueryWrapper.create()
