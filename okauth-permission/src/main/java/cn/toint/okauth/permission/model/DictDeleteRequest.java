@@ -14,34 +14,13 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.permission.service;
+package cn.toint.okauth.permission.model;
 
-import cn.toint.okauth.permission.model.DictCreateRequest;
-import cn.toint.okauth.permission.model.DictDo;
-import cn.toint.okauth.permission.model.DictUpdateRequest;
+import lombok.Data;
 
 import java.util.List;
 
-public interface DictService {
-    /**
-     * 查询所有列表
-     * 内置缓存
-     */
-    List<DictDo> listAll();
-
-    /**
-     * 根据type查询列表
-     */
-    List<DictDo> listByType(String type);
-
-    /**
-     * 根据type和key查询
-     */
-    DictDo getByTypeAndKey(String type, String key);
-
-    void create(DictCreateRequest request);
-
-    void update(DictUpdateRequest request);
-
-    void delete(List<Long> ids);
+@Data
+public class DictDeleteRequest {
+    private List<Long> ids;
 }

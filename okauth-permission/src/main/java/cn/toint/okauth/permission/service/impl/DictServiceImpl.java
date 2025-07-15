@@ -30,10 +30,12 @@ import com.mybatisflex.core.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -51,7 +53,7 @@ public class DictServiceImpl implements DictService {
     private final String dictCacheKey = "dict";
 
     @Override
-    public List<DictDo> list() {
+    public List<DictDo> listAll() {
         // 检查缓存
         String cacheValue = cache.get(dictCacheKey);
         if (StringUtils.isNotBlank(cacheValue)) {
@@ -66,6 +68,22 @@ public class DictServiceImpl implements DictService {
         cacheValue = JacksonUtil.writeValueAsString(dictDos);
         cache.put(dictCacheKey, cacheValue, okAuthPermissionProperties.getCacheTimeout());
         return dictDos;
+    }
+
+    @Override
+    public List<DictDo> listByType(String type) {
+        Assert.notBlank(type, "type must not be null");
+        return dictMapper.selectListByQuery(QueryWrapper.create()
+                .eq(DictDo::getType, type));
+    }
+
+    @Override
+    public DictDo getByTypeAndKey(String type, String key) {
+        Assert.notBlank(type, "type must not be null");
+        Assert.notBlank(key, "key must not be null");
+        return dictMapper.selectOneByQuery(QueryWrapper.create()
+                .eq(DictDo::getType, type)
+                .eq(DictDo::getKey, key));
     }
 
     @Override
@@ -114,6 +132,16 @@ public class DictServiceImpl implements DictService {
         BeanUtils.copyProperties(request, dictDo);
         dictMapper.update(dictDo, false);
 
+        // 清除缓存
+        clearCache();
+    }
+
+    @Override
+    public void delete(List<Long> ids) {
+        if (CollUtil.isEmpty(ids)) return;
+        ids.removeIf(Objects::isNull);
+        if (CollUtil.isEmpty(ids)) return;
+        dictMapper.deleteBatchByIds(ids);
         // 清除缓存
         clearCache();
     }
