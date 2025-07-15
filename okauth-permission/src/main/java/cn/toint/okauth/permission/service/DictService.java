@@ -19,6 +19,8 @@ package cn.toint.okauth.permission.service;
 import cn.toint.okauth.permission.model.DictCreateRequest;
 import cn.toint.okauth.permission.model.DictDo;
 import cn.toint.okauth.permission.model.DictUpdateRequest;
+import cn.toint.oktool.spring.boot.model.PageRequest;
+import com.mybatisflex.core.paginate.Page;
 
 import java.util.List;
 
@@ -44,4 +46,8 @@ public interface DictService {
     void update(DictUpdateRequest request);
 
     void delete(List<Long> ids);
+
+    DictDo getById(Long id);
+
+    Page<DictDo> page(PageRequest pageRequest);
 }

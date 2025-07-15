@@ -23,9 +23,11 @@ import cn.toint.okauth.permission.model.DictUpdateRequest;
 import cn.toint.okauth.permission.properties.OkAuthPermissionProperties;
 import cn.toint.okauth.permission.service.DictService;
 import cn.toint.oktool.spring.boot.cache.Cache;
+import cn.toint.oktool.spring.boot.model.PageRequest;
 import cn.toint.oktool.util.Assert;
 import cn.toint.oktool.util.JacksonUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -144,6 +146,22 @@ public class DictServiceImpl implements DictService {
         dictMapper.deleteBatchByIds(ids);
         // 清除缓存
         clearCache();
+    }
+
+    @Override
+    public DictDo getById(Long id) {
+        Assert.notNull(id, "字典ID不能为空");
+        return dictMapper.selectOneById(id);
+    }
+
+    @Override
+    public Page<DictDo> page(PageRequest pageRequest) {
+        Assert.notNull(pageRequest, "请求参数不能为空");
+        Assert.validate(pageRequest);
+
+        Long pageNumber = pageRequest.getPageNumber();
+        Long pageSize = pageRequest.getPageSize();
+        return dictMapper.paginate(pageNumber, pageSize, QueryWrapper.create());
     }
 
     private void clearCache() {

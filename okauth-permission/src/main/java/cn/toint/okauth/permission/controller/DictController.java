@@ -24,9 +24,12 @@ import cn.toint.okauth.permission.model.DictDo;
 import cn.toint.okauth.permission.model.DictUpdateRequest;
 import cn.toint.okauth.permission.service.DictService;
 import cn.toint.oktool.model.Response;
+import cn.toint.oktool.spring.boot.model.PageRequest;
+import com.mybatisflex.core.paginate.Page;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -41,9 +44,33 @@ public class DictController {
     private DictService dictService;
 
     @PostMapping("/dict/listAll")
-    public Response<List<DictDo>> list() {
+    public Response<List<DictDo>> listAll() {
         List<DictDo> dictDos = dictService.listAll();
         return Response.success(dictDos);
+    }
+
+    @PostMapping("/dict/getById")
+    public Response<DictDo> getById(@RequestParam("id") Long id) {
+        DictDo dictDo = dictService.getById(id);
+        return Response.success(dictDo);
+    }
+
+    @PostMapping("/dict/getByTypeAndKey")
+    public Response<DictDo> getByTypeAndKey(@RequestParam("type") String type, @RequestParam("key") String key) {
+        DictDo dictDo = dictService.getByTypeAndKey(type, key);
+        return Response.success(dictDo);
+    }
+
+    @PostMapping("/dict/listByType")
+    public Response<List<DictDo>> listByType(@RequestParam("type") String type) {
+        List<DictDo> dictDos = dictService.listByType(type);
+        return Response.success(dictDos);
+    }
+
+    @PostMapping("/dict/page")
+    public Response<Page<DictDo>> listByType(@RequestBody PageRequest pageRequest) {
+        Page<DictDo> dictPage = dictService.page(pageRequest);
+        return Response.success(dictPage);
     }
 
     @PostMapping("/dict/create")
