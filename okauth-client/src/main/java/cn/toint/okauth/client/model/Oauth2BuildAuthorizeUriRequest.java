@@ -16,7 +16,7 @@
 
 package cn.toint.okauth.client.model;
 
-import cn.toint.okauth.client.constant.OkAuthConstant;
+import cn.toint.okauth.client.constant.OkAuthClientConstant;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -47,7 +47,7 @@ public class Oauth2BuildAuthorizeUriRequest {
     private String authorizeUri;
 
     /**
-     * @see OkAuthConstant.ResponseType
+     * @see OkAuthClientConstant.ResponseType
      */
     @NotBlank(message = "responseType不能为空")
     private String responseType;

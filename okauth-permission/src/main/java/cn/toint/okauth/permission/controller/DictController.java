@@ -17,7 +17,7 @@
 package cn.toint.okauth.permission.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
-import cn.toint.okauth.permission.constant.OkAuthConstant;
+import cn.toint.okauth.permission.constant.OkAuthPermissionConstant;
 import cn.toint.okauth.permission.model.DictCreateRequest;
 import cn.toint.okauth.permission.model.DictDeleteRequest;
 import cn.toint.okauth.permission.model.DictDo;
@@ -74,21 +74,21 @@ public class DictController {
     }
 
     @PostMapping("/dict/create")
-    @SaCheckRole(OkAuthConstant.Role.ADMIN)
+    @SaCheckRole(OkAuthPermissionConstant.Role.ADMIN)
     public Response<Void> create(@RequestBody DictCreateRequest request) {
         dictService.create(request);
         return Response.success();
     }
 
     @PostMapping("/dict/update")
-    @SaCheckRole(OkAuthConstant.Role.ADMIN)
+    @SaCheckRole(OkAuthPermissionConstant.Role.ADMIN)
     public Response<Void> update(@RequestBody DictUpdateRequest request) {
         dictService.update(request);
         return Response.success();
     }
 
     @PostMapping("/dict/delete")
-    @SaCheckRole(OkAuthConstant.Role.ADMIN)
+    @SaCheckRole(OkAuthPermissionConstant.Role.ADMIN)
     public Response<Void> delete(@RequestBody DictDeleteRequest request) {
         dictService.delete(request.getIds());
         return Response.success();

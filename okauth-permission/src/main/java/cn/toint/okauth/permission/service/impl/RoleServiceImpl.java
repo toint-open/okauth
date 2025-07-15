@@ -16,7 +16,7 @@
 
 package cn.toint.okauth.permission.service.impl;
 
-import cn.toint.okauth.permission.constant.OkAuthConstant;
+import cn.toint.okauth.permission.constant.OkAuthPermissionConstant;
 import cn.toint.okauth.permission.event.PermissionCacheClearEvent;
 import cn.toint.okauth.permission.event.RoleCacheClearEvent;
 import cn.toint.okauth.permission.mapper.RoleMapper;
@@ -70,7 +70,7 @@ public class RoleServiceImpl implements RoleService {
     public boolean isAdmin(Long userId) {
         List<RoleDo> roleDos = listByUserId(userId);
         return roleDos.stream()
-                .anyMatch(roleDo -> OkAuthConstant.Role.ADMIN.equals(roleDo.getCode()));
+                .anyMatch(roleDo -> OkAuthPermissionConstant.Role.ADMIN.equals(roleDo.getCode()));
     }
 
     @Override
@@ -145,7 +145,7 @@ public class RoleServiceImpl implements RoleService {
     @SuppressWarnings("unchecked")
     public void update(RoleUpdateRequest request) {
         String code = request.getCode();
-        Assert.notEquals(code, OkAuthConstant.Role.ADMIN, "admin角色不允许修改");
+        Assert.notEquals(code, OkAuthPermissionConstant.Role.ADMIN, "admin角色不允许修改");
 
         Long id = request.getId();
 
@@ -178,7 +178,7 @@ public class RoleServiceImpl implements RoleService {
 
         // 查询是否存在admin角色
         RoleDo hasAdmin = roleMapper.selectOneByQuery(QueryWrapper.create()
-                .eq(RoleDo::getCode, OkAuthConstant.Role.ADMIN)
+                .eq(RoleDo::getCode, OkAuthPermissionConstant.Role.ADMIN)
                 .in(RoleDo::getId, ids));
         Assert.isNull(hasAdmin, "admin角色不允许删除");
 

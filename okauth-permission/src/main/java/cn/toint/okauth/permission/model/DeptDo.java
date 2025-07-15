@@ -16,7 +16,7 @@
 //
 //package cn.toint.okauth.permission.model;
 //
-//import cn.toint.okauth.permission.constant.OkAuthConstant;
+//import cn.toint.okauth.permission.constant.OkAuthPermissionConstant;
 //import com.mybatisflex.annotation.Column;
 //import com.mybatisflex.annotation.Table;
 //import lombok.Data;
@@ -29,7 +29,7 @@
 // * @date 2025/6/29
 // */
 //@EqualsAndHashCode(callSuper = true)
-//@Table(value = "dept", dataSource = OkAuthConstant.DATA_SOURCE)
+//@Table(value = "dept", dataSource = OkAuthPermissionConstant.DATA_SOURCE)
 //@Data
 //public class DeptDo extends BaseDo {
 //    @Column

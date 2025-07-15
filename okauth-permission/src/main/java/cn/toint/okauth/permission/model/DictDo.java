@@ -16,7 +16,7 @@
 
 package cn.toint.okauth.permission.model;
 
-import cn.toint.okauth.permission.constant.OkAuthConstant;
+import cn.toint.okauth.permission.constant.OkAuthPermissionConstant;
 import cn.toint.oktool.spring.boot.model.BaseDo;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Table;
@@ -25,7 +25,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Table(value = "dict", dataSource = OkAuthConstant.DATA_SOURCE)
+@Table(value = "dict", dataSource = OkAuthPermissionConstant.DATA_SOURCE)
 public class DictDo extends BaseDo {
     @Column
     private String type;

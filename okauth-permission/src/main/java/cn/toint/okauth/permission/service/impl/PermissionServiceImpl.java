@@ -16,7 +16,7 @@
 
 package cn.toint.okauth.permission.service.impl;
 
-import cn.toint.okauth.permission.constant.OkAuthConstant;
+import cn.toint.okauth.permission.constant.OkAuthPermissionConstant;
 import cn.toint.okauth.permission.event.PermissionCacheClearEvent;
 import cn.toint.okauth.permission.mapper.PermissionMapper;
 import cn.toint.okauth.permission.mapper.RoleMtmPermissionMapper;
@@ -247,7 +247,7 @@ public class PermissionServiceImpl implements PermissionService {
         // 检查admin角色, admin应拥有所有权限
         // 非admin角色, 查询角色对应的权限集合
         List<PermissionDo> permissionDos = new ArrayList<>();
-        RoleDo roleDo = roleService.getByCode(OkAuthConstant.Role.ADMIN);
+        RoleDo roleDo = roleService.getByCode(OkAuthPermissionConstant.Role.ADMIN);
         boolean hasAdmin = roleDo != null && Objects.equals(roleId, roleDo.getId());
         if (hasAdmin) {
             permissionDos = permissionMapper.selectAll();
@@ -359,7 +359,7 @@ public class PermissionServiceImpl implements PermissionService {
 
         // 1. 只要动了权限, 就清除admin的缓存
         ArrayList<Long> roleIds = new ArrayList<>();
-        RoleDo adminRoleDo = roleService.getByCode(OkAuthConstant.Role.ADMIN);
+        RoleDo adminRoleDo = roleService.getByCode(OkAuthPermissionConstant.Role.ADMIN);
         roleIds.add(adminRoleDo.getId());
 
         // 2. 查询权限对应的所有角色

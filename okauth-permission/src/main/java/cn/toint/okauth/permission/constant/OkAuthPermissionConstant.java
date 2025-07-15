@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.client.constant;
+package cn.toint.okauth.permission.constant;
 
 /**
  * @author Toint
- * @date 2025/7/2
+ * @date 2025/6/29
  */
-public class OkAuthConstant {
+public class OkAuthPermissionConstant {
     /**
-     * 所有返回类型
+     * 数据源名称
      */
-    public static final class ResponseType {
-        public static String code = "code";
-    }
+    public static final String DATA_SOURCE = "okauth-permission";
 
-    public static final class GrantType {
-        public static final String AUTHORIZATION_CODE = "authorization_code";
-        public static final String REFRESH_TOKEN = "refresh_token";
+    public static class Role {
+        /**
+         * 管理员角色
+         */
+        public static final String ADMIN = "admin";
     }
 }
