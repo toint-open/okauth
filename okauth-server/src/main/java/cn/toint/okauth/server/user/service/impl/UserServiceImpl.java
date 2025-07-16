@@ -222,10 +222,10 @@ public class UserServiceImpl implements UserService {
         if (userDo == null) {
             userDo = new UserDo();
             userDo.init();
+            userDo.setUsername(phone);
             userDo.setPhone(phone);
             userDo.setName(genNickName());
             int inserted = userMapper.insert(userDo, false);
-            Assert.isTrue(SqlUtil.toBool(inserted), "账号创建失败");
         }
 
         return checkSuccessThenLogin(userDo);
