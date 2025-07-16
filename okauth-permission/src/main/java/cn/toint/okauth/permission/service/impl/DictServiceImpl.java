@@ -64,7 +64,8 @@ public class DictServiceImpl implements DictService {
         }
 
         // 查询所有字典
-        List<DictDo> dictDos = dictMapper.selectAll();
+        List<DictDo> dictDos = dictMapper.selectListByQuery(QueryWrapper.create()
+                .orderBy(DictDo::getType, true));
 
         // 缓存
         cacheValue = JacksonUtil.writeValueAsString(dictDos);
@@ -162,7 +163,8 @@ public class DictServiceImpl implements DictService {
 
         Long pageNumber = pageRequest.getPageNumber();
         Long pageSize = pageRequest.getPageSize();
-        return dictMapper.paginate(pageNumber, pageSize, QueryWrapper.create());
+        return dictMapper.paginate(pageNumber, pageSize, QueryWrapper.create()
+                .orderBy(DictDo::getType, true));
     }
 
     private void clearCache() {
