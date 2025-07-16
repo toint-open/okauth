@@ -17,6 +17,7 @@
 package cn.toint.okauth.permission.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.toint.okauth.permission.constant.OkAuthPermissionConstant;
 import cn.toint.okauth.permission.model.DictCreateRequest;
 import cn.toint.okauth.permission.model.DictDeleteRequest;
@@ -44,6 +45,7 @@ public class DictController {
     private DictService dictService;
 
     @PostMapping("/dict/listAll")
+    @SaIgnore
     public Response<List<DictDo>> listAll() {
         List<DictDo> dictDos = dictService.listAll();
         return Response.success(dictDos);
