@@ -124,7 +124,8 @@ public class DictServiceImpl implements DictService {
         // 不能重复
         DictDo dictDo = dictMapper.selectOneByQuery(QueryWrapper.create()
                 .eq(DictDo::getType, type)
-                .eq(DictDo::getKey, key));
+                .eq(DictDo::getKey, key)
+                .ne(DictDo::getId, id));
         Assert.isNull(dictDo, "字典已存在");
 
         // 数据落库
