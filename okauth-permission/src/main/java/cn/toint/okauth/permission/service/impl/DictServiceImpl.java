@@ -65,7 +65,8 @@ public class DictServiceImpl implements DictService {
 
         // 查询所有字典
         List<DictDo> dictDos = dictMapper.selectListByQuery(QueryWrapper.create()
-                .orderBy(DictDo::getType, true));
+                .orderBy(DictDo::getType, true)
+                .orderBy(DictDo::getSort, true));
 
         // 缓存
         cacheValue = JacksonUtil.writeValueAsString(dictDos);
@@ -77,7 +78,8 @@ public class DictServiceImpl implements DictService {
     public List<DictDo> listByType(String type) {
         Assert.notBlank(type, "type must not be null");
         return dictMapper.selectListByQuery(QueryWrapper.create()
-                .eq(DictDo::getType, type));
+                .eq(DictDo::getType, type)
+                .orderBy(DictDo::getSort, true));
     }
 
     @Override
@@ -164,7 +166,8 @@ public class DictServiceImpl implements DictService {
         Long pageNumber = pageRequest.getPageNumber();
         Long pageSize = pageRequest.getPageSize();
         return dictMapper.paginate(pageNumber, pageSize, QueryWrapper.create()
-                .orderBy(DictDo::getType, true));
+                .orderBy(DictDo::getType, true)
+                .orderBy(DictDo::getSort, true));
     }
 
     private void clearCache() {

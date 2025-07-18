@@ -34,5 +34,8 @@ public class DictUpdateRequest {
     @NotBlank
     private String value;
 
+    @NotNull
+    private Integer sort;
+
     private String remark;
 }

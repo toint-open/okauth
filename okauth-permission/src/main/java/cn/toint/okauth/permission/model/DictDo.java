@@ -38,4 +38,7 @@ public class DictDo extends BaseDo {
 
     @Column
     private String remark;
+
+    @Column
+    private Integer sort;
 }

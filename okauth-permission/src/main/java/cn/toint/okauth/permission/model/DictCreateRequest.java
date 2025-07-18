@@ -17,6 +17,7 @@
 package cn.toint.okauth.permission.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -30,5 +31,9 @@ public class DictCreateRequest {
     @NotBlank
     private String value;
 
+    @NotNull
+    private Integer sort;
+
     private String remark;
+
 }
