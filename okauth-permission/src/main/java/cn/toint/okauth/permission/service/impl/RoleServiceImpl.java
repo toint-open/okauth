@@ -39,7 +39,6 @@ import org.dromara.hutool.extra.spring.SpringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,7 @@ public class RoleServiceImpl implements RoleService {
     @Resource
     private OkAuthPermissionProperties okAuthPermissionProperties;
 
-    private final KeyBuilderUtil userRoleCacheKeyBuilder = KeyBuilderUtil.of("userMtmRole");
+    public static final KeyBuilderUtil userMtmRoleCacheKeyBuilder = KeyBuilderUtil.of("userMtmRole");
 
     @Resource
     private RoleMtmPermissionMapper roleMtmPermissionMapper;
@@ -78,7 +77,7 @@ public class RoleServiceImpl implements RoleService {
         Assert.notNull(userId, "用户ID不能为空");
 
         // 1. 尝试从缓存中获取
-        String cacheKey = userRoleCacheKeyBuilder.build(String.valueOf(userId));
+        String cacheKey = userMtmRoleCacheKeyBuilder.build(String.valueOf(userId));
         String cacheValue = cache.get(cacheKey);
         if (StringUtils.isNotBlank(cacheValue)) {
             return JacksonUtil.readValue(cacheValue, new TypeReference<>() {
@@ -178,7 +177,6 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Transactional
     public void delete(List<Long> ids) {
         if (CollUtil.isEmpty(ids)) return;
 
@@ -189,17 +187,46 @@ public class RoleServiceImpl implements RoleService {
         roleMapper.deleteBatchByIds(ids);
 
         // 删除用户与角色的绑定关系
-        userMtmRoleMapper.deleteByQuery(QueryWrapper.create()
-                .in(UserMtmRoleDo::getRoleId, ids));
+        // 先查询出来角色对应的用户数据
+        // 然后删除之
+        // 最后在本方法内清除角色对应的用户缓存
+        // 因为在RoleCacheClearEvent事件内已经无法查询到用户和角色之间的关系了
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .in(UserMtmRoleDo::getRoleId, ids);
 
-        // 删除角色与权限绑定关系
+        List<UserMtmRoleDo> userMtmRoleDos = userMtmRoleMapper.selectListByQuery(queryWrapper);
+        userMtmRoleMapper.deleteByQuery(queryWrapper);
+
+        userMtmRoleDos.stream()
+                .map(UserMtmRoleDo::getUserId)
+                .map(String::valueOf)
+                .map(userMtmRoleCacheKeyBuilder::build)
+                .forEach(cache::delete);
+
+        // 删除角色与权限关联信息
+        // 先查询出来角色对应的权限数据
+        // 然后删除之
+        // 最后在本方法内清除角色对应的权限缓存
+        // 因为在PermissionCacheClearEvent事件内已经无法查询到权限和角色之间的关系了
         List<RoleMtmPermissionDo> roleMtmPermissionDos = roleMtmPermissionMapper.selectListByQuery(QueryWrapper.create()
                 .in(RoleMtmPermissionDo::getRoleId, ids));
-        List<Long> roleMtmPermissionIds = roleMtmPermissionDos.stream().map(RoleMtmPermissionDo::getId).toList();
-        List<Long> permissionIds = roleMtmPermissionDos.stream().map(RoleMtmPermissionDo::getPermissionId).toList();
+
+        List<Long> roleMtmPermissionIds = roleMtmPermissionDos.stream()
+                .map(RoleMtmPermissionDo::getId)
+                .toList();
+
+        List<Long> permissionIds = roleMtmPermissionDos.stream()
+                .map(RoleMtmPermissionDo::getPermissionId)
+                .toList();
+
         if (CollUtil.isNotEmpty(roleMtmPermissionIds)) {
             roleMtmPermissionMapper.deleteBatchByIds(roleMtmPermissionIds);
         }
+
+        permissionIds.stream()
+                .map(String::valueOf)
+                .map(PermissionServiceImpl.roleMtmPermissionCacheKeyBuilder::build)
+                .forEach(cache::delete);
 
         // 清除缓存
         SpringUtil.publishEvent(new RoleCacheClearEvent(ids));
@@ -207,7 +234,6 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Transactional
     public void bind(Long roleId, List<Long> userIds) {
         Assert.notNull(roleId, "角色ID不能为空");
         Assert.notEmpty(userIds, "用户ID不能为空");
@@ -261,7 +287,9 @@ public class RoleServiceImpl implements RoleService {
     }
 
     /**
-     * 角色缓存清除事件 (与发布者同步执行)
+     * 缓存清除事件 (与发布者同步执行)
+     * 1. 清除用户与角色关系缓存
+     * 2. 清除角色与权限关系缓存
      */
     @SuppressWarnings("unchecked")
     @EventListener
@@ -270,18 +298,19 @@ public class RoleServiceImpl implements RoleService {
         roleIds.removeIf(Objects::isNull);
         if (CollUtil.isEmpty(roleIds)) return;
 
-        // 1. 查询角色对应的所有用户ID
-        List<Long> userIds = userMtmRoleMapper.selectListByQuery(QueryWrapper.create()
-                        .select(UserMtmRoleDo::getUserId)
-                        .in(UserMtmRoleDo::getRoleId, roleIds))
+        // 只要动了角色, 就清除admin缓存
+        roleIds.add(OkAuthPermissionConstant.Role.ADMIN_ID);
+
+        // 查询角色对应的所有用户ID, 删除其缓存
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .select(UserMtmRoleDo::getUserId)
+                .in(UserMtmRoleDo::getRoleId, roleIds);
+
+        userMtmRoleMapper.selectListByQuery(queryWrapper)
                 .stream()
                 .map(UserMtmRoleDo::getUserId)
-                .toList();
-
-        // 2. 删除用户对应的缓存
-        userIds.stream()
                 .map(String::valueOf)
-                .map(userRoleCacheKeyBuilder::build)
+                .map(userMtmRoleCacheKeyBuilder::build)
                 .forEach(cache::delete);
     }
 }
