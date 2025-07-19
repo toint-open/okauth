@@ -161,7 +161,8 @@ public class RoleServiceImpl implements RoleService {
         // 角色码不能重复
         Assert.isNull(roleMapper.selectOneByQuery(QueryWrapper.create()
                 .select(RoleDo::getCode)
-                .eq(RoleDo::getCode, code)), "角色码不能重复");
+                .eq(RoleDo::getCode, code)
+                .ne(RoleDo::getId, request.getId())), "角色码不能重复");
 
         // 2. 数据初始化
         RoleDo roleDo = roleMapper.selectOneById(id);
