@@ -67,7 +67,7 @@ public class PermissionServiceImpl implements PermissionService {
     @Resource
     private OkAuthPermissionProperties okAuthPermissionProperties;
 
-    private final KeyBuilderUtil roleMtmPermissionCacheKeyBuilder = KeyBuilderUtil.of("roleMtmPermission");
+    public static final KeyBuilderUtil roleMtmPermissionCacheKeyBuilder = KeyBuilderUtil.of("roleMtmPermission");
 
     @Override
     public List<PermissionDo> listByUserId(Long userId) {
@@ -299,8 +299,11 @@ public class PermissionServiceImpl implements PermissionService {
         // 因为在PermissionCacheClearEvent事件内已经无法查询到权限和角色之间的关系了
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .in(RoleMtmPermissionDo::getPermissionId, ids);
+
         List<RoleMtmPermissionDo> roleMtmPermissionDos = roleMtmPermissionMapper.selectListByQuery(queryWrapper);
+
         roleMtmPermissionMapper.deleteByQuery(queryWrapper);
+
         roleMtmPermissionDos
                 .stream()
                 .map(RoleMtmPermissionDo::getRoleId)
