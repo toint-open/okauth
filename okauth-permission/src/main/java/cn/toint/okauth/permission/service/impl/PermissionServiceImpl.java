@@ -17,7 +17,7 @@
 package cn.toint.okauth.permission.service.impl;
 
 import cn.toint.okauth.permission.constant.OkAuthPermissionConstant;
-import cn.toint.okauth.permission.event.PermissionCacheClearEvent;
+import cn.toint.okauth.permission.event.ClearPermissionCacheEvent;
 import cn.toint.okauth.permission.mapper.PermissionMapper;
 import cn.toint.okauth.permission.mapper.RoleMtmPermissionMapper;
 import cn.toint.okauth.permission.model.*;
@@ -28,7 +28,6 @@ import cn.toint.oktool.spring.boot.cache.Cache;
 import cn.toint.oktool.util.Assert;
 import cn.toint.oktool.util.ExceptionUtil;
 import cn.toint.oktool.util.JacksonUtil;
-import cn.toint.oktool.util.KeyBuilderUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.util.SqlUtil;
@@ -38,8 +37,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.util.EnumUtil;
-import org.dromara.hutool.extra.spring.SpringUtil;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -67,8 +64,6 @@ public class PermissionServiceImpl implements PermissionService {
     @Resource
     private OkAuthPermissionProperties okAuthPermissionProperties;
 
-    public static final KeyBuilderUtil roleMtmPermissionCacheKeyBuilder = KeyBuilderUtil.of("roleMtmPermission");
-
     @Override
     public List<PermissionDo> listByUserId(Long userId) {
         Assert.notNull(userId, "用户ID不能为空");
@@ -90,7 +85,7 @@ public class PermissionServiceImpl implements PermissionService {
         // 3. 尝试从缓存中查找所有角色拥有的所有权限
         List<String> cacheKeys = roleIds.stream()
                 .map(String::valueOf)
-                .map(roleMtmPermissionCacheKeyBuilder::build)
+                .map(OkAuthPermissionConstant.roleMtmPermissionCacheKeyBuilder::build)
                 .toList();
 
         // 角色在缓存中的权限字符串, 未找到对应的缓存用null占位
@@ -169,7 +164,9 @@ public class PermissionServiceImpl implements PermissionService {
         permissionMapper.insert(permissionDo, false);
 
         // 清除缓存
-        SpringUtil.publishEvent(new PermissionCacheClearEvent(List.of(permissionDo.getId())));
+        ClearPermissionCacheEvent.of()
+                .addPermissionId(permissionDo.getId())
+                .publishEvent();
     }
 
     @SuppressWarnings("unchecked")
@@ -202,7 +199,9 @@ public class PermissionServiceImpl implements PermissionService {
         Assert.isTrue(SqlUtil.toBool(updated), "修改失败");
 
         // 清除缓存
-        SpringUtil.publishEvent(new PermissionCacheClearEvent(List.of(permissionDo.getId())));
+        ClearPermissionCacheEvent.of()
+                .addPermissionId(permissionDo.getId())
+                .publishEvent();
     }
 
     @Override
@@ -244,7 +243,10 @@ public class PermissionServiceImpl implements PermissionService {
         roleMtmPermissionMapper.insertBatch(roleMtmPermissionDos);
 
         // 最后全部没问题, 清除缓存
-        SpringUtil.publishEvent(new PermissionCacheClearEvent(permissionIds));
+        ClearPermissionCacheEvent clearPermissionCacheEvent = ClearPermissionCacheEvent.of();
+        clearPermissionCacheEvent.addRoleId(roleId);
+        permissionIds.forEach(clearPermissionCacheEvent::addPermissionId);
+        clearPermissionCacheEvent.publishEvent();
     }
 
     @Override
@@ -252,7 +254,7 @@ public class PermissionServiceImpl implements PermissionService {
         Assert.notNull(roleId, "角色ID不能为空");
 
         // 先查询缓存中角色是否存在对应的权限集合
-        String cacheKey = roleMtmPermissionCacheKeyBuilder.build(String.valueOf(roleId));
+        String cacheKey = OkAuthPermissionConstant.roleMtmPermissionCacheKeyBuilder.build(String.valueOf(roleId));
         String cacheValue = cache.get(cacheKey);
         if (StringUtils.isNotBlank(cacheValue)) {
             // 命中缓存, 直接返回结果
@@ -293,26 +295,23 @@ public class PermissionServiceImpl implements PermissionService {
         permissionMapper.deleteBatchByIds(ids);
 
         // 删除角色与权限关联信息
-        // 先查询出来角色对应的权限数据
-        // 然后删除之
-        // 最后在本方法内清除角色对应的权限缓存
-        // 因为在PermissionCacheClearEvent事件内已经无法查询到权限和角色之间的关系了
-        QueryWrapper queryWrapper = QueryWrapper.create()
-                .in(RoleMtmPermissionDo::getPermissionId, ids);
+        List<RoleMtmPermissionDo> roleMtmPermissionDos = roleMtmPermissionMapper.selectListByQuery(QueryWrapper.create()
+                .in(RoleMtmPermissionDo::getPermissionId, ids));
 
-        List<RoleMtmPermissionDo> roleMtmPermissionDos = roleMtmPermissionMapper.selectListByQuery(queryWrapper);
-
-        roleMtmPermissionMapper.deleteByQuery(queryWrapper);
-
-        roleMtmPermissionDos
-                .stream()
-                .map(RoleMtmPermissionDo::getRoleId)
-                .map(String::valueOf)
-                .map(roleMtmPermissionCacheKeyBuilder::build)
-                .forEach(cache::delete);
+        if (!roleMtmPermissionDos.isEmpty()) {
+            roleMtmPermissionMapper.deleteBatchByIds(roleMtmPermissionDos.stream()
+                    .map(RoleMtmPermissionDo::getId)
+                    .toList());
+        }
 
         // 清除缓存
-        SpringUtil.publishEvent(new PermissionCacheClearEvent(ids));
+        ClearPermissionCacheEvent clearPermissionCacheEvent = ClearPermissionCacheEvent.of();
+        ids.forEach(clearPermissionCacheEvent::addPermissionId);
+        roleMtmPermissionDos.forEach(item -> {
+            clearPermissionCacheEvent.addPermissionId(item.getPermissionId());
+            clearPermissionCacheEvent.addRoleId(item.getRoleId());
+        });
+        clearPermissionCacheEvent.publishEvent();
     }
 
     @Override
@@ -373,34 +372,5 @@ public class PermissionServiceImpl implements PermissionService {
         });
 
         return roots;
-    }
-
-    /**
-     * 权限写入事件监听器, 当权限发生变动时清除对应的缓存
-     */
-    @SuppressWarnings("unchecked")
-    @EventListener
-    protected void onCacheClear(PermissionCacheClearEvent event) {
-        List<Long> permissionIds = new ArrayList<>(event.getSource());
-        permissionIds.removeIf(Objects::isNull);
-        if (CollUtil.isEmpty(permissionIds)) return;
-
-        // 1. 只要动了权限, 就清除admin的缓存
-        ArrayList<Long> roleIds = new ArrayList<>();
-        roleIds.add(OkAuthPermissionConstant.Role.ADMIN_ID);
-
-        // 2. 查询权限对应的所有角色
-        roleMtmPermissionMapper.selectListByQuery(QueryWrapper.create()
-                        .select(RoleMtmPermissionDo::getRoleId)
-                        .in(RoleMtmPermissionDo::getPermissionId, permissionIds))
-                .stream()
-                .map(RoleMtmPermissionDo::getRoleId)
-                .forEach(roleIds::add);
-
-        // 3. 清除角色对应的缓存
-        roleIds.stream()
-                .map(String::valueOf)
-                .map(roleMtmPermissionCacheKeyBuilder::build)
-                .forEach(cache::delete);
     }
 }

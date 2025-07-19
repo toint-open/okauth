@@ -16,6 +16,8 @@
 
 package cn.toint.okauth.permission.constant;
 
+import cn.toint.oktool.util.KeyBuilderUtil;
+
 /**
  * @author Toint
  * @date 2025/6/29
@@ -25,6 +27,10 @@ public class OkAuthPermissionConstant {
      * 数据源名称
      */
     public static final String DATA_SOURCE = "okauth-permission";
+
+
+    public static final KeyBuilderUtil roleMtmPermissionCacheKeyBuilder = KeyBuilderUtil.of("roleMtmPermission");
+    public static final KeyBuilderUtil userMtmRoleCacheKeyBuilder = KeyBuilderUtil.of("userMtmRole");
 
     public static class Role {
         /**
@@ -36,5 +42,10 @@ public class OkAuthPermissionConstant {
          * 管理员角色ID
          */
         public static final long ADMIN_ID = 10000L;
+
+        /**
+         * 超级管理员用户ID
+         */
+        public static final long SUPER_ADMIN_USER_ID = 10000L;
     }
 }
