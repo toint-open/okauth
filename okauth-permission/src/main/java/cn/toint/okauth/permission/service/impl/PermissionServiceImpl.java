@@ -173,10 +173,21 @@ public class PermissionServiceImpl implements PermissionService {
         SpringUtil.publishEvent(new PermissionCacheClearEvent(List.of(permissionDo.getId())));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void update(PermissionUpdateRequest request) {
         Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request);
+
+        // 权限码不能重复
+        String code = request.getCode();
+        if (StringUtils.isNotBlank(code)) {
+            QueryWrapper queryWrapper = QueryWrapper.create()
+                    .select(PermissionDo::getCode)
+                    .eq(PermissionDo::getCode, code)
+                    .ne(PermissionDo::getId, request.getId());
+            Assert.isNull(permissionMapper.selectOneByQuery(queryWrapper), "权限码已存在");
+        }
 
         // 检查是否存在
         PermissionDo permissionDo = getById(request.getId());
