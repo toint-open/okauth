@@ -41,7 +41,6 @@ import org.dromara.hutool.core.util.EnumUtil;
 import org.dromara.hutool.extra.spring.SpringUtil;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -215,7 +214,6 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    @Transactional
     public void bind(Long roleId, List<Long> permissionIds) {
         Assert.notNull(roleId, "角色ID不能为空");
         Assert.notEmpty(permissionIds, "权限ID不能为空");
@@ -288,7 +286,6 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    @Transactional
     public void delete(List<Long> ids) {
         if (CollUtil.isEmpty(ids)) return;
 
@@ -296,9 +293,20 @@ public class PermissionServiceImpl implements PermissionService {
         permissionMapper.deleteBatchByIds(ids);
 
         // 删除角色与权限关联信息
+        // 先查询出来角色对应的权限数据
+        // 然后删除之
+        // 最后在本方法内清除角色对应的权限缓存
+        // 因为在PermissionCacheClearEvent事件内已经无法查询到权限和角色之间的关系了
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .in(RoleMtmPermissionDo::getPermissionId, ids);
+        List<RoleMtmPermissionDo> roleMtmPermissionDos = roleMtmPermissionMapper.selectListByQuery(queryWrapper);
         roleMtmPermissionMapper.deleteByQuery(queryWrapper);
+        roleMtmPermissionDos
+                .stream()
+                .map(RoleMtmPermissionDo::getRoleId)
+                .map(String::valueOf)
+                .map(roleMtmPermissionCacheKeyBuilder::build)
+                .forEach(cache::delete);
 
         // 清除缓存
         SpringUtil.publishEvent(new PermissionCacheClearEvent(ids));
