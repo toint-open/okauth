@@ -8,9 +8,16 @@ create table if not exists dict
     `key`       varchar(200)                        not null,
     value       text                                not null,
     remark      text                                null,
+    sort        int                                 not null,
     constraint uid_type_key
     unique (type, `key`)
     );
+
+create index id_sort
+    on dict (sort);
+
+create index id_type
+    on dict (type);
 
 create table if not exists permission
 (
@@ -69,24 +76,6 @@ create index id_permission_id
 
 create index id_role_id
     on role_mtm_permission (role_id);
-
-create table if not exists user_mtm_dept
-(
-    id          bigint                              not null
-    primary key,
-    create_time timestamp default CURRENT_TIMESTAMP not null,
-    update_time timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
-    user_id     bigint                              not null,
-    dept_id     bigint                              not null,
-    constraint uid_userid_deptid
-    unique (user_id, dept_id)
-    );
-
-create index id_dept_id
-    on user_mtm_dept (dept_id);
-
-create index id_user_id
-    on user_mtm_dept (user_id);
 
 create table if not exists user_mtm_role
 (
