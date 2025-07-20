@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 /**
  * @author Toint
  * @date 2025/6/29
@@ -74,8 +72,8 @@ public class UserController {
     @PostMapping("/user/updatePassword")
     @SaIgnore
     public Response<Void> updatePassword(@RequestBody UserUpdatePasswordRequest request) {
-        long userId = Optional.ofNullable(request.getUserId())
-                .orElse(StpUtil.getLoginIdAsLong());
+        Long userId = request.getUserId();
+        if (userId == null) userId = StpUtil.getLoginIdAsLong();
         String oldPassword = request.getOldPassword();
         String newPassword = request.getNewPassword();
         userService.updatePassword(userId, oldPassword, newPassword);
