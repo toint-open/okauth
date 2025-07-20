@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.toint.okauth.server.user.model;
+package cn.toint.okauth.client.model;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -24,7 +24,7 @@ import lombok.Data;
  * @date 2025/7/2
  */
 @Data
-public class UserUpdatePasswordRequest {
+public class Oauth2UpdatePasswordRequest {
     /**
      * 选填, 不填则从token获取用户信息
      */

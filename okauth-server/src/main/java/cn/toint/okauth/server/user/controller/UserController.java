@@ -19,12 +19,14 @@ package cn.toint.okauth.server.user.controller;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.toint.okauth.server.user.model.*;
-import cn.toint.oktool.model.Response;
 import cn.toint.okauth.server.user.service.UserService;
+import cn.toint.oktool.model.Response;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 /**
  * @author Toint
@@ -70,8 +72,10 @@ public class UserController {
      * 修改密码
      */
     @PostMapping("/user/updatePassword")
+    @SaIgnore
     public Response<Void> updatePassword(@RequestBody UserUpdatePasswordRequest request) {
-        long userId = StpUtil.getLoginIdAsLong();
+        long userId = Optional.ofNullable(request.getUserId())
+                .orElse(StpUtil.getLoginIdAsLong());
         String oldPassword = request.getOldPassword();
         String newPassword = request.getNewPassword();
         userService.updatePassword(userId, oldPassword, newPassword);

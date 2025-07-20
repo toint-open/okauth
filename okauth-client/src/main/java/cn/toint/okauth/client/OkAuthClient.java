@@ -57,4 +57,9 @@ public interface OkAuthClient {
      * 获取用户信息
      */
     Oauth2UserInfoResponse userInfo(Oauth2UserInfoRequest request);
+
+    /**
+     * 修改密码
+     */
+    void updatePassword(Oauth2UpdatePasswordRequest request);
 }

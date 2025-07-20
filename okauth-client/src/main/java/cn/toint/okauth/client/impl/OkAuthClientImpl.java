@@ -124,6 +124,20 @@ public class OkAuthClientImpl implements OkAuthClient {
     }
 
     @Override
+    public void updatePassword(Oauth2UpdatePasswordRequest request) {
+        Assert.notNull(request, "请求参数不能为空");
+        Assert.validate(request);
+
+        Request httpRequest = Request.of(okAuthClientConfig.getServerUri() + "/user/updatePassword")
+                .method(Method.POST)
+                .body(JacksonUtil.writeValueAsString(request));
+        String resBodyStr = OkAuthHttpUtil.request(httpRequest);
+        Response<Void> response = JacksonUtil.readValue(resBodyStr, new TypeReference<>() {
+        });
+        Assert.isTrue(Objects.equals(response.getCode(), 0), response.getMsg());
+    }
+
+    @Override
     public Oauth2LoginResponse login(Oauth2LoginByPasswordRequest request) {
         Assert.notNull(request, "请求参数不能为空");
         Assert.validate(request);
