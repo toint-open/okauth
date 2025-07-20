@@ -42,10 +42,5 @@ public class OkAuthPermissionConstant {
          * 管理员角色ID
          */
         public static final long ADMIN_ID = 10000L;
-
-        /**
-         * 超级管理员用户ID
-         */
-        public static final long SUPER_ADMIN_USER_ID = 10000L;
     }
 }

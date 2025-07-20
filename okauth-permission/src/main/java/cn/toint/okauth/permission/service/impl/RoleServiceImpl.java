@@ -287,7 +287,6 @@ public class RoleServiceImpl implements RoleService {
 
         // 只要动了角色或者权限, 一定清除admin的缓存
         roleIds.add(OkAuthPermissionConstant.Role.ADMIN_ID);
-        userIds.add(OkAuthPermissionConstant.Role.SUPER_ADMIN_USER_ID);
 
         // 根据权限ID, 找到需要清除的角色
         if (!permissionIds.isEmpty()) {
